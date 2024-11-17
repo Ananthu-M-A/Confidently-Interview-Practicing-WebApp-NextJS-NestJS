@@ -4,7 +4,7 @@ import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 export class AdminController {
 
     @Post('login')
-    loginAdmin(@Body() user: { emailId, password }) {
+    loginAdmin(@Body() user: { email, password }) {
         return user
     }
 
@@ -38,7 +38,7 @@ export class AdminController {
         return []
     }
 
-    @Get('stat')
+    @Get('stats')
     getStatistics() {
         return []
     }

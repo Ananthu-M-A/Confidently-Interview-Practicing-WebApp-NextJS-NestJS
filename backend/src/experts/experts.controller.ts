@@ -4,7 +4,7 @@ import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 export class ExpertsController {
 
     @Post('login')
-    loginExpert(@Body() expert: { emailId, password }) {
+    loginExpert(@Body() expert: { email, password }) {
         return expert
     }
 
@@ -18,7 +18,7 @@ export class ExpertsController {
         return expert
     }
 
-    @Put('availability')
+    @Post('availability')
     updateAvailability(@Body() expert:{}) {
         return expert
     }

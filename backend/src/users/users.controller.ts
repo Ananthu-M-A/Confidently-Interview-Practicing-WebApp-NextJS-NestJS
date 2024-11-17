@@ -4,12 +4,12 @@ import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 export class UsersController {
 
     @Post('register')
-    createUser(@Body() user: { fullName, emailId, password }) {
+    createUser(@Body() user: { fullname, email, password }) {
         return user
     }
 
     @Post('login')
-    loginUser(@Body() user: { emailId, password }) {
+    loginUser(@Body() user: { email, password }) {
         return user
     }
 
@@ -20,7 +20,7 @@ export class UsersController {
 
     @Get('me')
     viewUser() {
-        return []
+        return {}
     }
 
     @Put('me')
@@ -33,7 +33,7 @@ export class UsersController {
         return []
     }
 
-    @Get('interview')
+    @Get('interviews')
     viewInterviews(){
         return []
     }
