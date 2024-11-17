@@ -177,7 +177,7 @@ export function SignupForm() {
           </CardContent>
         </form>
       </Form>
-      <h1 className="text-sm text-center">Or Sign Up with</h1>
+      <h1 className="text-sm text-center">Or sign up with</h1>
       <CardContent className="flex gap-10 justify-center pt-3">
         <Button variant="outline" className="border border-black font-semibold">
           <FaGoogle className="text-red-600" />
@@ -190,7 +190,7 @@ export function SignupForm() {
       </CardContent>
       <CardContent className="text-center">
         <CardDescription>
-          Already have an account ?{" "}
+          Already have an account ?
           <Link
             className="font-semibold hover:text-black hover:underline"
             href="/login"
