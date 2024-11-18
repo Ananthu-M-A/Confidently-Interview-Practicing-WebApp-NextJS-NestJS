@@ -1,45 +1,50 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { User } from 'src/users/users.schema';
+import { AdminService } from './admin.service';
+import { Admin } from './admin.schema';
 
 @Controller('admin')
 export class AdminController {
 
+    constructor(private readonly adminService: AdminService) { }
+
     @Post('login')
-    loginAdmin(@Body() user: { email, password }) {
-        return user
+    loginAdmin(@Body() adminData: Partial<Admin>) {
+        return this.adminService.loginAdmin(adminData)
     }
 
     @Get('users')
     viewUsers() {
-        return []
+        return this.adminService.viewUsers()
     }
 
     @Put('users')
-    updateUser(@Body() user:{}) {
-        return user
+    updateUser(@Body() user: {}) {
+        return this.adminService.updateUser()
     }
 
     @Get('experts')
     viewExperts() {
-        return []
+        return this.adminService.viewExperts()
     }
 
     @Put('experts')
-    updateExpert(@Body() expert:{}) {
-        return expert
+    updateExpert(@Body() expert: {}) {
+        return this.adminService.updateExpert()
     }
 
     @Post('experts')
-    addExpert(@Body() expert:{}){
-        return expert
+    addExpert(@Body() expert: {}) {
+        return this.adminService.addExpert()
     }
 
     @Get('interviews')
     getInterviewData() {
-        return []
+        return this.adminService.getInterviewData()
     }
 
     @Get('stats')
     getStatistics() {
-        return []
+        return this.adminService.getStatistics()
     }
 }

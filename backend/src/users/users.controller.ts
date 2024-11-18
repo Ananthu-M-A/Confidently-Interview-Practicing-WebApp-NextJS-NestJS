@@ -1,41 +1,46 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { User } from './users.schema';
+
 
 @Controller('users')
 export class UsersController {
 
+    constructor(private readonly usersService: UsersService) { }
+
     @Post('register')
-    createUser(@Body() user: { fullname, email, password }) {
-        return user
+    createUser(@Body() userData: User) {
+        return this.usersService.createUser(userData);
     }
 
     @Post('login')
-    loginUser(@Body() user: { email, password }) {
-        return user
+    loginUser(@Body() userData: Partial<User>) {
+        return this.usersService.loginUser(userData)
     }
 
     @Post('logout')
     logoutUser() {
-        return []
+        return this.usersService.logoutUser()
     }
 
     @Get('me')
     viewUser() {
-        return {}
+        return this.usersService.viewUser()
     }
 
     @Put('me')
-    updateUser(@Body() user:{}) {
-        return user
+    updateUser(@Body() user: {}) {
+        return this.usersService.updateUser()
     }
 
     @Post('interview')
-    scheduleInterview(){
-        return []
+    scheduleInterview() {
+        return this.usersService.scheduleInterview()
     }
 
     @Get('interviews')
-    viewInterviews(){
-        return []
+    viewInterviews() {
+        return this.usersService.viewInterviews()
     }
 
 }
