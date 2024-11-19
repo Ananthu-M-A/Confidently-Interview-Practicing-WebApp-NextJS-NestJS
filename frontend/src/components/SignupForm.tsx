@@ -24,6 +24,7 @@ import { Label } from "./ui/label";
 import { useState } from "react";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 const FormSchema = z
   .object({
@@ -55,6 +56,7 @@ const FormSchema = z
 
 export function SignupForm() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const { register } = useAuth();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -66,7 +68,11 @@ export function SignupForm() {
     },
   });
 
-  function onSubmit() {}
+  async function onSubmit({ email, password, fullname }: z.infer<typeof FormSchema>) {
+    const response = await register(email, password, fullname);
+    console.log(response);
+    
+  }
 
   return (
     <Card className="w-2/5 mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">

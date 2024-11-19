@@ -15,3 +15,8 @@ export class Admin {
 }
 
 export const AdminSchema = SchemaFactory.createForClass(Admin);
+
+AdminSchema.pre('save', function (next) {
+    this.password = this.password;
+    next();
+});

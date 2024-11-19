@@ -34,3 +34,8 @@ export class Expert {
 }
 
 export const ExpertSchema = SchemaFactory.createForClass(Expert);
+
+ExpertSchema.pre('save', function (next) {
+    this.password = this.password;
+    next();
+});
