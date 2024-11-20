@@ -3,25 +3,10 @@ import { UsersService } from './users.service';
 import { User } from './users.schema';
 
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
 
-    constructor(private readonly usersService: UsersService) { }
-
-    @Post('register')
-    createUser(@Body() userData: User) {
-        return this.usersService.createUser(userData);
-    }
-
-    @Post('login')
-    loginUser(@Body() userData: Partial<User>) {
-        return this.usersService.loginUser(userData)
-    }
-
-    @Post('logout')
-    logoutUser() {
-        return this.usersService.logoutUser()
-    }
+    constructor(private usersService: UsersService) { }
 
     @Get('me')
     viewUser() {

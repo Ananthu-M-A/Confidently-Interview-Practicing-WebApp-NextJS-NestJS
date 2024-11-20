@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     fullname: string
   ) => {
     try {
-      const response = await axios.post("http://localhost:3001/users/register", {
+      const response = await axios.post("http://localhost:3001/api/auth/register", {
         email,
         password,
         fullname,
