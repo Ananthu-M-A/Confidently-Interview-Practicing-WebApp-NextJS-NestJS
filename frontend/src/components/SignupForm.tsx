@@ -25,6 +25,8 @@ import { useState } from "react";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+
 
 const FormSchema = z
   .object({
@@ -39,15 +41,7 @@ const FormSchema = z
             "Password must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
         }
       ),
-    confirmPassword: z
-      .string()
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-        {
-          message:
-            "Password must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
-        }
-      ),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -57,6 +51,7 @@ const FormSchema = z
 export function SignupForm() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const { register } = useAuth();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -68,14 +63,32 @@ export function SignupForm() {
     },
   });
 
-  async function onSubmit({ email, password, fullname }: z.infer<typeof FormSchema>) {
-    const response = await register(email, password, fullname);
-    console.log(response);
-    
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      await register(data.email, data.password, data.fullname);
+      console.log("Registration Successfull");
+      router.push('/');
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
+  }
+
+  async function handleGoogleSignup() {
+    try {
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
+  }
+
+  async function handleLinkedinSignup() {
+    try {
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   }
 
   return (
-    <Card className="w-2/5 mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">
+    <Card className="max-w-lg w-full mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <CardHeader>
@@ -169,12 +182,15 @@ export function SignupForm() {
               <Label className="flex text-xs font-semibold p-1">
                 <Input
                   type="checkbox"
+                  id="show-password"
                   className="w-4"
                   checked={isChecked}
                   onChange={() => setIsChecked(!isChecked)}
                   aria-label="Show Password"
                 />
-                <Label className="py-3 px-1">Show Password</Label>
+                <Label htmlFor="show-password" className="py-3 px-1">
+                  Show Password
+                </Label>
               </Label>
               <Button type="submit" className="font-bold">
                 Sign Up
@@ -185,11 +201,19 @@ export function SignupForm() {
       </Form>
       <h1 className="text-sm text-center">Or sign up with</h1>
       <CardContent className="flex gap-10 justify-center pt-3">
-        <Button variant="outline" className="border border-black font-semibold">
+        <Button
+          variant="outline"
+          onClick={handleGoogleSignup}
+          className="border border-black font-semibold"
+        >
           <FaGoogle className="text-red-600" />
           Google
         </Button>
-        <Button variant="outline" className="border border-black font-semibold">
+        <Button
+          variant="outline"
+          onClick={handleLinkedinSignup}
+          className="border border-black font-semibold"
+        >
           <FaLinkedinIn className="text-blue-600" />
           LinkedIn
         </Button>

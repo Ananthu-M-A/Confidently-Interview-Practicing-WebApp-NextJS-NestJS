@@ -29,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (token) {
         try {
           const response = await axios.get(
-            "http://localhost:3000/api/auth/me",
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -44,12 +44,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  async function login(email: string, password: string) {
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       setUser(user);
@@ -57,40 +60,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Login failed:", error);
       throw error;
     }
-  };
+  }
 
-  const logout = async () => {
+  async function logout() {
     localStorage.removeItem("token");
     setUser(null);
     try {
-      await axios.post("http://localhost:3001/users/logout");
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/logout`);
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  };
+  }
 
-  const register = async (
-    email: string,
-    password: string,
-    fullname: string
-  ) => {
+  async function register(email: string, password: string, fullname: string) {
     try {
-      const response = await axios.post("http://localhost:3001/api/auth/register", {
-        email,
-        password,
-        fullname,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
+        { email, password, fullname }
+      );
 
-      const { token, user } = response.data;
-      console.log("auth",token, user);
-
-      localStorage.setItem("token", token);
-      setUser(user);
+      if (response.status === 201) {
+        const { token, user } = response.data;
+        localStorage.setItem("token", token);
+        setUser(user);
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       throw error;
     }
-  };
+  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register }}>

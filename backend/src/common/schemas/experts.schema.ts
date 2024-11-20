@@ -4,9 +4,9 @@ interface Availability {
 }
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Document } from 'mongoose';
 
-export type ExpertDocument = HydratedDocument<Expert>;
+export type ExpertDocument = Expert & Document;
 
 @Schema({ timestamps: true })
 export class Expert {

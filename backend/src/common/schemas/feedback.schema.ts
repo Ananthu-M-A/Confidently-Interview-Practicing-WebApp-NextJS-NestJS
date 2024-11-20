@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-export type InterviewDocument = HydratedDocument<Interview>;
+export type FeedbackDocument = Feedback & Document;
 
 @Schema({ timestamps: true })
-export class Interview {
+export class Feedback {
 
     @Prop({ ref: 'Expert', required: true })
     expertId: Types.ObjectId;
@@ -24,8 +24,6 @@ export class Interview {
     @Prop({ required: true })
     comments: string;
 
-
-
 }
 
-export const InterviewSchema = SchemaFactory.createForClass(Interview);
+export const FeedbackSchema = SchemaFactory.createForClass(Feedback);

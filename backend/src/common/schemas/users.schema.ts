@@ -1,4 +1,6 @@
+import { NotAcceptableException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { hash } from 'bcryptjs';
 import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
@@ -26,7 +28,15 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.pre('save', function (next) {
-    this.password = this.password;
-    next();
+UserSchema.pre('save', async function (next) {
+    try {
+        if (this.isModified('password')) {
+            const hashedPassword = await hash(this.password, 10)
+            this.password = hashedPassword;
+        }
+        next();
+    } catch (error) {
+        console.error(error);
+        next(new Error('Error hashing the password'));
+    }
 });

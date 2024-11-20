@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
-import { User } from 'src/users/users.schema';
+import { User } from 'src/common/schemas/users.schema';
 import { AdminService } from './admin.service';
-import { Admin } from './admin.schema';
+import { Admin } from '../common/schemas/admin.schema';
 
 @Controller('admin')
 export class AdminController {
