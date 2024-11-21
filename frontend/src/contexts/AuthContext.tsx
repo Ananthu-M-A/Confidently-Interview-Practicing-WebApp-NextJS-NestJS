@@ -13,7 +13,12 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    fullname: string
+  ) => Promise<void>;
+  registerOauth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +33,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("token");
       if (token) {
         try {
+          console.log(token);
+
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
             {
@@ -53,9 +60,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           password,
         }
       );
-      const { token, user } = response.data;
-      localStorage.setItem("token", token);
-      setUser(user);
+      if (response.status === 201) {
+        const { token, user } = response.data;
+        localStorage.setItem("token", token);
+        setUser(user);
+      }
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -66,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("token");
     setUser(null);
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/logout`);
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`);
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -78,7 +87,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
         { email, password, fullname }
       );
-
       if (response.status === 201) {
         const { token, user } = response.data;
         localStorage.setItem("token", token);
@@ -90,8 +98,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  async function registerOauth() {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`
+      );
+      console.log(response.data); //cors error
+      if (response.status === 201) {
+        // const { token, user } = response.data;
+        // localStorage.setItem("token", token);
+        // setUser(user);
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+      throw error;
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, register }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, register, registerOauth }}
+    >
       {children}
     </AuthContext.Provider>
   );

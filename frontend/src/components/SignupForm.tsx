@@ -21,12 +21,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "./ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-
 
 const FormSchema = z
   .object({
@@ -50,7 +49,7 @@ const FormSchema = z
 
 export function SignupForm() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const { register } = useAuth();
+  const { register, registerOauth, user } = useAuth();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -67,25 +66,33 @@ export function SignupForm() {
     try {
       await register(data.email, data.password, data.fullname);
       console.log("Registration Successfull");
-      router.push('/');
+      window.location.reload();
     } catch (error) {
       console.error("Registration failed:", error);
     }
   }
 
-  async function handleGoogleSignup() {
+  const handleGoogleSignup = async () => {
     try {
+      await registerOauth();
+      console.log("Registration Successfull");
     } catch (error) {
       console.error("Registration failed:", error);
     }
-  }
+  };
 
-  async function handleLinkedinSignup() {
+  const handleLinkedinSignup = () => {
     try {
     } catch (error) {
       console.error("Registration failed:", error);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
 
   return (
     <Card className="max-w-lg w-full mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">

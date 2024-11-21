@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { compare } from 'bcryptjs';
+import { Model, ObjectId } from 'mongoose';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
 
 @Injectable()
 export class AuthService {
 
-    constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) { }
+    constructor(
+        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+        private readonly jwtService: JwtService
+    ) { }
 
-    async registerUser(userData: User): Promise<Object> {
+    async registerUser(userData: User) {
         const { email } = userData;
         const existingUser = await this.userModel.findOne({ email });
         if (existingUser) {
@@ -16,19 +21,23 @@ export class AuthService {
         }
         const user = new this.userModel(userData);
         await user.save();
-        return { user, token: "jwt_token" }
+        const payload = { username: user.fullname, sub: user._id };
+        return { token: this.jwtService.sign(payload) };
     }
 
-    async loginUser(userData: Partial<User>): Promise<String> {
+    async loginUser(userData: Partial<User>): Promise<Object> {
         const { email, password } = userData;
-        const existingUser = await this.userModel.findOne({ email });
-        if (!existingUser) {
-            throw new Error("Email not registered");
+        const user = await this.userModel.findOne({ email });
+        if (!user) {
+            return null;
         }
-        if (existingUser.password !== password) {
-            throw new Error("Password not correct");
+        const passwordMatched = await compare(password, user.password);
+
+        if (!passwordMatched) {
+            return null;
         }
-        return "User logged in";
+        const payload = { username: user.fullname, sub: user._id };
+        return { token: this.jwtService.sign(payload) };
     }
 
     async logoutUser(email: string): Promise<String> {
@@ -39,4 +48,17 @@ export class AuthService {
         return "User logged out"
     }
 
+    async validateUser(userData: Partial<User>): Promise<object> {
+        const { email, password } = userData;
+        const existingUser = await this.userModel.findOne({ email });
+        if (!existingUser) {
+            return null;
+        }
+        const passwordMatched = await compare(password, existingUser.password);
+
+        if (!passwordMatched) {
+            return null;
+        }
+        return { username: existingUser.email, id: existingUser._id };
+    }
 }
