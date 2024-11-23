@@ -19,6 +19,7 @@ interface AuthContextType {
     fullname: string
   ) => Promise<void>;
   registerOauth: () => Promise<void>;
+  loginOauth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,6 +72,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  async function loginOauth() {
+    try {
+      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  }
+
   async function logout() {
     localStorage.removeItem("token");
     setUser(null);
@@ -100,15 +110,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function registerOauth() {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`
-      );
-      console.log(response.data); //cors error
-      if (response.status === 201) {
-        // const { token, user } = response.data;
-        // localStorage.setItem("token", token);
-        // setUser(user);
-      }
+      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+      const urlObj = new URL(window.location.href);
+      const token = urlObj.searchParams.get("token");
+      const user = urlObj.searchParams.get("user");
+
+      // Parse the user JSON string into an object
+      const userObject = JSON.parse(decodeURIComponent(user as string));
+
+      console.log("Token:", token);
+      console.log("User Object:", userObject);
     } catch (error) {
       console.error("Registration failed:", error);
       throw error;
@@ -117,7 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, register, registerOauth }}
+      value={{ user, login, logout, register, registerOauth, loginOauth }}
     >
       {children}
     </AuthContext.Provider>

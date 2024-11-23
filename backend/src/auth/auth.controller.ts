@@ -1,13 +1,18 @@
-import { Body, Controller, Get, Post, Req, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Request, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { User } from 'src/common/schemas/users.schema';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('api/auth')
 export class AuthController {
 
-    constructor(private readonly authService: AuthService) { }
+    constructor(
+        private readonly authService: AuthService,
+        private readonly configService: ConfigService
+    ) { }
 
     @Post('register')
     async createUser(@Body() userData: User) {
@@ -41,18 +46,31 @@ export class AuthController {
 
     @Get('google')
     @UseGuards(AuthGuard('google'))
-    async googleAuth(@Req() req: any) { }
+    async googleAuth() { }
 
-    @Get('google/redirect')
+    @Get('google/callback')
     @UseGuards(AuthGuard('google'))
-    async googleAuthRedirect(@Req() req: Partial<any>) {
+    async googleAuthRedirect(@Req() req, @Res() res: Response) {
         const { firstName, lastName, email } = req.user;
-        return this.authService.registerUser({
-            fullname:`${firstName} ${lastName}`,
-            email,
-            password: process.env.CONFIDENTLY_DEFAULT_PASSWORD,
-            subscription: false,
-            active: true
-        })
+        try {
+            const result = await this.authService.registerUser({
+                fullname: `${firstName} ${lastName}`,
+                email,
+                password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD'),
+                subscription: false,
+                active: true
+            });
+            const frontendURL = this.configService.get<string>('FRONTEND_URL');
+            const redirectUrl = new URL(`${frontendURL}/auth/callback`);
+            redirectUrl.searchParams.append('token', result.token);
+            redirectUrl.searchParams.append('user', JSON.stringify(result.user));
+            res.redirect(redirectUrl.toString());
+        } catch (error) {
+            const frontendURL = this.configService.get<string>('FRONTEND_URL');
+            const errorUrl = new URL(`${frontendURL}/auth/callback`);
+            errorUrl.searchParams.append('error', error.message);
+            res.redirect(errorUrl.toString());
+        }
+
     }
 }

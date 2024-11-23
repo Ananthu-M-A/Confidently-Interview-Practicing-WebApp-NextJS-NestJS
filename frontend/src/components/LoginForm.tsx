@@ -43,7 +43,7 @@ const FormSchema = z.object({
 export function LoginForm() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { login, user } = useAuth();
+  const { login, loginOauth, user } = useAuth();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -63,6 +63,22 @@ export function LoginForm() {
       console.error("Login failed:", error);
     }
   }
+
+  const handleGoogleLogin = async () => {
+    try {
+      await loginOauth();
+      console.log("Registration Successfull");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  const handleLinkedinLogin = async () => {
+    try {
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -149,6 +165,7 @@ export function LoginForm() {
           <CardContent className="flex gap-10 justify-center pt-3">
             <Button
               variant="outline"
+              onClick={handleGoogleLogin}
               className="border border-black font-semibold"
             >
               <FaGoogle className="text-red-600" />
@@ -156,6 +173,7 @@ export function LoginForm() {
             </Button>
             <Button
               variant="outline"
+              onClick={handleLinkedinLogin}
               className="border border-black font-semibold"
             >
               <FaLinkedinIn className="text-blue-600" />

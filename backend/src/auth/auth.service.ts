@@ -13,16 +13,28 @@ export class AuthService {
         private readonly jwtService: JwtService
     ) { }
 
-    async registerUser(userData: User) {
+    async registerUser(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string }> {
         const { email } = userData;
-        const existingUser = await this.userModel.findOne({ email });
-        if (existingUser) {
+        let user = await this.userModel.findOne({ email });
+        if (user) {
+            Object.assign(user, userData);
+            await user.save();
             throw new Error("Email already exists");
+        } else {
+            user = new this.userModel(userData);
+            await user.save();
         }
-        const user = new this.userModel(userData);
-        await user.save();
         const payload = { username: user.fullname, sub: user._id };
-        return { token: this.jwtService.sign(payload) };
+        return {
+            user: {
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                subscription: user.subscription,
+                active: user.active
+            },
+            token: this.jwtService.sign(payload)
+        };
     }
 
     async loginUser(userData: Partial<User>): Promise<Object> {
