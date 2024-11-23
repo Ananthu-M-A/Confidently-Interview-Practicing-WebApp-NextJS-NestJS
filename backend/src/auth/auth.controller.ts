@@ -34,8 +34,8 @@ export class AuthController {
     }
 
     @Post('resetPassword')
-    async resetUserEntry(@Body() email: string) {
-        return this.authService.resetUser(email);
+    async resetUserEntry(@Body() userData: Partial<User>) {
+        return this.authService.resetUser(userData);
     }
 
     @Get('me')

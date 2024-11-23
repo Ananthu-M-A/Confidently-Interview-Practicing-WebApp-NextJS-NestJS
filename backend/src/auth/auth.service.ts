@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcryptjs';
-import { Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
 
 @Injectable()
@@ -10,7 +11,8 @@ export class AuthService {
 
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private configService: ConfigService
     ) { }
 
     async registerUser(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string }> {
@@ -56,8 +58,17 @@ export class AuthService {
         return "User logged out"
     }
 
-    async resetUser(email: string): Promise<String> {
-        return "User logged out"
+    async resetUser(userData: Partial<User>): Promise<String> {
+        const { email } = userData;
+        let user = await this.userModel.findOne({ email });
+        if (user) {
+            Object.assign(user, { password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD') });
+            await user.save();
+
+            return "Password reset email sent";
+        } else {
+            return "User not found";
+        }
     }
 
     async validateUser(userData: Partial<User>): Promise<object> {

@@ -21,12 +21,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
 });
 
 export function ResetPasswordForm() {
+  const { resetPassword } = useAuth();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -35,7 +39,15 @@ export function ResetPasswordForm() {
     },
   });
 
-  function onSubmit() {}
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      await resetPassword(data.email);
+      console.log("Password reset link sent");
+      router.push("/login");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  }
 
   return (
     <Card className="w-2/5 mx-auto px-4 py-2 my-10 rounded-xl border-2 shadow-lg">
@@ -79,7 +91,7 @@ export function ResetPasswordForm() {
       </Form>
       <CardContent className="text-center">
         <CardDescription>
-          Remember your password ?  
+          Remember your password ?
           <Link
             className="font-semibold hover:text-black hover:underline"
             href="/login"

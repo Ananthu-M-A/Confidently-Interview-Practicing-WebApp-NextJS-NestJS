@@ -20,6 +20,7 @@ interface AuthContextType {
   ) => Promise<void>;
   registerOauth: () => Promise<void>;
   loginOauth: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -115,7 +116,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = urlObj.searchParams.get("token");
       const user = urlObj.searchParams.get("user");
 
-      // Parse the user JSON string into an object
       const userObject = JSON.parse(decodeURIComponent(user as string));
 
       console.log("Token:", token);
@@ -126,9 +126,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  async function resetPassword(email: string) {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/resetPassword`,
+        { email }
+      );
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, register, registerOauth, loginOauth }}
+      value={{
+        user,
+        login,
+        logout,
+        register,
+        registerOauth,
+        loginOauth,
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>
