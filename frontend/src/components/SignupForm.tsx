@@ -90,7 +90,7 @@ export function SignupForm() {
 
   useEffect(() => {
     if (user) {
-      router.push("/");
+      router.push("/user");
     }
   }, [user, router]);
 

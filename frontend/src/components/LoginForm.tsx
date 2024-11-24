@@ -82,7 +82,7 @@ export function LoginForm() {
 
   useEffect(() => {
     if (user) {
-      router.push("/");
+      router.push("/user");
     } else {
       setIsLoading(false);
     }

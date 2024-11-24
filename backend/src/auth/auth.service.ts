@@ -55,7 +55,16 @@ export class AuthService {
             return null;
         }
         const payload = { username: user.fullname, sub: user._id };
-        return { token: this.jwtService.sign(payload) };
+        return {
+            user: {
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                subscription: user.subscription,
+                active: user.active
+            },
+            token: this.jwtService.sign(payload)
+        };
     }
 
     async logoutUser(email: string): Promise<String> {

@@ -71,6 +71,5 @@ export class AuthController {
             errorUrl.searchParams.append('error', error.message);
             res.redirect(errorUrl.toString());
         }
-
     }
 }

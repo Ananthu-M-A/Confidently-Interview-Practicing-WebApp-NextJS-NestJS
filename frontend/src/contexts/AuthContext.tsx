@@ -2,11 +2,11 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 interface User {
-  id: string;
-  email: string;
-  name: string;
+  _id: string;
+  username: string;
 }
 
 interface AuthContextType {
@@ -35,8 +35,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          console.log(token);
-
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
             {
@@ -66,9 +64,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const { token, user } = response.data;
         localStorage.setItem("token", token);
         setUser(user);
+        toast.success("Successfull Logged In");
+      } else {
+        toast.warning("Unsuccessfull attempt to Login");
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.warning("Unsuccessfull attempt to Login");
+      console.error("Unsuccessfull attempt to Login:", error);
       throw error;
     }
   }
@@ -76,19 +78,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   async function loginOauth() {
     try {
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+      toast.success("Successfull Logged In");
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.warning("Unsuccessfull attempt to Login");
+      console.error("Unsuccessfull attempt to Login:", error);
       throw error;
     }
   }
 
   async function logout() {
-    localStorage.removeItem("token");
-    setUser(null);
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`);
+      localStorage.removeItem("token");
+      setUser(null);
+      toast.success("Successfully Logged Out");
     } catch (error) {
-      console.error("Logout failed:", error);
+      toast.warning("Successfully Logged Out");
+      console.error("Successfully Logged Out:", error);
     }
   }
 
@@ -102,9 +108,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const { token, user } = response.data;
         localStorage.setItem("token", token);
         setUser(user);
+        toast.success("Registration Successfull");
+      } else {
+        toast.warning("Registration Unsuccessfull");
       }
     } catch (error) {
-      console.error("Registration failed:", error);
+      toast.warning("Registration Unsuccessfull");
+      console.error("Registration Unsuccessfull:", error);
       throw error;
     }
   }
@@ -117,11 +127,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const user = urlObj.searchParams.get("user");
 
       const userObject = JSON.parse(decodeURIComponent(user as string));
-
-      console.log("Token:", token);
-      console.log("User Object:", userObject);
+      if (token && userObject) {
+        toast.success("Registration Successfull");
+      }
     } catch (error) {
-      console.error("Registration failed:", error);
+      toast.warning("Registration Unuccessfull");
+      console.error("Registration Unuccessfull:", error);
       throw error;
     }
   }
