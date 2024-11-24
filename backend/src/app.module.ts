@@ -5,6 +5,7 @@ import { AdminModule } from './admin/admin.module';
 import { DatabaseModule } from './common/modules/database.module';
 import { AuthModule } from './auth/auth.module';
 import { EnvConfigModule } from './common/modules/config.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { EnvConfigModule } from './common/modules/config.module';
     ExpertsModule,
     AdminModule,
     AuthModule,
-    AppModule
+    AppModule,
+    EmailModule
   ],
 })
 export class AppModule { }

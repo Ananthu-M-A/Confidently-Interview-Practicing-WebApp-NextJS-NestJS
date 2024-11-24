@@ -1,18 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcryptjs';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
+import { EmailService } from 'src/email/email.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
 
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+        private readonly userService: UsersService,
         private readonly jwtService: JwtService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private readonly emailService: EmailService,
     ) { }
 
     async registerUser(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string }> {
@@ -64,10 +68,12 @@ export class AuthService {
         if (user) {
             Object.assign(user, { password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD') });
             await user.save();
-
+            await this.emailService.sendResetMail(user.email);
             return "Password reset email sent";
         } else {
-            return "User not found";
+            if (!user) {
+                throw new NotFoundException('User not found');
+            }
         }
     }
 
