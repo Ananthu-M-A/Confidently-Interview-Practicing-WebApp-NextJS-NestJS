@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import { useRouter } from "next/navigation";
 
 const FormSchema = z

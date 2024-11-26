@@ -2,17 +2,29 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { usePathname, useRouter } from "next/navigation";
+import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
+import { useAdminAuth } from "@/contexts/auth/AdminAuthContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const { expert, expertLogout } = useExpertAuth();
+  const { admin, adminLogout } = useAdminAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
-  async function handleLogout() {
+  async function handleLogout(userType: string) {
     try {
-      await logout();
-      console.log("User logged out.");
+      const response =
+        userType === "user"
+          ? await logout()
+          : userType === "expert"
+          ? await expertLogout()
+          : userType === "admin"
+          ? await adminLogout()
+          : "";
+      console.log("User logged out.", response);
       router.push("/login");
     } catch (error) {
       console.error("Logging out failed:", error);
@@ -26,7 +38,7 @@ export default function Header() {
           <Link href={"/"}>Confidently</Link>
         </h1>
         <div className="flex gap-4">
-          {!user ? (
+          {(pathname === "/login" || pathname === "/register") && (
             <>
               <Button
                 variant="outline"
@@ -38,10 +50,24 @@ export default function Header() {
                 <Link href={"/register"}>Sign Up</Link>
               </Button>
             </>
-          ) : (
-            <Button onClick={handleLogout} className="font-bold">
+          )}
+          {user ? (
+            <Button onClick={() => handleLogout("user")} className="font-bold">
               Log Out
             </Button>
+          ) : expert ? (
+            <Button
+              onClick={() => handleLogout("expert")}
+              className="font-bold"
+            >
+              Log Out
+            </Button>
+          ) : admin ? (
+            <Button onClick={() => handleLogout("admin")} className="font-bold">
+              Log Out
+            </Button>
+          ) : (
+            <></>
           )}
         </div>
       </div>

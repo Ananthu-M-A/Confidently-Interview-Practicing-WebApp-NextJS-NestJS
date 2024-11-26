@@ -22,10 +22,9 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
-import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
@@ -43,7 +42,7 @@ const FormSchema = z.object({
 export default function LoginPage() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { login, loginOauth, user } = useAuth();
+  const { login, expert } = useExpertAuth();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -57,36 +56,20 @@ export default function LoginPage() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await login(data.email, data.password);
-      console.log("User logged in");
+      console.log("Expert logged in");
       window.location.reload();
     } catch (error) {
       console.error("Login failed:", error);
     }
   }
 
-  const handleGoogleLogin = async () => {
-    try {
-      await loginOauth();
-      console.log("Registration Successfull");
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
-
-  const handleLinkedinLogin = async () => {
-    try {
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
-
   useEffect(() => {
-    if (user) {
-      router.push("/user");
+    if (expert) {
+      router.push("/expert");
     } else {
       setIsLoading(false);
     }
-  }, [user, router]);
+  }, [expert, router]);
 
   return (
     <>
@@ -96,7 +79,7 @@ export default function LoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <CardHeader>
                 <CardTitle className="text-3xl text-center">
-                  Log In to Confidently
+                  Confidently Expert Login
                 </CardTitle>
                 <h1 className="text-xs text-center">
                   Enter your credentials to access your account
@@ -161,41 +144,14 @@ export default function LoginPage() {
               </CardContent>
             </form>
           </Form>
-          <h1 className="text-sm text-center">Or continue with</h1>
-          <CardContent className="flex gap-10 justify-center pt-3">
-            <Button
-              variant="outline"
-              onClick={handleGoogleLogin}
-              className="border border-black font-semibold"
-            >
-              <FaGoogle className="text-red-600" />
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleLinkedinLogin}
-              className="border border-black font-semibold"
-            >
-              <FaLinkedinIn className="text-blue-600" />
-              LinkedIn
-            </Button>
-          </CardContent>
           <CardContent className="flex-1">
             <CardDescription>
+              {` Forgot password ? `}
               <Link
                 className="font-semibold hover:text-black hover:underline"
-                href="/resetPassword"
+                href={`mailto:process.env.NEXT_PUBLIC_ADMIN_EMAIL`}
               >
-                Forgot password ?
-              </Link>
-            </CardDescription>
-            <CardDescription>
-              {`Don't have an account ? `}
-              <Link
-                className="font-semibold hover:text-black hover:underline"
-                href="/register"
-              >
-                Register Now
+                {`Contact Admin`}
               </Link>
             </CardDescription>
           </CardContent>

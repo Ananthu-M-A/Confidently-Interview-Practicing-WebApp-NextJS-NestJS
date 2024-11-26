@@ -1,3 +1,6 @@
+"use client";
+
+import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import React from "react";
 
 const ExpertHome = () => {
@@ -12,4 +15,4 @@ const ExpertHome = () => {
   );
 };
 
-export default ExpertHome;
+export default WithExpertAuth(ExpertHome);

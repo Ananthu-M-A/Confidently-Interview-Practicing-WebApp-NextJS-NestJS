@@ -1,7 +1,7 @@
 "use client";
 
-import WithAuth from "@/components/WithAuth";
-import { useAuth } from "@/contexts/AuthContext";
+import WithAuth from "@/components/auth-guards/WithAuth";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import React from "react";
 
 const UserHome = () => {

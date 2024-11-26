@@ -1,20 +1,37 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Expert } from '../common/schemas/experts.schema';
 import { ExpertsService } from './experts.service';
+import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
-@Controller('experts')
+@Controller('api/expert')
 export class ExpertsController {
 
-    constructor(private readonly expertsService: ExpertsService) { }
+    constructor(private readonly expertsService: ExpertsService, private readonly configService: ConfigService) { }
+
+    // @Post('register')
+    // async createUser(@Body() userData: Expert) {
+    //     return this.expertsService.registerUser(userData);
+    // }
 
     @Post('login')
-    loginExpert(@Body() expertData: Partial<Expert>) {
+    async enterExpert(@Body() expertData: Partial<Expert>) {      
+        const expert = await this.expertsService.validateExpert(expertData);
+        if (!expert) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
         return this.expertsService.loginExpert(expertData);
     }
 
+    @Post('logout')
+    async exitExert(@Body() email: string) {
+        return this.expertsService.logoutExpert(email);
+    }
+
     @Get('me')
-    viewExpert() {
-        return this.expertsService.viewExpert();
+    @UseGuards(JwtAuthGuard)
+    async checkUserOnline(@Request() req) {
+        return req.user;
     }
 
     @Put('me')

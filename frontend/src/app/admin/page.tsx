@@ -1,3 +1,6 @@
+"use client";
+
+import WithAdminAuth from "@/components/auth-guards/WithAdminAuth";
 import React from "react";
 
 const AdminHome = () => {
@@ -12,4 +15,4 @@ const AdminHome = () => {
   );
 };
 
-export default AdminHome;
+export default WithAdminAuth(AdminHome);
