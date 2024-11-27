@@ -30,10 +30,9 @@ export default function Header() {
       console.error("Logging out failed:", error);
     }
   }
-
   return (
     <>
-      <div className="p-3 border-b border-black flex justify-between">
+      <div className="p-4 sm:p-6 border-b border-black flex justify-between items-center">
         <h1 className="text-3xl font-semibold">
           <Link href={"/"}>Confidently</Link>
         </h1>
@@ -44,32 +43,38 @@ export default function Header() {
             <>
               <Button
                 variant="outline"
-                className="border border-black font-bold"
+                className="border border-black font-bold py-2 px-4 sm:py-3 sm:px-6"
               >
                 <Link href={"/login"}>Log In</Link>
               </Button>
-              <Button className="font-bold">
+              <Button className="font-bold py-2 px-4 sm:py-3 sm:px-6">
                 <Link href={"/register"}>Sign Up</Link>
               </Button>
             </>
           )}
-          {user ? (
-            <Button onClick={() => handleLogout("user")} className="font-bold">
-              Log Out
-            </Button>
-          ) : expert ? (
+          {user && (
             <Button
-              onClick={() => handleLogout("expert")}
-              className="font-bold"
+              onClick={() => handleLogout("user")}
+              className="font-bold py-2 px-4 sm:py-3 sm:px-6"
             >
               Log Out
             </Button>
-          ) : admin ? (
-            <Button onClick={() => handleLogout("admin")} className="font-bold">
+          )}
+          {expert && (
+            <Button
+              onClick={() => handleLogout("expert")}
+              className="font-bold py-2 px-4 sm:py-3 sm:px-6"
+            >
               Log Out
             </Button>
-          ) : (
-            <></>
+          )}
+          {admin && (
+            <Button
+              onClick={() => handleLogout("admin")}
+              className="font-bold py-2 px-4 sm:py-3 sm:px-6"
+            >
+              Log Out
+            </Button>
           )}
         </div>
       </div>

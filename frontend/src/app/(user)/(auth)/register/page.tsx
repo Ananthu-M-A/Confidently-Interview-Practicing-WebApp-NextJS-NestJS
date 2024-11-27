@@ -49,7 +49,7 @@ const FormSchema = z
 
 export default function SignupPage() {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const { register, registerOauth, user } = useAuth();
+  const { register, registerGoogle, registerLinkedin, user } = useAuth();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -74,15 +74,17 @@ export default function SignupPage() {
 
   const handleGoogleSignup = async () => {
     try {
-      await registerOauth();
+      await registerGoogle();
       console.log("Registration Successfull");
     } catch (error) {
       console.error("Registration failed:", error);
     }
   };
 
-  const handleLinkedinSignup = () => {
+  const handleLinkedinSignup = async () => {
     try {
+      await registerLinkedin();
+      console.log("Registration Successfull");
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -95,14 +97,14 @@ export default function SignupPage() {
   }, [user, router]);
 
   return (
-    <Card className="max-w-lg w-full mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">
+    <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <CardHeader>
-            <CardTitle className="text-3xl text-center">
+            <CardTitle className="text-2xl sm:text-3xl text-center">
               Sign Up for Confidently
             </CardTitle>
-            <h1 className="text-xs text-center">
+            <h1 className="text-sm sm:text-xs text-center mt-1">
               Create your account to start improving your interview skills
             </h1>
           </CardHeader>
@@ -185,8 +187,8 @@ export default function SignupPage() {
             />
           </CardContent>
           <CardContent className="text-center">
-            <CardContent className="flex justify-between text-center p-1">
-              <Label className="flex text-xs font-semibold p-1">
+            <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start p-1">
+              <Label className="flex items-center text-sm sm:text-xs font-semibold mb-2 sm:mb-0">
                 <Input
                   type="checkbox"
                   id="show-password"
@@ -195,23 +197,21 @@ export default function SignupPage() {
                   onChange={() => setIsChecked(!isChecked)}
                   aria-label="Show Password"
                 />
-                <Label htmlFor="show-password" className="py-3 px-1">
-                  Show Password
-                </Label>
+                <span className="ml-2">Show Password</span>
               </Label>
-              <Button type="submit" className="font-bold">
+              <Button type="submit" className="font-bold w-full sm:w-auto">
                 Sign Up
               </Button>
-            </CardContent>
+            </div>
           </CardContent>
         </form>
       </Form>
-      <h1 className="text-sm text-center">Or sign up with</h1>
-      <CardContent className="flex gap-10 justify-center pt-3">
+      <h1 className="text-sm text-center mt-4">Or sign up with</h1>
+      <CardContent className="flex gap-4 sm:gap-10 justify-center pt-3">
         <Button
           variant="outline"
           onClick={handleGoogleSignup}
-          className="border border-black font-semibold"
+          className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
         >
           <FaGoogle className="text-red-600" />
           Google
@@ -219,15 +219,15 @@ export default function SignupPage() {
         <Button
           variant="outline"
           onClick={handleLinkedinSignup}
-          className="border border-black font-semibold"
+          className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
         >
           <FaLinkedinIn className="text-blue-600" />
           LinkedIn
         </Button>
       </CardContent>
-      <CardContent className="text-center">
+      <CardContent className="text-center mt-4">
         <CardDescription>
-          Already have an account ?
+          Already have an account?{" "}
           <Link
             className="font-semibold hover:text-black hover:underline"
             href="/login"

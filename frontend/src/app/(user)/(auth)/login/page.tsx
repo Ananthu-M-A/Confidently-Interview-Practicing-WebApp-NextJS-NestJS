@@ -91,14 +91,14 @@ export default function LoginPage() {
   return (
     <>
       {!isLoading && (
-        <Card className="max-w-lg w-full mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">
+        <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <CardHeader>
-                <CardTitle className="text-3xl text-center">
+                <CardTitle className="text-2xl sm:text-3xl text-center">
                   Log In to Confidently
                 </CardTitle>
-                <h1 className="text-xs text-center">
+                <h1 className="text-sm sm:text-xs text-center mt-1">
                   Enter your credentials to access your account
                 </h1>
               </CardHeader>
@@ -143,8 +143,8 @@ export default function LoginPage() {
                 />
               </CardContent>
               <CardContent className="text-center">
-                <CardContent className="flex justify-between text-center p-1">
-                  <Label className="flex text-xs font-semibold p-1">
+                <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start p-1">
+                  <Label className="flex items-center text-sm sm:text-xs font-semibold mb-2 sm:mb-0">
                     <Input
                       type="checkbox"
                       className="w-4"
@@ -152,21 +152,21 @@ export default function LoginPage() {
                       onChange={() => setIsChecked(!isChecked)}
                       aria-label="Show Password"
                     />
-                    <Label className="py-3 px-1">Show Password</Label>
+                    <span className="ml-2">Show Password</span>
                   </Label>
-                  <Button type="submit" className="font-bold">
+                  <Button type="submit" className="font-bold w-full sm:w-auto">
                     Log In
                   </Button>
-                </CardContent>
+                </div>
               </CardContent>
             </form>
           </Form>
-          <h1 className="text-sm text-center">Or continue with</h1>
-          <CardContent className="flex gap-10 justify-center pt-3">
+          <h1 className="text-sm text-center mt-4">Or continue with</h1>
+          <CardContent className="flex gap-4 sm:gap-10 justify-center pt-3">
             <Button
               variant="outline"
               onClick={handleGoogleLogin}
-              className="border border-black font-semibold"
+              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
             >
               <FaGoogle className="text-red-600" />
               Google
@@ -174,23 +174,23 @@ export default function LoginPage() {
             <Button
               variant="outline"
               onClick={handleLinkedinLogin}
-              className="border border-black font-semibold"
+              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
             >
               <FaLinkedinIn className="text-blue-600" />
               LinkedIn
             </Button>
           </CardContent>
-          <CardContent className="flex-1">
+          <CardContent className="text-center mt-4 space-y-2">
             <CardDescription>
               <Link
                 className="font-semibold hover:text-black hover:underline"
                 href="/resetPassword"
               >
-                Forgot password ?
+                Forgot password?
               </Link>
             </CardDescription>
             <CardDescription>
-              {`Don't have an account ? `}
+              {`Don't have an account? `}
               <Link
                 className="font-semibold hover:text-black hover:underline"
                 href="/register"

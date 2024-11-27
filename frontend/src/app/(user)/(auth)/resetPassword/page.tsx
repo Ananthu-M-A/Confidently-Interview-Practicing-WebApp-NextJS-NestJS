@@ -50,14 +50,14 @@ export default function ResetPasswordForm() {
   }
 
   return (
-    <Card className="w-2/5 mx-auto px-4 py-2 my-10 rounded-xl border-2 shadow-lg">
+    <Card className="w-full max-w-sm sm:max-w-md mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <CardHeader>
-            <CardTitle className="text-3xl text-center">
+            <CardTitle className="text-2xl sm:text-3xl text-center">
               Reset Your Password
             </CardTitle>
-            <h1 className="text-xs text-center">
+            <h1 className="text-sm sm:text-xs text-center mt-1">
               Enter your email to receive a password reset link
             </h1>
           </CardHeader>
@@ -82,16 +82,16 @@ export default function ResetPasswordForm() {
               )}
             />
           </CardContent>
-          <CardContent className="text-center">
-            <Button type="submit" className="font-bold w-full">
+          <CardContent className="text-center mt-4">
+            <Button type="submit" className="font-bold w-full sm:w-auto">
               Send Password Reset Link
             </Button>
           </CardContent>
         </form>
       </Form>
-      <CardContent className="text-center">
+      <CardContent className="text-center mt-4">
         <CardDescription>
-          Remember your password ?
+          Remember your password?{" "}
           <Link
             className="font-semibold hover:text-black hover:underline"
             href="/login"

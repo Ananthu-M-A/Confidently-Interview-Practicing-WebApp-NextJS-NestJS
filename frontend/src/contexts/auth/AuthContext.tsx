@@ -18,7 +18,8 @@ interface AuthContextType {
     password: string,
     fullname: string
   ) => Promise<void>;
-  registerOauth: () => Promise<void>;
+  registerGoogle: () => Promise<void>;
+  registerLinkedin: () => Promise<void>;
   loginOauth: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -119,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  async function registerOauth() {
+  async function registerGoogle() {
     try {
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
       const urlObj = new URL(window.location.href);
@@ -130,6 +131,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (token && userObject) {
         toast.success("Registration Successfull");
       }
+    } catch (error) {
+      toast.warning("Registration Unuccessfull");
+      console.error("Registration Unuccessfull:", error);
+      throw error;
+    }
+  }
+
+  async function registerLinkedin() {
+    try {
+      const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
+      const redirectUri = process.env.NEXT_PUBLIC_LINKEDIN_CALLBACK_URL;
+      // const scope = 'r_liteprofile r_emailaddress';
+  
+      // Redirect to LinkedIn's OAuth authorization page
+      window.location.href = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=r_liteprofile%20r_emailaddress`;
+
+      // const urlObj = new URL(window.location.href);
+      // const token = urlObj.searchParams.get("token");
+      // const user = urlObj.searchParams.get("user");
+
+      // const userObject = JSON.parse(decodeURIComponent(user as string));
+      // if (token && userObject) {
+        toast.success("Registration Successfull");
+      // }
     } catch (error) {
       toast.warning("Registration Unuccessfull");
       console.error("Registration Unuccessfull:", error);
@@ -156,7 +181,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         login,
         logout,
         register,
-        registerOauth,
+        registerGoogle,
+        registerLinkedin,
         loginOauth,
         resetPassword,
       }}

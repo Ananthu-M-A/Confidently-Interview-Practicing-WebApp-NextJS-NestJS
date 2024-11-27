@@ -75,11 +75,14 @@ export class AuthController {
 
     @Get('linkedin')
     @UseGuards(AuthGuard('linkedin'))
-    async linkedinLogin() { }
+    async linkedinLogin() {
+        console.log("1111111111111");
+     }
 
     @Get('linkedin/callback')
     @UseGuards(AuthGuard('linkedin'))
     async linkedinLoginCallback(@Req() req) {
+        console.log("222222222222");
         return { user: req.user };
     }
 }

@@ -6,8 +6,8 @@ import React from "react";
 const ExpertHome = () => {
   return (
     <>
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <h1 className="text-4xl font-bold mb-8">
+      <main className="flex min-h-screen flex-col items-center justify-center px-4 sm:px-8 lg:px-24 py-12">
+        <h1 className="text-2xl sm:text-4xl font-bold text-center mb-6 sm:mb-8">
           Hello Expert, Welcome to Confidently
         </h1>
       </main>

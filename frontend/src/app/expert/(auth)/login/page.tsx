@@ -74,14 +74,14 @@ export default function LoginPage() {
   return (
     <>
       {!isLoading && (
-        <Card className="max-w-lg w-full mx-auto px-4 py-2 my-4 rounded-xl border-2 shadow-lg">
+        <Card className="w-full max-w-md mx-auto px-4 py-4 sm:py-6 my-4 rounded-xl border-2 shadow-lg">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <CardHeader>
-                <CardTitle className="text-3xl text-center">
+                <CardTitle className="text-xl sm:text-3xl text-center">
                   Confidently Expert Login
                 </CardTitle>
-                <h1 className="text-xs text-center">
+                <h1 className="text-xs sm:text-sm text-center mt-1">
                   Enter your credentials to access your account
                 </h1>
               </CardHeader>
@@ -126,32 +126,32 @@ export default function LoginPage() {
                 />
               </CardContent>
               <CardContent className="text-center">
-                <CardContent className="flex justify-between text-center p-1">
-                  <Label className="flex text-xs font-semibold p-1">
+                <div className="flex justify-between items-center p-1">
+                  <Label className="flex items-center text-xs font-semibold">
                     <Input
                       type="checkbox"
-                      className="w-4"
+                      className="w-4 h-4"
                       checked={isChecked}
                       onChange={() => setIsChecked(!isChecked)}
                       aria-label="Show Password"
                     />
-                    <Label className="py-3 px-1">Show Password</Label>
+                    <span className="ml-2">Show Password</span>
                   </Label>
                   <Button type="submit" className="font-bold">
                     Log In
                   </Button>
-                </CardContent>
+                </div>
               </CardContent>
             </form>
           </Form>
-          <CardContent className="flex-1">
+          <CardContent className="text-center mt-4">
             <CardDescription>
-              {` Forgot password ? `}
+              {`Forgot password? `}
               <Link
                 className="font-semibold hover:text-black hover:underline"
-                href={`mailto:process.env.NEXT_PUBLIC_ADMIN_EMAIL`}
+                href={`mailto:${process.env.NEXT_PUBLIC_ADMIN_EMAIL}`}
               >
-                {`Contact Admin`}
+                Contact Admin
               </Link>
             </CardDescription>
           </CardContent>

@@ -5,116 +5,124 @@ import { Button } from "@/components/ui/button";
 const HomePage = () => {
   return (
     <>
-      <div className="flex-1 text-center my-6 p-2">
-        <h1 className="text-4xl font-bold mb-2 text-center">
+      <div className="text-center my-6 px-4 sm:px-8">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4">
           Master Your Interview Skills With Confidently
         </h1>
-        <p className="text-lg font-medium mb-3">
+        <p className="text-lg sm:text-xl font-medium mb-6">
           Practice real-time interviews with professional experts and boost your
           confidence.
         </p>
         <Button className="text-lg">
-          <Link href={"/register"}>Get Started</Link>
+          <Link href="/register">Get Started</Link>
         </Button>
       </div>
-      <h1 className="text-3xl font-medium text-left pb-2 pt-1 px-5">
-        Why Interview Skills Matter
-      </h1>
-      <div className="p-5 flex justify-between gap-10 text-center">
-        <div className="w-1/3 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-xl font-bold">Boost Confidence</h1>
-            <p className="text-lg font-medium">
-              Practce makes perfect. Regular interviews help you feel more
-              confident and prepared.
-            </p>
-          </div>
+      <section className="px-5 sm:px-12 py-6">
+        <h2 className="text-2xl sm:text-3xl font-medium text-left pb-4">
+          Why Interview Skills Matter
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            {
+              title: "Boost Confidence",
+              description:
+                "Practice makes perfect. Regular interviews help you feel more confident and prepared.",
+            },
+            {
+              title: "Improve Communication",
+              description:
+                "Learn to articulate your thoughts clearly and concisely in high-pressure situations.",
+            },
+            {
+              title: "Get Expert Feedback",
+              description:
+                "Receive valuable insights from industry professionals to help you improve.",
+            },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="border border-gray-300 p-4 rounded-lg text-center"
+            >
+              <h3 className="text-xl sm:text-2xl font-bold">{item.title}</h3>
+              <p className="text-lg sm:text-xl font-medium">
+                {item.description}
+              </p>
+            </div>
+          ))}
         </div>
-        <div className="w-1/3 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-xl font-bold">Improve Communication</h1>
-            <p className="text-lg font-medium">
-              Learn to articulate your thoughts clearly and concisely in
-              high-pressure situations.
-            </p>
-          </div>
+      </section>
+      <section className="px-5 sm:px-12 py-6">
+        <h2 className="text-2xl sm:text-3xl font-medium text-left pb-4">
+          Our Expert Interviewers
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            {
+              name: "Nakul",
+              details:
+                "15+ years experience in software engineering. Former tech lead at Google.",
+            },
+            {
+              name: "Sruthi",
+              details:
+                "Data Scientist with 10 years experience. PhD in Machine Learning from MIT.",
+            },
+            {
+              name: "Ajith",
+              details:
+                "Product Manager with experience at startups and Fortune 500 companies.",
+            },
+          ].map((expert, index) => (
+            <div
+              key={index}
+              className="border border-gray-300 p-4 rounded-lg text-center"
+            >
+              <h3 className="text-2xl sm:text-3xl font-bold">{expert.name}</h3>
+              <p className="text-lg sm:text-xl font-medium">{expert.details}</p>
+            </div>
+          ))}
         </div>
-        <div className="w-1/3 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-xl font-bold">Get Expert Feedback</h1>
-            <p className="text-lg font-medium">
-              Receive valuable insights from industry professionals to help you
-              improve.
-            </p>
-          </div>
+      </section>
+      <section className="px-5 sm:px-12 py-6">
+        <h2 className="text-2xl sm:text-3xl font-medium text-left pb-4">
+          Success Stories
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+          {[
+            {
+              name: "Vyshak",
+              feedback:
+                '"Thanks to Confidently, I aced my interview at a top company. The feedback from experts was invaluable."',
+            },
+            {
+              name: "Ananthu",
+              feedback:
+                '"I improved my communication skills significantly. Now I feel confident in any interview situation."',
+            },
+          ].map((story, index) => (
+            <div
+              key={index}
+              className="border border-gray-300 p-4 rounded-lg text-center"
+            >
+              <h3 className="text-2xl sm:text-3xl font-bold">{story.name}</h3>
+              <p className="text-lg sm:text-xl font-medium">{story.feedback}</p>
+            </div>
+          ))}
         </div>
-      </div>
-      <h1 className="text-3xl font-medium text-left pb-2 pt-1 px-5">
-        Our Expert Interviewers
-      </h1>
-      <div className="p-5 flex justify-between gap-10 text-center">
-        <div className="w-1/3 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold">Nakul</h1>
-            <p className="text-lg font-medium">
-              15+ years experience in software engineering. Former tech lead at
-              Google.
-            </p>
-          </div>
-        </div>
-        <div className="w-1/3 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold">Sruthi</h1>
-            <p className="text-lg font-medium">
-              Data Scientist with 10 years experience. PhD in Machine Learning
-              from MIT.
-            </p>
-          </div>
-        </div>
-        <div className="w-1/3 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold">Ajith</h1>
-            <p className="text-lg font-medium">
-              Product Manager with experience at startups and Fortune 500
-              companies.
-            </p>
-          </div>
-        </div>
-      </div>
-      <h1 className="text-3xl font-medium text-left pb-2 pt-1 px-5">
-        Success Stories
-      </h1>
-      <div className="p-5 flex justify-between gap-10 text-center">
-        <div className="w-1/2 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold">Vyshak</h1>
-            <p className="text-lg font-medium">
-              {`"Thanks to Confidently, I aced my interview at a top company. The feedbacks from experts was invaluable."`}
-            </p>
-          </div>
-        </div>
-        <div className="w-1/2 border border-gray-300 p-4 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold">Ananthu</h1>
-            <p className="text-lg font-medium">
-              {`"I improved my communication skills significantly. Now I feel confident in any interview situation."`}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-between py-5">
-        <h1 className="text-3xl font-medium text-left pb-2 pt-1 px-10">
+      </section>
+      <section className="flex flex-col sm:flex-row items-center justify-between px-5 sm:px-12 py-6 gap-6">
+        <h2 className="text-2xl sm:text-3xl font-medium pb-4 sm:pb-0">
           Ready to Ace Your Next Interview?
-        </h1>
-        <div className="flex gap-2 justify-between text-center px-20 gap-20">
+        </h2>
+        <div className="flex gap-4 sm:gap-6">
           <Button className="text-lg">
-            <Link href={"/register"}>Sign Up</Link>
+            <Link href="/register">Sign Up</Link>
           </Button>
-          <Button variant={"outline"} className="text-lg border-black">
-            <Link href={"/login"}>Log In</Link>
+          <Button variant="outline" className="text-lg border-black">
+            <Link href="/login">Log In</Link>
           </Button>
         </div>
-      </div>
+      </section>
     </>
   );
 };
