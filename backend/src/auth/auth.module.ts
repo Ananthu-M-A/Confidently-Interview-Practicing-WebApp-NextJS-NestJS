@@ -9,12 +9,14 @@ import { GoogleStrategy } from 'src/common/strategy/google.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from 'src/email/email.module';
 import { UsersService } from 'src/users/users.service';
+import { LinkedInStrategy } from 'src/common/strategy/linkedin.strategy';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
-    PassportModule.register({defaultStrategy:'google'}),
+    PassportModule.register({ defaultStrategy: 'google' }),
+    PassportModule.register({ defaultStrategy: 'linkedin' }),
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.JWT_SECRET,
@@ -24,7 +26,7 @@ import { UsersService } from 'src/users/users.service';
     ConfigModule,
     EmailModule
   ],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, UsersService],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, LinkedInStrategy, UsersService],
   controllers: [AuthController]
 })
 export class AuthModule { }

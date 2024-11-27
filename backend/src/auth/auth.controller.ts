@@ -72,4 +72,14 @@ export class AuthController {
             res.redirect(errorUrl.toString());
         }
     }
+
+    @Get('linkedin')
+    @UseGuards(AuthGuard('linkedin'))
+    async linkedinLogin() { }
+
+    @Get('linkedin/callback')
+    @UseGuards(AuthGuard('linkedin'))
+    async linkedinLoginCallback(@Req() req) {
+        return { user: req.user };
+    }
 }

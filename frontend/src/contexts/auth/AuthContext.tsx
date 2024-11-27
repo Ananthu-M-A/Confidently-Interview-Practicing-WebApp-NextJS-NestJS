@@ -143,6 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/resetPassword`,
         { email }
       );
+      toast.success("Password reset link sent, Check your email.")
     } catch (error) {
       console.error("Logout failed:", error);
     }

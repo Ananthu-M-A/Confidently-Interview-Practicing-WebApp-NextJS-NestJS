@@ -38,7 +38,9 @@ export default function Header() {
           <Link href={"/"}>Confidently</Link>
         </h1>
         <div className="flex gap-4">
-          {(pathname === "/login" || pathname === "/register") && (
+          {(pathname === "/login" ||
+            pathname === "/register" ||
+            pathname === "/") && (
             <>
               <Button
                 variant="outline"
