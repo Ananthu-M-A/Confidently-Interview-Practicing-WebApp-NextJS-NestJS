@@ -30,32 +30,35 @@ export default function Header() {
       console.error("Logging out failed:", error);
     }
   }
+
   return (
-    <>
-      <div className="p-4 sm:p-6 border-b border-black flex justify-between items-center">
-        <h1 className="text-3xl font-semibold">
+    <div className="p-4 sm:p-6 border-b border-gray-300 bg-white">
+      <div className="flex flex-col sm:flex-row justify-between items-center">
+        <h1 className="text-2xl font-semibold mb-4 sm:mb-0">
           <Link href={"/"}>Confidently</Link>
         </h1>
-        <div className="flex gap-4">
-          {(pathname === "/login" ||
-            pathname === "/register" ||
-            pathname === "/") && (
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          {(pathname === "/login" || pathname === "/register" || pathname === "/") && (
             <>
-              <Button
-                variant="outline"
-                className="border border-black font-bold py-2 px-4 sm:py-3 sm:px-6"
-              >
-                <Link href={"/login"}>Log In</Link>
-              </Button>
-              <Button className="font-bold py-2 px-4 sm:py-3 sm:px-6">
-                <Link href={"/register"}>Sign Up</Link>
-              </Button>
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto border border-gray-500 font-bold py-2 px-4 sm:py-3 sm:px-6"
+                >
+                  Log In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6">
+                  Sign Up
+                </Button>
+              </Link>
             </>
           )}
           {user && (
             <Button
               onClick={() => handleLogout("user")}
-              className="font-bold py-2 px-4 sm:py-3 sm:px-6"
+              className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
             >
               Log Out
             </Button>
@@ -63,32 +66,32 @@ export default function Header() {
           {expert && (
             <Button
               onClick={() => handleLogout("expert")}
-              className="font-bold py-2 px-4 sm:py-3 sm:px-6"
+              className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
             >
               Log Out
             </Button>
           )}
           {admin && (
-            <>
-              <Link className="font-bold mt-2 mx-5" href={"/admin"}>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link className="font-bold mt-2 sm:mt-0" href="/admin">
                 Dashboard
               </Link>
-              <Link className="font-bold mt-2 mx-5" href={"/admin/experts"}>
+              <Link className="font-bold mt-2 sm:mt-0" href="/admin/experts">
                 Experts
               </Link>
-              <Link className="font-bold mt-2 mx-5" href={"/admin/users"}>
+              <Link className="font-bold mt-2 sm:mt-0" href="/admin/users">
                 Users
               </Link>
               <Button
                 onClick={() => handleLogout("admin")}
-                className="font-bold py-2 px-4 sm:py-3 sm:px-6"
+                className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
               >
                 Log Out
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

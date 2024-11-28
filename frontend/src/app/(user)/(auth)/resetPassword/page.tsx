@@ -25,7 +25,10 @@ import { useAuth } from "@/contexts/auth/AuthContext";
 import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
-  email: z.string().email({ message: "Enter a valid email address" }),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Enter a valid email address" }),
 });
 
 export default function ResetPasswordForm() {
