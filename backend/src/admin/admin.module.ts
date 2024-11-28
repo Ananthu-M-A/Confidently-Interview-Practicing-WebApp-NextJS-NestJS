@@ -6,6 +6,7 @@ import { Admin, AdminSchema } from '../common/schemas/admin.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { Expert, ExpertSchema } from 'src/common/schemas/experts.schema';
 import { User, UserSchema } from 'src/common/schemas/users.schema';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { User, UserSchema } from 'src/common/schemas/users.schema';
         signOptions: { expiresIn: '1h' },
       })
     }),
+    EmailModule
   ],
   controllers: [AdminController],
   providers: [AdminService],

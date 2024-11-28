@@ -6,6 +6,7 @@ import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Expert, ExpertDocument } from 'src/common/schemas/experts.schema';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AdminService {
@@ -13,7 +14,8 @@ export class AdminService {
     constructor(
         @InjectModel(Admin.name) private readonly adminModel: Model<AdminDocument>,
         @InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>, @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-        private readonly jwtService: JwtService) { }
+        private readonly jwtService: JwtService,
+        private readonly emailService: EmailService) { }
 
     // async registerUser(userData: Partial<Admin>): Promise<{ user: Partial<AdminDocument>; token: string }> {
     //     const { email } = userData;
@@ -117,8 +119,19 @@ export class AdminService {
         return existingExpert;
     }
 
-    addExpert() {
-
+    async addExpert(expertData: Partial<Expert>): Promise<Expert> {
+        const { email, fullname, yearsOfExperience } = expertData;
+        let existingExpert = await this.expertModel.findOne({ email });
+        if (existingExpert) {
+            throw new Error("Email already exists");
+        }
+        const password = "Expert@" + yearsOfExperience + fullname.substring(0, 3);
+        const hashedPassword = await hash(password, 10);
+        await this.emailService.sendExpertMail(email, password);
+        Object.assign(expertData, { password: hashedPassword })
+        const newExpert = new this.expertModel(expertData);
+        await newExpert.save();
+        return (newExpert);
     }
 
     getInterviewData() {

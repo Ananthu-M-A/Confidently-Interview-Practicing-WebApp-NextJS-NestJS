@@ -13,32 +13,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import WithAdminAuth from "@/components/auth-guards/WithAdminAuth";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email is required" })
     .email({ message: "Enter a valid email address" }),
-  fullname: z
-    .string()
-    .min(1, { message: "Name is required" }),
-  specialization: z
-    .string()
-    .min(1, { message: "Specialization is required" }),
+  fullname: z.string().min(1, { message: "Name is required" }),
+  specialization: z.string().min(1, { message: "Specialization is required" }),
   yearsOfExperience: z
     .string()
     .min(1, { message: "Years of experience is required" }),
 });
 
-
 function AddExpert() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -51,9 +45,20 @@ function AddExpert() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      console.log(data);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/experts`,
+        data
+      );
+      if (response) {
+        console.log(response);
+        router.push('/admin/experts');
+        toast.success("New Expert Added Successfully");
+      } else {
+        toast.warning("New Expert Added Unsuccessfully");
+      }
     } catch (error) {
-      console.error("Submit failed:", error);
+      console.error(error);
+      toast.error("Adding Expert Failed");
     }
   }
 

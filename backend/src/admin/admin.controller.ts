@@ -57,8 +57,8 @@ export class AdminController {
     }
 
     @Post('experts')
-    addExpert(@Body() expert: {}) {
-        return this.adminService.addExpert()
+    addExpert(@Body() expertData: Partial<Expert>) {
+        return this.adminService.addExpert(expertData)
     }
 
     @Get('interviews')
