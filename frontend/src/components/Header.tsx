@@ -69,12 +69,23 @@ export default function Header() {
             </Button>
           )}
           {admin && (
-            <Button
-              onClick={() => handleLogout("admin")}
-              className="font-bold py-2 px-4 sm:py-3 sm:px-6"
-            >
-              Log Out
-            </Button>
+            <>
+              <Link className="font-bold mt-2 mx-5" href={"/admin"}>
+                Dashboard
+              </Link>
+              <Link className="font-bold mt-2 mx-5" href={"/admin/experts"}>
+                Experts
+              </Link>
+              <Link className="font-bold mt-2 mx-5" href={"/admin/users"}>
+                Users
+              </Link>
+              <Button
+                onClick={() => handleLogout("admin")}
+                className="font-bold py-2 px-4 sm:py-3 sm:px-6"
+              >
+                Log Out
+              </Button>
+            </>
           )}
         </div>
       </div>

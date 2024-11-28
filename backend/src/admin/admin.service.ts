@@ -4,11 +4,16 @@ import { Admin, AdminDocument } from '../common/schemas/admin.schema';
 import { Model } from 'mongoose';
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { Expert, ExpertDocument } from 'src/common/schemas/experts.schema';
+import { User, UserDocument } from 'src/common/schemas/users.schema';
 
 @Injectable()
 export class AdminService {
 
-    constructor(@InjectModel(Admin.name) private readonly adminModel: Model<AdminDocument>, private readonly jwtService: JwtService) { }
+    constructor(
+        @InjectModel(Admin.name) private readonly adminModel: Model<AdminDocument>,
+        @InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>, @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+        private readonly jwtService: JwtService) { }
 
     // async registerUser(userData: Partial<Admin>): Promise<{ user: Partial<AdminDocument>; token: string }> {
     //     const { email } = userData;
@@ -72,20 +77,44 @@ export class AdminService {
         return { username: existingAdmin.email, id: existingAdmin._id };
     }
 
-    viewUsers() {
-
+    async viewUsers(): Promise<User[]> {
+        let users = await this.userModel.find({},
+            { _id: 0, fullname: 1, email: 1, subscription: 1, active: 1 });
+        if (!users) {
+            return [];
+        }
+        return users;
     }
 
-    updateUser() {
-
+    async updateUser(userData: Partial<User>): Promise<Partial<User>> {
+        const { email } = userData;
+        let existingUser = await this.userModel.findOne({ email });
+        if (!existingUser) {
+            return null;
+        }
+        Object.assign(existingUser, { active: !existingUser.active });
+        await existingUser.save();
+        return existingUser;
     }
 
-    viewExperts() {
-
+    async viewExperts(): Promise<Expert[]> {
+        let experts = await this.expertModel.find({},
+            { _id: 0, fullname: 1, email: 1, specialization: 1, active: 1 });
+        if (!experts) {
+            return [];
+        }
+        return experts;
     }
 
-    updateExpert() {
-
+    async updateExpert(expertData: Partial<Expert>): Promise<Expert> {
+        const { email } = expertData;
+        let existingExpert = await this.expertModel.findOne({ email });
+        if (!existingExpert) {
+            return null;
+        }
+        Object.assign(existingExpert, { active: !existingExpert.active });
+        await existingExpert.save();
+        return existingExpert;
     }
 
     addExpert() {

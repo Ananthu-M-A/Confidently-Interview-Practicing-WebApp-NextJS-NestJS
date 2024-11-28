@@ -4,6 +4,7 @@ import { AdminService } from './admin.service';
 import { Admin } from '../common/schemas/admin.schema';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Expert } from 'src/common/schemas/experts.schema';
 
 @Controller('api/admin')
 export class AdminController {
@@ -36,23 +37,23 @@ export class AdminController {
     }
 
     @Get('users')
-    viewUsers() {
+    viewUsers(): Promise<User[]> {
         return this.adminService.viewUsers()
     }
 
     @Put('users')
-    updateUser(@Body() user: {}) {
-        return this.adminService.updateUser()
+    updateUser(@Body() userData: Partial<User>): Promise<Partial<User>> {
+        return this.adminService.updateUser(userData)
     }
 
     @Get('experts')
-    viewExperts() {
+    viewExperts(): Promise<Expert[]> {
         return this.adminService.viewExperts()
     }
 
     @Put('experts')
-    updateExpert(@Body() expert: {}) {
-        return this.adminService.updateExpert()
+    updateExpert(@Body() expertData: Partial<Expert>): Promise<Expert> {
+        return this.adminService.updateExpert(expertData)
     }
 
     @Post('experts')
