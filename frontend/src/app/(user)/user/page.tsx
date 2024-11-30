@@ -33,7 +33,7 @@ const UserHome = () => {
               Schedule New Interview
             </Button>
             <Button
-              onClick={() => router.push("")}
+              onClick={() => router.push("/user/me")}
               variant={"outline"}
               className="font-bold px-4 py-2"
             >
