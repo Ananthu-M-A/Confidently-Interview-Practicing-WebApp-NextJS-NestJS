@@ -58,9 +58,15 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       if (response.status === 201) {
         const { token, expert } = response.data;
-        localStorage.setItem("expert-token", token);
-        setExpert(expert);
-        toast.success("Successfully Logged In");
+        if (!expert.active) {
+          toast.warning(
+            `You are not allowed to login now, Please contact admin@confidently.com`
+          );
+        }else{
+          localStorage.setItem("expert-token", token);
+          setExpert(expert);
+          toast.success("Successfully Logged In");
+        }
       } else {
         toast.warning("Unsuccessfull attempt to Login");
       }

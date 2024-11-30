@@ -63,9 +63,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       if (response.status === 201) {
         const { token, user } = response.data;
-        localStorage.setItem("token", token);
-        setUser(user);
-        toast.success("Successfull Logged In");
+        if (!user.active) {
+          toast.warning(
+            `You are not allowed to login now, Please contact admin@confidently.com`
+          );
+        }else{
+          localStorage.setItem("token", token);
+          setUser(user);
+          toast.success("Successfull Logged In");
+        }
       } else {
         toast.warning("Unsuccessfull attempt to Login");
       }
@@ -143,7 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
       const redirectUri = process.env.NEXT_PUBLIC_LINKEDIN_CALLBACK_URL;
       // const scope = 'r_liteprofile r_emailaddress';
-  
+
       // Redirect to LinkedIn's OAuth authorization page
       window.location.href = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=r_liteprofile%20r_emailaddress`;
 
@@ -153,7 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // const userObject = JSON.parse(decodeURIComponent(user as string));
       // if (token && userObject) {
-        toast.success("Registration Successfull");
+      toast.success("Registration Successfull");
       // }
     } catch (error) {
       toast.warning("Registration Unuccessfull");
@@ -168,7 +174,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/resetPassword`,
         { email }
       );
-      toast.success("Password reset link sent, Check your email.")
+      toast.success("Password reset link sent, Check your email.");
     } catch (error) {
       console.error("Logout failed:", error);
     }
