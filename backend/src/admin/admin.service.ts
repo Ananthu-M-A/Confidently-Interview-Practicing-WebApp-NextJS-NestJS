@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Expert, ExpertDocument } from 'src/common/schemas/experts.schema';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
 import { EmailService } from 'src/email/email.service';
+import { Interview, InterviewDocument } from 'src/common/schemas/interview.schema';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AdminService {
@@ -14,7 +16,9 @@ export class AdminService {
     constructor(
         @InjectModel(Admin.name) private readonly adminModel: Model<AdminDocument>,
         @InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>, @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+        @InjectModel(Interview.name) private readonly interviewModel: Model<InterviewDocument>,
         private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
         private readonly emailService: EmailService) { }
 
     // async registerUser(userData: Partial<Admin>): Promise<{ user: Partial<AdminDocument>; token: string }> {
@@ -138,8 +142,13 @@ export class AdminService {
 
     }
 
-    getStatistics() {
-
+    async getStatistics() {
+        const totalUsers = await this.userModel.countDocuments();
+        const totalExperts = await this.expertModel.countDocuments();
+        const totalInterviews = await this.interviewModel.countDocuments();
+        const totalProUsers = await this.userModel.find({ subscription: true }).countDocuments();
+        const avgRating = "4.5";
+        const totalRevanue = totalProUsers * this.configService.get<number>('SUBSCRIPTION_FEE');
+        return { totalUsers, totalExperts, totalInterviews, avgRating, totalRevanue };
     }
-
 }

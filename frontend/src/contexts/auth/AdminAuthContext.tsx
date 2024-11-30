@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { Stats } from "@/interfaces/stats.interface";
 
 interface Admin {
   _id: string;
@@ -13,6 +14,7 @@ interface AdminContextType {
   admin: Admin | null;
   login: (email: string, password: string) => Promise<void>;
   adminLogout: () => Promise<void>;
+  stats: Stats;
 }
 
 const AdminAuthContext = createContext<AdminContextType | undefined>(undefined);
@@ -21,6 +23,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [admin, setAdmin] = useState<Admin | null>(null);
+  const [stats, setStats] = useState<Stats>({
+    totalUsers: 0,
+    totalExperts: 0,
+    totalInterviews: 0,
+    avgRating: 0,
+    totalRevanue: 0,
+  });
 
   useEffect(() => {
     const checkAdminAuth = async () => {
@@ -41,6 +50,18 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
     checkAdminAuth();
+  }, []);
+
+  useEffect(() => {
+    async function loadStatistics() {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/stats`
+      );
+      if (response) {
+        setStats(response.data);
+      }
+    }
+    loadStatistics();
   }, []);
 
   async function login(email: string, password: string) {
@@ -85,6 +106,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
         admin,
         login,
         adminLogout,
+        stats
       }}
     >
       {children}
