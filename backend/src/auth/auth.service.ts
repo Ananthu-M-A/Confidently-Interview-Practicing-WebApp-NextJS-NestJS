@@ -43,17 +43,16 @@ export class AuthService {
         };
     }
 
-    async loginUser(userData: Partial<User>): Promise<Object> {
+    async loginUser(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string } | null> {
         const { email, password } = userData;
         const user = await this.userModel.findOne({ email });
-        if (!user) {
-            return null;
-        }
+
+        if (!user) return null;
+
         const passwordMatched = await compare(password, user.password);
 
-        if (!passwordMatched) {
-            return null;
-        }
+        if (!passwordMatched) return null;
+
         const payload = { username: user.fullname, sub: user._id };
         return {
             user: {
@@ -84,19 +83,5 @@ export class AuthService {
                 throw new NotFoundException('User not found');
             }
         }
-    }
-
-    async validateUser(userData: Partial<User>): Promise<object> {
-        const { email, password } = userData;
-        const existingUser = await this.userModel.findOne({ email });
-        if (!existingUser) {
-            return null;
-        }
-        const passwordMatched = await compare(password, existingUser.password);
-
-        if (!passwordMatched) {
-            return null;
-        }
-        return { username: existingUser.email, id: existingUser._id };
     }
 }

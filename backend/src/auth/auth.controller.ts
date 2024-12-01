@@ -21,10 +21,6 @@ export class AuthController {
 
     @Post('login')
     async enterUser(@Body() userData: Partial<User>) {
-        const user = await this.authService.validateUser(userData);
-        if (!user) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
         return this.authService.loginUser(userData);
     }
 

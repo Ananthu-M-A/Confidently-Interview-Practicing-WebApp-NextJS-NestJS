@@ -8,98 +8,58 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class ExpertsService {
 
-    constructor(@InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>, private readonly jwtService: JwtService,) { }
+    constructor(
+        @InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>,
+        private readonly jwtService: JwtService
+    ) {}
 
-    // async registerUser(userData: Partial<Expert>): Promise<{ user: Partial<ExpertDocument>; token: string }> {
-    //     const { email } = userData;
-    //     let user = await this.expertModel.findOne({ email });
-    //     if (user) {
-    //         Object.assign(user, userData);
-    //         await user.save();
-    //         throw new Error("Email already exists");
-    //     } else {
-    //         let {password} = userData;
-    //         userData.password = await hash(password,10);
-    //         user = new this.expertModel(userData);
-    //         await user.save();
-    //     }
-    //     const payload = { username: user.fullname, sub: user._id };
-    //     return {
-    //         user: {
-    //             id: user._id,
-    //             fullname: user.fullname,
-    //             email: user.email,
-    //             specialization: 'SW',
-    //             yearsOfExperience: 5,
-    //             availability:[],
-    //             active: user.active
-    //         },
-    //         token: this.jwtService.sign(payload)
-    //     };
-    // }
-
-    async loginExpert(expertData: Partial<Expert>): Promise<Object> {
+    async loginExpert(expertData: Partial<Expert>): Promise<{ expert: Partial<ExpertDocument>; token: string } | null> {
         const { email, password } = expertData;
         const expert = await this.expertModel.findOne({ email });
-        if (!expert) {
-            return null;
-        }
-        const passwordMatched = await compare(password, expert.password);
 
-        if (!passwordMatched) {
-            return null;
-        }
+        if (!expert) return null;
+
+        const passwordMatched = await compare(password, expert.password);
+        
+        if (!passwordMatched) return null;
+
         const payload = { username: expert.fullname, sub: expert._id };
         return {
-            user: {
+            expert: {
                 id: expert._id,
                 email: expert.email,
                 fullname: expert.fullname,
                 specialization: expert.specialization,
                 yearsOfExperience: expert.yearsOfExperience,
                 availability: expert.availability,
-                active: expert.active
+                active: expert.active,
             },
-            token: this.jwtService.sign(payload)
+            token: this.jwtService.sign(payload),
         };
     }
 
-    async logoutExpert(email: string): Promise<String> {
-        return "User logged out"
+    async logoutExpert(email: string): Promise<string> {
+        // Implement token invalidation logic if needed (e.g., add to blacklist or session store)
+        return "User logged out successfully.";
     }
 
-    async validateExpert(expertData: Partial<Expert>): Promise<object> {
-        const { email, password } = expertData;
-        const existingExpert = await this.expertModel.findOne({ email });
-        if (!existingExpert) {
-            return null;
-        }
-        const passwordMatched = await compare(password, existingExpert.password);
-
-        if (!passwordMatched) {
-            return null;
-        }
-        return { username: existingExpert.email, id: existingExpert._id };
+    async updateExpert(expertId: string, updateData: Partial<Expert>): Promise<Expert> {
+        return this.expertModel.findByIdAndUpdate(expertId, updateData, { new: true });
     }
 
-    viewExpert() {
-
+    async updateAvailability(expertId: string, availability: any[]): Promise<Expert> {
+        return this.expertModel.findByIdAndUpdate(
+            expertId,
+            { availability },
+            { new: true }
+        );
     }
 
-    updateExpert() {
-
+    async viewInterviews(expertId: string): Promise<any[]> {
+        return [];
     }
 
-    updateAvailability() {
-
+    async submitFeedback(interviewId: string, feedback: any): Promise<string> {
+        return `Feedback for interview ${interviewId} submitted.`;
     }
-
-    viewInterviews() {
-
-    }
-
-    submitFeedback() {
-
-    }
-
 }

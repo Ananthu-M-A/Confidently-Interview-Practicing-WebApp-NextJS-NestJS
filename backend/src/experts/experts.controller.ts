@@ -6,25 +6,18 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('api/expert')
 export class ExpertsController {
-
-    constructor(private readonly expertsService: ExpertsService, private readonly configService: ConfigService) { }
-
-    // @Post('register')
-    // async createUser(@Body() userData: Expert) {
-    //     return this.expertsService.registerUser(userData);
-    // }
+    constructor(
+        private readonly expertsService: ExpertsService,
+        private readonly configService: ConfigService
+    ) {}
 
     @Post('login')
-    async enterExpert(@Body() expertData: Partial<Expert>) {      
-        const expert = await this.expertsService.validateExpert(expertData);
-        if (!expert) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
+    async enterExpert(@Body() expertData: Partial<Expert>) {
         return this.expertsService.loginExpert(expertData);
     }
 
     @Post('logout')
-    async exitExert(@Body() email: string) {
+    async exitExpert(@Body('email') email: string) {
         return this.expertsService.logoutExpert(email);
     }
 
@@ -35,23 +28,29 @@ export class ExpertsController {
     }
 
     @Put('me')
-    updateExpert(@Body() expert: Expert) {
-        return this.expertsService.updateExpert();
+    @UseGuards(JwtAuthGuard)
+    async updateExpert(@Request() req, @Body() expertUpdate: Partial<Expert>) {
+        return this.expertsService.updateExpert(req.user.id, expertUpdate);
     }
 
     @Post('availability')
-    updateAvailability(@Body() expert: {}) {
-        return this.expertsService.updateAvailability();
+    @UseGuards(JwtAuthGuard)
+    async updateAvailability(@Request() req, @Body('availability') availability: any[]) {
+        return this.expertsService.updateAvailability(req.user.id, availability);
     }
 
     @Get('interviews')
-    viewInterviews() {
-        return this.expertsService.viewInterviews();
+    @UseGuards(JwtAuthGuard)
+    async viewInterviews(@Request() req) {
+        return this.expertsService.viewInterviews(req.user.id);
     }
 
     @Post('interviews/:interview_id/feedback')
-    submitFeedback(@Param('interview_id') interview_id: string) {
-        return this.expertsService.submitFeedback();
+    @UseGuards(JwtAuthGuard)
+    async submitFeedback(
+        @Param('interview_id') interviewId: string,
+        @Body('feedback') feedback: any
+    ) {
+        return this.expertsService.submitFeedback(interviewId, feedback);
     }
-
 }
