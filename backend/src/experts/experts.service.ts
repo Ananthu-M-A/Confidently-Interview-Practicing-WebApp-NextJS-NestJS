@@ -11,10 +11,11 @@ export class ExpertsService {
     constructor(
         @InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>,
         private readonly jwtService: JwtService
-    ) {}
+    ) { }
 
-    async viewExpert() {
-        return ""
+    async viewExpert(expertId: string): Promise<object> {
+        const expert = await this.expertModel.findOne({ _id: expertId });
+        return { fullname: expert.fullname, email: expert.email, specialization: expert.specialization, yearsOfExperience: expert.yearsOfExperience };
     }
 
     async loginExpert(expertData: Partial<Expert>): Promise<{ expert: Partial<ExpertDocument>; token: string } | null> {
@@ -24,7 +25,7 @@ export class ExpertsService {
         if (!expert) return null;
 
         const passwordMatched = await compare(password, expert.password);
-        
+
         if (!passwordMatched) return null;
 
         const payload = { username: expert.fullname, sub: expert._id };
@@ -47,8 +48,9 @@ export class ExpertsService {
         return "User logged out successfully.";
     }
 
-    async updateExpert(expertId: string, updateData: Partial<Expert>): Promise<Expert> {
-        return this.expertModel.findByIdAndUpdate(expertId, updateData, { new: true });
+    async updateExpert(expertId: string, updateData: Partial<Expert>): Promise<object> {
+        const expert = await this.expertModel.findByIdAndUpdate(expertId, updateData, { new: true });
+        return { id: expert._id }
     }
 
     async updateAvailability(expertId: string, availability: any[]): Promise<Expert> {

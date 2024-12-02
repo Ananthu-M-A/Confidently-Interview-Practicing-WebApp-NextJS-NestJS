@@ -24,7 +24,7 @@ export class Expert {
     specialization: string;
 
     @Prop()
-    yearsOfExperience: number;
+    yearsOfExperience: string;
 
     @Prop({ type: [{ type: Object, required: true }], _id: false })
     availability: Availability[];

@@ -18,8 +18,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
-import { useState } from "react";
-import { Expert } from "@/interfaces/expert.interface";
+import { useEffect } from "react";
+import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
 
 const FormSchema = z.object({
   email: z
@@ -35,7 +35,7 @@ const FormSchema = z.object({
 
 function ViewExpert() {
   const router = useRouter();
-  const [expertData, setExpertData] = useState<Expert>();
+  const { expert } = useExpertAuth();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -47,14 +47,31 @@ function ViewExpert() {
     },
   });
 
+  useEffect(() => {
+    async function fetchExpertData() {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/profile/${expert?.userId}`
+        );
+        if (response.data) {
+          form.reset(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching expert data:", error);
+        toast.error("Failed to load profile data");
+      }
+    }
+
+    fetchExpertData();
+  }, [expert, form]);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/profile/${expert?.userId}`,
         data
       );
       if (response) {
-        console.log(response);
         router.push("/expert");
         toast.success("Expert Profile Updated Successfully");
       } else {
@@ -64,7 +81,7 @@ function ViewExpert() {
       console.error(error);
       toast.error("Profile Updation Failed");
     }
-  }  
+  }
 
   return (
     <Card className="w-full max-w-xl mx-auto p-4 sm:p-6 my-6 rounded-xl border shadow-lg">
@@ -89,7 +106,6 @@ function ViewExpert() {
                     <Input
                       placeholder="Eg:- Ananthu M A"
                       {...field}
-                      value={expertData?.fullname}
                       type="text"
                       className="w-full"
                     />
@@ -108,9 +124,9 @@ function ViewExpert() {
                     <Input
                       placeholder="Eg:- ananthu@gmail.com"
                       {...field}
-                      value={expertData?.email}
                       type="email"
                       className="w-full"
+                      disabled
                     />
                   </FormControl>
                   <FormMessage />
@@ -129,7 +145,6 @@ function ViewExpert() {
                     <Input
                       placeholder="Eg:- JavaScript Development"
                       {...field}
-                      value={expertData?.specialization}
                       type="text"
                       className="w-full"
                     />
@@ -150,7 +165,6 @@ function ViewExpert() {
                     <Input
                       placeholder="Eg:- 10"
                       {...field}
-                      value={expertData?.yearsOfExperience}
                       type="number"
                       className="w-full"
                     />

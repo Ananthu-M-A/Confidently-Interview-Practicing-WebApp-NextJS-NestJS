@@ -5,8 +5,8 @@ import axios from "axios";
 import { toast } from "sonner";
 
 interface Expert {
-  _id: string;
-  expertname: string;
+  userId: string;
+  username: string;
 }
 
 interface ExpertContextType {
@@ -60,7 +60,7 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
           toast.warning(
             `You are not allowed to login now, Please contact admin@confidently.com`
           );
-        }else{
+        } else {
           localStorage.setItem("expert-token", token);
           setExpert(expert);
           toast.success("Successfully Logged In");

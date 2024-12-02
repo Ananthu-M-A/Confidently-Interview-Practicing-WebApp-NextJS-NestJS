@@ -18,6 +18,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import WithAuth from "@/components/auth-guards/WithAuth";
+import { useEffect } from "react";
+import { useAuth } from "@/contexts/auth/AuthContext";
 
 const FormSchema = z
   .object({
@@ -45,6 +47,7 @@ const FormSchema = z
 
 function ViewUser() {
   const router = useRouter();
+  const { user } = useAuth();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -55,10 +58,28 @@ function ViewUser() {
     },
   });
 
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile/${user?.userId}`
+        );
+        if (response.data) {
+          form.reset(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to load profile data");
+      }
+    }
+
+    fetchUserData();
+  }, [user, form]);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile`,
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile/${user?.userId}`,
         data
       );
       if (response) {
@@ -78,10 +99,7 @@ function ViewUser() {
     <>
       <Card className="w-full max-w-md mx-auto p-4 sm:p-6 mt-6 rounded-xl border shadow-md">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl font-semibold">
                 Profile Information
@@ -117,6 +135,7 @@ function ViewUser() {
                         {...field}
                         type="email"
                         className="w-full"
+                        disabled
                       />
                     </FormControl>
                     <FormMessage />
@@ -128,7 +147,7 @@ function ViewUser() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Current / New Password</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Eg: P@55word"

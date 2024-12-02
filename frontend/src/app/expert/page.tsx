@@ -54,10 +54,9 @@ const ExpertHome = () => {
       </div>
       <div className="border p-4 rounded-lg mt-6">
         <h2 className="text-lg font-bold mb-2 sm:text-xl">Performance Stats</h2>
-        <p className="text-sm sm:text-base">{`Average Score: ${expert}`}</p>
-        <p className="text-sm sm:text-base">{`Total Interviews: ${expert}`}</p>
-        <p className="text-sm sm:text-base">{`Strengths: ${expert}`}</p>
-        <p className="text-sm sm:text-base">{`Areas of Improvement: ${expert}`}</p>
+        <p className="text-sm sm:text-base">{`Total Interviews Conducted: ${expert}`}</p>
+        <p className="text-sm sm:text-base">{`Average Rating: ${expert}`}</p>
+        <p className="text-sm sm:text-base">{`Specializations: ${expert}`}</p>
       </div>
     </div>
   );

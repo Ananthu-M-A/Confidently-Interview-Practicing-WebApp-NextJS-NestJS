@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { Expert } from '../common/schemas/experts.schema';
 import { ExpertsService } from './experts.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,14 +12,15 @@ export class ExpertsController {
     ) { }
 
     @Get('profile/:expertId')
-    async viewExpert(@Request() req, @Param('expertId') expertId: string) {
-        console.log(expertId);
-        return this.expertsService.viewExpert();
+    async viewExpert(@Param('expertId') expertId: string): Promise<Partial<Expert>> {
+        return this.expertsService.viewExpert(expertId);
     }
 
-    @Put('profile')
-    async updateExpert(@Request() req, @Body() expertData: Partial<Expert>) {
-        return this.expertsService.updateExpert(req.user.id, expertData);
+    @Put('profile/:expertId')
+    async updateExpert(
+        @Param('expertId') expertId: string,
+        @Body() expertData: Partial<Expert>): Promise<Partial<Expert>> {
+        return this.expertsService.updateExpert(expertId, expertData);
     }
 
     @Post('login')

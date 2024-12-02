@@ -1,21 +1,25 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../common/schemas/users.schema';
 
 
-@Controller('api/users')
+@Controller('api/user')
 export class UsersController {
 
     constructor(private usersService: UsersService) { }
 
-    @Get('me')
-    viewUser() {
-        return this.usersService.viewUser()
+    @Get('profile/:userId')
+    async viewUser(@Param('userId') userId: string): Promise<Partial<User>> {
+        return this.usersService.viewUser(userId);
     }
 
-    @Put('me')
-    updateUser(@Body() user: {}) {
-        return this.usersService.updateUser()
+    @Put('profile/:userId')
+    async updateExpert(
+        @Param('userId') userId: string,
+        @Body() userData: Partial<User>): Promise<Partial<User>> {
+            console.log(userId, userData);
+            
+        return this.usersService.updateUser(userId, userData);
     }
 
     @Post('interview')

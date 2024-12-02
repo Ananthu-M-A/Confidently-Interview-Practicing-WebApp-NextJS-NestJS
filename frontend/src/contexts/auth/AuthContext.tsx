@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 interface User {
-  _id: string;
+  userId: string;
   username: string;
 }
 
