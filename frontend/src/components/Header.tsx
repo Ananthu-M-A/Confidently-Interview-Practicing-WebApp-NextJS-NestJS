@@ -34,9 +34,7 @@ export default function Header() {
   return (
     <div className="p-4 sm:p-6 border-b border-gray-300 bg-white">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="text-2xl font-semibold mb-4 sm:mb-0">
-          <Link href={"/"}>Confidently</Link>
-        </h1>
+        <h1 className="text-2xl font-semibold mb-4 sm:mb-0">Confidently</h1>
         <div className="flex flex-col sm:flex-row items-center gap-4">
           {(pathname === "/login" ||
             pathname === "/register" ||
@@ -67,7 +65,7 @@ export default function Header() {
               </Link>
               <Link
                 className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/user/me"
+                href="/user/profile"
               >
                 Profile
               </Link>
@@ -101,7 +99,7 @@ export default function Header() {
               </Link>
               <Link
                 className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/expert/me"
+                href="/expert/profile"
               >
                 Profile
               </Link>

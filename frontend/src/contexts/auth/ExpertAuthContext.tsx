@@ -35,8 +35,6 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-          console.log(response);
-          
           setExpert(response.data);
         } catch (error) {
           console.error("Authentication check failed:", error);

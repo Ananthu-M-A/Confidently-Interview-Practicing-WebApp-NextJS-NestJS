@@ -58,19 +58,19 @@ function ViewUser() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/experts`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile`,
         data
       );
       if (response) {
         console.log(response);
-        router.push("/admin/experts");
-        toast.success("New Expert Added Successfully");
+        router.push("/user");
+        toast.success("User Updated Successfully");
       } else {
-        toast.warning("New Expert Added Unsuccessfully");
+        toast.warning("User Updated Unsuccessfully");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Adding Expert Failed");
+      toast.error("Updating User Failed");
     }
   }
 
