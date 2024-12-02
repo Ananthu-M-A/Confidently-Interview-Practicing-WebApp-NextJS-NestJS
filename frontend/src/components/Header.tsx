@@ -38,7 +38,9 @@ export default function Header() {
           <Link href={"/"}>Confidently</Link>
         </h1>
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          {(pathname === "/login" || pathname === "/register" || pathname === "/") && (
+          {(pathname === "/login" ||
+            pathname === "/register" ||
+            pathname === "/") && (
             <>
               <Link href="/login">
                 <Button
@@ -56,12 +58,38 @@ export default function Header() {
             </>
           )}
           {user && (
-            <Button
-              onClick={() => handleLogout("user")}
-              className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
-            >
-              Log Out
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/user"
+              >
+                Home
+              </Link>
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/user/me"
+              >
+                Profile
+              </Link>
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/user/subscriptions"
+              >
+                Subscription
+              </Link>
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/user/notifications"
+              >
+                Notification
+              </Link>
+              <Button
+                onClick={() => handleLogout("user")}
+                className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
+              >
+                Log Out
+              </Button>
+            </div>
           )}
           {expert && (
             <Button
@@ -73,13 +101,22 @@ export default function Header() {
           )}
           {admin && (
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link className="font-bold mt-2 sm:mt-0" href="/admin">
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/admin"
+              >
                 Dashboard
               </Link>
-              <Link className="font-bold mt-2 sm:mt-0" href="/admin/experts">
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/admin/experts"
+              >
                 Experts
               </Link>
-              <Link className="font-bold mt-2 sm:mt-0" href="/admin/users">
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/admin/users"
+              >
                 Users
               </Link>
               <Button
