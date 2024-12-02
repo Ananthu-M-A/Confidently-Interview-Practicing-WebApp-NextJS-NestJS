@@ -92,12 +92,26 @@ export default function Header() {
             </div>
           )}
           {expert && (
-            <Button
-              onClick={() => handleLogout("expert")}
-              className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
-            >
-              Log Out
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/expert"
+              >
+                Dashboard
+              </Link>
+              <Link
+                className="hover:underline font-bold mt-2 sm:mt-0"
+                href="/expert/me"
+              >
+                Profile
+              </Link>
+              <Button
+                onClick={() => handleLogout("expert")}
+                className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
+              >
+                Log Out
+              </Button>
+            </div>
           )}
           {admin && (
             <div className="flex flex-col sm:flex-row items-center gap-4">
