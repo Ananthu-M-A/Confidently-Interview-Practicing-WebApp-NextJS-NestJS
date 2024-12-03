@@ -1,6 +1,6 @@
 interface Availability {
     date: string;
-    slots: string[];
+    slots: string;
 }
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -26,8 +26,8 @@ export class Expert {
     @Prop()
     yearsOfExperience: string;
 
-    @Prop({ type: [{ type: Object, required: true }], _id: false })
-    availability: Availability[];
+    @Prop({ type: [Date], _id: false })
+    availability: Date[];
 
     @Prop({ required: true, default: true })
     active: boolean;

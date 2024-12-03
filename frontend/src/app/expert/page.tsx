@@ -4,10 +4,34 @@ import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
-import React from "react";
+import axios, { isAxiosError } from "axios";
+import React, { useState } from "react";
+import { toast } from "sonner";
 
 const ExpertHome = () => {
   const { expert } = useExpertAuth();
+  const [slot, setSlot] = useState<string>("");
+
+  async function addSlot() {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/availability/${expert?.userId}`,
+        { availability: slot }
+      );
+      toast.success("New Slot Added Successfully");
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          toast.warning("You've already booked this slot");
+        }else{
+          toast.error("Something went wrong, Try again.")
+        }
+      } else {
+        console.error(error);
+        toast.error("Something went wrong, Try again.");
+      }
+    }
+  }
 
   return (
     <div className="px-4 py-6 sm:px-8">
@@ -44,8 +68,17 @@ const ExpertHome = () => {
             Manage Availability
           </h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-5 mt-4">
-            <Input type="datetime-local" className="sm:w-min" />
-            <Button className="font-bold px-4 py-2">Add Slot</Button>
+            <Input
+              type="datetime-local"
+              min={new Date().toISOString().slice(0, 16)}
+              onChange={(e) => {
+                setSlot(e.target.value);
+              }}
+              className="sm:w-min"
+            />
+            <Button onClick={addSlot} className="font-bold px-4 py-2">
+              Add Slot
+            </Button>
           </div>
           <h1 className="mt-4 sm:mt-1">
             Each slot is of 1 hour; select starting time to add slot.

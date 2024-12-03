@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Expert, ExpertDocument } from '../common/schemas/experts.schema';
 import { Model } from 'mongoose';
@@ -45,13 +45,23 @@ export class ExpertsService {
         return { id: expert._id }
     }
 
-    async updateAvailability(expertId: string, availability: any[]): Promise<Expert> {
-        return this.expertModel.findByIdAndUpdate(
-            expertId,
-            { availability },
-            { new: true }
-        );
-    }
+    async updateAvailability(expertId: string, slot: string): Promise<object> {
+        const expert = await this.expertModel.findById(expertId);
+        const newSlot = new Date(slot);
+        
+        const bookedSlots = expert.availability.some((existingSlot: Date) => {
+            const existingSlotTime = new Date(existingSlot).getTime();
+            const newSlotTime = newSlot.getTime();
+            return Math.abs(existingSlotTime - newSlotTime) < 60 * 60 * 1000;
+        });
+            
+        if (bookedSlots) {
+            throw new ConflictException();
+        }
+
+        const updateExpert = await this.expertModel.findByIdAndUpdate(expertId, { $push: { availability: newSlot } });
+        return updateExpert.availability;
+    }    
 
     async viewInterviews(expertId: string): Promise<any[]> {
         return [];

@@ -34,9 +34,12 @@ export class ExpertsController {
         return req.user;
     }
 
-    @Post('availability')
-    async updateAvailability(@Request() req, @Body('availability') availability: any[]) {
-        return this.expertsService.updateAvailability(req.user.id, availability);
+    @Post('availability/:expertId')
+    async updateAvailability(
+        @Request() req,
+        @Body('availability') slot: string,
+        @Param('expertId') expertId: string) {
+        return this.expertsService.updateAvailability(expertId, slot);
     }
 
     @Get('interviews')
