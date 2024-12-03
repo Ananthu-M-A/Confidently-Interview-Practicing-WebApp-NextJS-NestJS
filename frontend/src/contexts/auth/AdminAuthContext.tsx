@@ -73,24 +73,27 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
           password,
         }
       );
-      if (response.status === 201) {
-        const { token, admin } = response.data;
-        localStorage.setItem("admin-token", token);
-        setAdmin(admin);
-        toast.success("Successfully Logged In");
-      } else {
-        toast.warning("Unsuccessfull attempt to Login");
-      }
+      const { token, admin } = response.data;
+      localStorage.setItem("admin-token", token);
+      setAdmin(admin);
+      toast.success("Successfully Logged In");
     } catch (error) {
-      toast.warning("Unsuccessfull attempt to Login");
-      console.error("Unsuccessfull attempt to Login:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          toast.warning("Email or password entered is incorrect.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+      console.error("Unsuccessful attempt to Login:", error);
       throw error;
     }
   }
 
   async function adminLogout() {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/logout`);
       localStorage.removeItem("admin-token");
       setAdmin(null);
       toast.success("Successfully Logged Out");
@@ -106,7 +109,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
         admin,
         login,
         adminLogout,
-        stats
+        stats,
       }}
     >
       {children}

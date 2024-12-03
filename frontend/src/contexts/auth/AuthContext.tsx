@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface User {
   userId: string;
   username: string;
+  active: string;
 }
 
 interface AuthContextType {
@@ -61,23 +62,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           password,
         }
       );
-      if (response.status === 201) {
-        const { token, user } = response.data;
-        if (!user.active) {
-          toast.warning(
-            `You are not allowed to login now, Please contact admin@confidently.com`
-          );
-        }else{
-          localStorage.setItem("token", token);
-          setUser(user);
-          toast.success("Successfull Logged In");
+      const { token, user } = response.data;
+      if (!user.active) {
+        toast.warning(
+          `You are not allowed to login now, Please contact admin@confidently.com`
+        );
+        return;
+      }
+      localStorage.setItem("token", token);
+      setUser(user);
+      toast.success("Successfully Logged In");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          toast.warning("Email or password entered is incorrect.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
         }
       } else {
-        toast.warning("Unsuccessfull attempt to Login");
+        toast.error("An unexpected error occurred. Please try again.");
       }
-    } catch (error) {
-      toast.warning("Unsuccessfull attempt to Login");
-      console.error("Unsuccessfull attempt to Login:", error);
+      console.error("Unsuccessful attempt to Login:", error);
       throw error;
     }
   }
@@ -87,21 +92,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
       toast.success("Successfull Logged In");
     } catch (error) {
-      toast.warning("Unsuccessfull attempt to Login");
-      console.error("Unsuccessfull attempt to Login:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          toast.warning("Oauth authentication invalid.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+      console.error("Unsuccessful attempt to Login:", error);
       throw error;
     }
   }
 
   async function logout() {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`);
       localStorage.removeItem("token");
       setUser(null);
       toast.success("Successfully Logged Out");
     } catch (error) {
-      toast.warning("Successfully Logged Out");
-      console.error("Successfully Logged Out:", error);
+      toast.error("Unsuccessfully Logged Out");
+      console.error("Unsuccessfully Logged Out:", error);
+      throw error;
     }
   }
 
@@ -111,17 +124,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
         { email, password, fullname }
       );
-      if (response.status === 201) {
-        const { token, user } = response.data;
-        localStorage.setItem("token", token);
-        setUser(user);
-        toast.success("Registration Successfull");
-      } else {
-        toast.warning("Registration Unsuccessfull");
-      }
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      setUser(user);
+      toast.success("Registration Successfull");
     } catch (error) {
-      toast.warning("Registration Unsuccessfull");
-      console.error("Registration Unsuccessfull:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          toast.warning("Email already registered.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+      console.error("Unsuccessful attempt to Login:", error);
       throw error;
     }
   }
@@ -176,7 +193,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       toast.success("Password reset link sent, Check your email.");
     } catch (error) {
-      console.error("Logout failed:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          toast.warning("Email not registered");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+      console.error("Unsuccessful attempt to Login:", error);
+      throw error;
     }
   }
 

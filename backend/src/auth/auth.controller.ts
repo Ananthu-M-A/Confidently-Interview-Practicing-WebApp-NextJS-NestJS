@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Request, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { User } from 'src/common/schemas/users.schema';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -20,13 +20,8 @@ export class AuthController {
     }
 
     @Post('login')
-    async enterUser(@Body() userData: Partial<User>) {
+    async enterUser(@Body() userData: Partial<object>) {
         return this.authService.loginUser(userData);
-    }
-
-    @Post('logout')
-    async exitUser(@Body() email: string) {
-        return this.authService.logoutUser(email);
     }
 
     @Post('resetPassword')
@@ -73,7 +68,7 @@ export class AuthController {
     @UseGuards(AuthGuard('linkedin'))
     async linkedinLogin() {
         console.log("1111111111111");
-     }
+    }
 
     @Get('linkedin/callback')
     @UseGuards(AuthGuard('linkedin'))

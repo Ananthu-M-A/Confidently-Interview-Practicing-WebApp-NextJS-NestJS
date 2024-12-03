@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Expert, ExpertDocument } from '../common/schemas/experts.schema';
 import { Model } from 'mongoose';
@@ -22,11 +22,11 @@ export class ExpertsService {
         const { email, password } = expertData;
         const expert = await this.expertModel.findOne({ email });
 
-        if (!expert) return null;
+        if (!expert) throw new UnauthorizedException();
 
         const passwordMatched = await compare(password, expert.password);
 
-        if (!passwordMatched) return null;
+        if (!passwordMatched) throw new UnauthorizedException();
 
         const payload = { username: expert.fullname, sub: expert._id };
         return {
@@ -34,18 +34,10 @@ export class ExpertsService {
                 id: expert._id,
                 email: expert.email,
                 fullname: expert.fullname,
-                specialization: expert.specialization,
-                yearsOfExperience: expert.yearsOfExperience,
-                availability: expert.availability,
                 active: expert.active,
             },
             token: this.jwtService.sign(payload),
         };
-    }
-
-    async logoutExpert(email: string): Promise<string> {
-        // Implement token invalidation logic if needed (e.g., add to blacklist or session store)
-        return "User logged out successfully.";
     }
 
     async updateExpert(expertId: string, updateData: Partial<Expert>): Promise<object> {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -23,13 +23,10 @@ export class AuthService {
         const { email } = userData;
         let user = await this.userModel.findOne({ email });
         if (user) {
-            Object.assign(user, userData);
-            await user.save();
-            throw new Error("Email already exists");
-        } else {
-            user = new this.userModel(userData);
-            await user.save();
+            throw new ConflictException("Email already registered");
         }
+        user = new this.userModel(userData);
+        await user.save();
         const payload = { username: user.fullname, sub: user._id };
         return {
             user: {
@@ -47,11 +44,15 @@ export class AuthService {
         const { email, password } = userData;
         const user = await this.userModel.findOne({ email });
 
-        if (!user) return null;
+        if (!user) {
+            throw new UnauthorizedException();
+        }
 
         const passwordMatched = await compare(password, user.password);
 
-        if (!passwordMatched) return null;
+        if (!passwordMatched) {
+            throw new UnauthorizedException();
+        }
 
         const payload = { username: user.fullname, sub: user._id };
         return {
@@ -66,22 +67,15 @@ export class AuthService {
         };
     }
 
-    async logoutUser(email: string): Promise<String> {
-        return "User logged out"
-    }
-
     async resetUser(userData: Partial<User>): Promise<String> {
         const { email } = userData;
         let user = await this.userModel.findOne({ email });
-        if (user) {
-            Object.assign(user, { password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD') });
-            await user.save();
-            await this.emailService.sendResetMail(user.email);
-            return "Password reset email sent";
-        } else {
-            if (!user) {
-                throw new NotFoundException('User not found');
-            }
+        if (!user) {
+            throw new NotFoundException('User not found');
         }
+        Object.assign(user, { password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD') });
+        await user.save();
+        await this.emailService.sendResetMail(user.email);
+        return;
     }
 }

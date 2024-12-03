@@ -28,11 +28,6 @@ export class ExpertsController {
         return this.expertsService.loginExpert(expertData);
     }
 
-    @Post('logout')
-    async exitExpert(@Body('email') email: string) {
-        return this.expertsService.logoutExpert(email);
-    }
-
     @Get('me')
     @UseGuards(JwtAuthGuard)
     async checkUserOnline(@Request() req) {

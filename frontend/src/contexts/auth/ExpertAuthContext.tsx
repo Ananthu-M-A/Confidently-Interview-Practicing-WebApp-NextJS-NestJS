@@ -54,36 +54,39 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
           password,
         }
       );
-      if (response.status === 201) {
-        const { token, expert } = response.data;
-        if (!expert.active) {
-          toast.warning(
-            `You are not allowed to login now, Please contact admin@confidently.com`
-          );
-        } else {
-          localStorage.setItem("expert-token", token);
-          setExpert(expert);
-          toast.success("Successfully Logged In");
-        }
+      const { token, expert } = response.data;
+      if (!expert.active) {
+        toast.warning(
+          `You are not allowed to login now, Please contact admin@confidently.com`
+        );
       } else {
-        toast.warning("Unsuccessfull attempt to Login");
+        localStorage.setItem("expert-token", token);
+        setExpert(expert);
+        toast.success("Successfully Logged In");
       }
     } catch (error) {
-      toast.warning("Unsuccessfull attempt to Login");
-      console.error("Unsuccessfull attempt to Login:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          toast.warning("Email or password entered is incorrect.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+      console.error("Unsuccessful attempt to Login:", error);
       throw error;
     }
   }
 
   async function expertLogout() {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/logout`);
       localStorage.removeItem("expert-token");
       setExpert(null);
       toast.success("Successfully Logged Out");
     } catch (error) {
-      toast.warning("Successfully Logged Out");
-      console.error("Successfully Logged Out:", error);
+      toast.warning("Unsuccessfully Logged Out");
+      console.error("Unsuccessfully Logged Out:", error);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Admin, AdminDocument } from '../common/schemas/admin.schema';
 import { Model } from 'mongoose';
@@ -48,13 +48,14 @@ export class AdminService {
         const { email, password } = adminData;
         const admin = await this.adminModel.findOne({ email });
         if (!admin) {
-            return null;
+            throw new UnauthorizedException();
         }
         const passwordMatched = await compare(password, admin.password);
 
         if (!passwordMatched) {
-            return null;
+            throw new UnauthorizedException();
         }
+
         const payload = { username: admin.email, sub: admin._id };
         return {
             user: {
@@ -63,24 +64,6 @@ export class AdminService {
             },
             token: this.jwtService.sign(payload)
         };
-    }
-
-    async logoutAdmin(email: string): Promise<String> {
-        return "Admin logged out"
-    }
-
-    async validateAdmin(adminData: Partial<Admin>): Promise<object> {
-        const { email, password } = adminData;
-        const existingAdmin = await this.adminModel.findOne({ email });
-        if (!existingAdmin) {
-            return null;
-        }
-        const passwordMatched = await compare(password, existingAdmin.password);
-
-        if (!passwordMatched) {
-            return null;
-        }
-        return { username: existingAdmin.email, id: existingAdmin._id };
     }
 
     async viewUsers(): Promise<User[]> {

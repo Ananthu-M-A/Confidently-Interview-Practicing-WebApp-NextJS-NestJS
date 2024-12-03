@@ -18,16 +18,7 @@ export class AdminController {
 
     @Post('login')
     async enterAdmin(@Body() adminData: Partial<Admin>) {
-        const admin = await this.adminService.validateAdmin(adminData);
-        if (!admin) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
         return this.adminService.loginAdmin(adminData)
-    }
-
-    @Post('logout')
-    async exitAdmin(@Body() email: string) {
-        return this.adminService.logoutAdmin(email);
     }
 
     @Get('me')
