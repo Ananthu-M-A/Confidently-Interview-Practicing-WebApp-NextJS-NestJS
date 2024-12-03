@@ -27,7 +27,7 @@ const UserHome = () => {
           <h2 className="text-lg font-bold mb-4 sm:text-xl">Quick Actions</h2>
           <div className="flex flex-col gap-4">
             <Button
-              onClick={() => router.push("")}
+              onClick={() => router.push("/user/interviews")}
               className="font-bold px-4 py-2"
             >
               Schedule New Interview

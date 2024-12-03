@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../common/schemas/users.schema';
 
@@ -17,9 +17,14 @@ export class UsersController {
     async updateExpert(
         @Param('userId') userId: string,
         @Body() userData: Partial<User>): Promise<Partial<User>> {
-            console.log(userId, userData);
-            
+        console.log(userId, userData);
+
         return this.usersService.updateUser(userId, userData);
+    }
+
+    @Get('list-experts')
+    listExperts(@Query('formData') formData: string,) {
+        return this.usersService.loadExperts(formData)
     }
 
     @Post('interview')
