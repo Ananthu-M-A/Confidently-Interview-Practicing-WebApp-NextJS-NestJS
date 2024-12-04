@@ -28,13 +28,13 @@ export class UsersController {
     }
 
     @Post('interview')
-    scheduleInterview() {
-        return this.usersService.scheduleInterview()
+    scheduleInterview(@Body() formData: { difficulty: string, time: string }) {
+        return this.usersService.scheduleInterview(formData)
     }
 
-    @Get('interviews')
-    viewInterviews() {
-        return this.usersService.viewInterviews()
+    @Get('interview-dates/:userId')
+    listDates(@Param('userId') userId: string) {
+        return this.usersService.fetchDates(userId);
     }
 
 }

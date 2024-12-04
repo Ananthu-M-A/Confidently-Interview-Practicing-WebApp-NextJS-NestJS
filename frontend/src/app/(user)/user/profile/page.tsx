@@ -83,7 +83,6 @@ function ViewUser() {
         data
       );
       if (response) {
-        console.log(response);
         router.push("/user");
         toast.success("User Updated Successfully");
       } else {

@@ -34,7 +34,7 @@ export class ExpertsController {
         return req.user;
     }
 
-    @Post('availability/:expertId')
+    @Put('availability/:expertId')
     async updateAvailability(
         @Request() req,
         @Body('availability') slot: string,

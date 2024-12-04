@@ -14,7 +14,9 @@ const ExpertHome = () => {
 
   async function addSlot() {
     try {
-      await axios.post(
+      console.log(slot);
+      
+      await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/availability/${expert?.userId}`,
         { availability: slot }
       );
