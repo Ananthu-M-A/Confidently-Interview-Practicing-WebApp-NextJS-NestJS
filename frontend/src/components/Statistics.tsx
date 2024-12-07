@@ -6,6 +6,8 @@ import { useAdminAuth } from "@/contexts/auth/AdminAuthContext";
 
 export function Statistics() {
   const { stats } = useAdminAuth();
+  console.log(stats);
+  
 
   const chartData = [
     {

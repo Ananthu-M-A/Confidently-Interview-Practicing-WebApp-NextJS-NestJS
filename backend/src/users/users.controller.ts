@@ -8,33 +8,37 @@ export class UsersController {
 
     constructor(private usersService: UsersService) { }
 
-    @Get('profile/:userId')
-    async viewUser(@Param('userId') userId: string): Promise<Partial<User>> {
-        return this.usersService.viewUser(userId);
-    }
-
-    @Put('profile/:userId')
-    async updateExpert(
-        @Param('userId') userId: string,
-        @Body() userData: Partial<User>): Promise<Partial<User>> {
-        console.log(userId, userData);
-
-        return this.usersService.updateUser(userId, userData);
-    }
-
-    @Get('list-experts')
-    listExperts(@Query('formData') formData: string,) {
-        return this.usersService.loadExperts(formData)
+    @Get('interviews')
+    async getInterviews() {
+        return this.usersService.getInterviews();
     }
 
     @Post('interview')
-    scheduleInterview(@Body() formData: { difficulty: string, time: string }) {
+    async scheduleInterview(@Body() formData: { difficulty: string, time: string }) {
         return this.usersService.scheduleInterview(formData)
     }
 
+    @Get('experts')
+    async getExperts(@Query('formData') formData: string,) {
+        return this.usersService.getExperts(formData)
+    }
+
     @Get('interview-dates/:userId')
-    listDates(@Param('userId') userId: string) {
-        return this.usersService.fetchDates(userId);
+    getDates(@Param('userId') userId: string) {
+        return this.usersService.getDates(userId);
+    }
+
+    @Get('profile/:userId')
+    async getUser(@Param('userId') userId: string): Promise<Partial<User>> {
+        return this.usersService.getUser(userId);
+    }
+
+    @Put('profile/:userId')
+    async updateUser(
+        @Param('userId') userId: string,
+        @Body() userData: Partial<User>): Promise<Partial<User>> {
+        console.log(userId, userData);
+        return this.usersService.updateUser(userId, userData);
     }
 
 }

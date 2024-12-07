@@ -18,6 +18,14 @@ import WithAdminAuth from "@/components/auth-guards/WithAdminAuth";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { subjects } from "@/constants/subjects";
 
 const FormSchema = z.object({
   email: z
@@ -46,12 +54,12 @@ function AddExpert() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/experts`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/expert`,
         data
       );
       if (response) {
         console.log(response);
-        router.push('/admin/experts');
+        router.push("/admin/experts");
         toast.success("New Expert Added Successfully");
       } else {
         toast.warning("New Expert Added Unsuccessfully");
@@ -119,14 +127,23 @@ function AddExpert() {
                   <FormLabel className="text-sm font-semibold">
                     Specialization
                   </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Eg:- JavaScript Development"
-                      {...field}
-                      type="text"
-                      className="w-full"
-                    />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a subject for interview" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {subjects.map((subject, index) => (
+                        <SelectItem key={index} value={subject.id}>
+                          {subject.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

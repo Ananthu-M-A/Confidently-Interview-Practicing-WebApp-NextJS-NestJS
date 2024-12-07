@@ -19,7 +19,7 @@ export class AuthService {
         private readonly emailService: EmailService,
     ) { }
 
-    async registerUser(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string }> {
+    async userRegister(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string }> {
         const { email } = userData;
         let user = await this.userModel.findOne({ email });
         if (user) {
@@ -40,7 +40,7 @@ export class AuthService {
         };
     }
 
-    async loginUser(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string } | null> {
+    async userLogin(userData: Partial<User>): Promise<{ user: Partial<UserDocument>; token: string } | null> {
         const { email, password } = userData;
         const user = await this.userModel.findOne({ email });
 
@@ -67,7 +67,7 @@ export class AuthService {
         };
     }
 
-    async resetUser(userData: Partial<User>): Promise<String> {
+    async resetPassword(userData: Partial<User>): Promise<String> {
         const { email } = userData;
         let user = await this.userModel.findOne({ email });
         if (!user) {

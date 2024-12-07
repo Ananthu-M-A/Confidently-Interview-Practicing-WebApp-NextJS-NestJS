@@ -72,7 +72,7 @@ const Interviews = () => {
     },
   });
 
-  async function listSlots(formData: z.infer<typeof FormSchema3>) {
+  async function getInterviews(formData: z.infer<typeof FormSchema3>) {
     try {
       console.log(formData.slot, user?.userId);
       const { data } = await axios.get(
@@ -104,13 +104,13 @@ const Interviews = () => {
     }
   }
 
-  async function findExperts(formData: z.infer<typeof FormSchema1>) {
+  async function getExperts(formData: z.infer<typeof FormSchema1>) {
     try {
       const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/list-experts`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/experts`,
         { params: { formData: JSON.stringify(formData) } }
       );
-        setExperts(data);
+      setExperts(data);
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
       throw error;
@@ -118,7 +118,7 @@ const Interviews = () => {
   }
 
   useEffect(() => {
-    async function fetchDates() {
+    async function getDates() {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/interview-dates/${user?.userId}`
@@ -131,7 +131,7 @@ const Interviews = () => {
       }
     }
 
-    fetchDates();
+    getDates();
   }, [user?.userId]);
 
   return (
@@ -140,17 +140,15 @@ const Interviews = () => {
         Schedule an Interview
       </h1>
       <div className="flex flex-col md:flex-row gap-4 md:gap-10">
-        {/* Interview Details */}
         <div className="w-full md:w-1/2 border p-4 rounded-lg">
           <h2 className="text-base md:text-lg font-bold mb-2">
             Interview Details
           </h2>
           <Form {...form1}>
             <form
-              onSubmit={form1.handleSubmit(findExperts)}
+              onSubmit={form1.handleSubmit(getExperts)}
               className="space-y-6"
             >
-              {/* Subject Field */}
               <FormField
                 control={form1.control}
                 name="subject"
@@ -178,7 +176,6 @@ const Interviews = () => {
                   </FormItem>
                 )}
               />
-              {/* Date Field */}
               <FormField
                 control={form1.control}
                 name="date"
@@ -197,7 +194,6 @@ const Interviews = () => {
               </Button>
             </form>
           </Form>
-          {/* Available Experts */}
           {experts.length !== 0 && (
             <>
               <h2 className="text-sm md:text-md font-medium mt-6 mb-2">
@@ -237,7 +233,6 @@ const Interviews = () => {
                           </FormItem>
                         )}
                       />
-                      {/* Difficulty Field */}
                       <FormField
                         control={form2.control}
                         name="difficulty"
@@ -275,17 +270,15 @@ const Interviews = () => {
             </>
           )}
         </div>
-        {/* Upcoming Interviews */}
         <div className="w-full md:w-1/2 border p-4 rounded-lg">
           <h2 className="text-base md:text-lg font-bold mb-2">
             Upcoming Interviews
           </h2>
           <Form {...form3}>
             <form
-              onSubmit={form3.handleSubmit(listSlots)}
+              onSubmit={form3.handleSubmit(getInterviews)}
               className="space-y-6"
             >
-              {/* Date Selection */}
               <FormField
                 control={form3.control}
                 name="slot"

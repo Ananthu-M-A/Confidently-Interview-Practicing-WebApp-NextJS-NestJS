@@ -44,7 +44,7 @@ export class AdminService {
     //     };
     // }
 
-    async loginAdmin(adminData: Partial<Admin>): Promise<Object> {
+    async adminLogin(adminData: Partial<Admin>): Promise<Object> {
         const { email, password } = adminData;
         const admin = await this.adminModel.findOne({ email });
         if (!admin) {
@@ -66,7 +66,7 @@ export class AdminService {
         };
     }
 
-    async viewUsers(): Promise<User[]> {
+    async getUsers(): Promise<User[]> {
         let users = await this.userModel.find({},
             { _id: 0, fullname: 1, email: 1, subscription: 1, active: 1 });
         if (!users) {
@@ -75,7 +75,7 @@ export class AdminService {
         return users;
     }
 
-    async updateUser(userData: Partial<User>): Promise<Partial<User>> {
+    async updateUserStatus(userData: Partial<User>): Promise<Partial<User>> {
         const { email } = userData;
         let existingUser = await this.userModel.findOne({ email });
         if (!existingUser) {
@@ -86,7 +86,7 @@ export class AdminService {
         return existingUser;
     }
 
-    async viewExperts(): Promise<Expert[]> {
+    async getExperts(): Promise<Expert[]> {
         let experts = await this.expertModel.find({},
             { _id: 0, fullname: 1, email: 1, specialization: 1, active: 1 });
         if (!experts) {
@@ -95,7 +95,7 @@ export class AdminService {
         return experts;
     }
 
-    async updateExpert(expertData: Partial<Expert>): Promise<Expert> {
+    async updateExpertStatus(expertData: Partial<Expert>): Promise<Expert> {
         const { email } = expertData;
         let existingExpert = await this.expertModel.findOne({ email });
         if (!existingExpert) {

@@ -12,11 +12,11 @@ const ExpertHome = () => {
   const { expert } = useExpertAuth();
   const [slot, setSlot] = useState<string>("");
 
-  async function addSlot() {
+  async function updateAvailability() {
     try {
       console.log(slot);
       
-      await axios.put(
+      await axios.patch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/availability/${expert?.userId}`,
         { availability: slot }
       );
@@ -78,7 +78,7 @@ const ExpertHome = () => {
               }}
               className="sm:w-min"
             />
-            <Button onClick={addSlot} className="font-bold px-4 py-2">
+            <Button onClick={updateAvailability} className="font-bold px-4 py-2">
               Add Slot
             </Button>
           </div>

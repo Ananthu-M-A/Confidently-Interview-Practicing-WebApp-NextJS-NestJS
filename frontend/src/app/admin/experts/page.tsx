@@ -25,8 +25,8 @@ const ExpertsList = () => {
 
   async function handleStatusChange(email: string) {
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/experts`,
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/expert`,
         { email }
       );
       if (response) {
@@ -48,7 +48,7 @@ const ExpertsList = () => {
   }
 
   useEffect(() => {
-    async function fetchExperts() {
+    async function getExperts() {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/experts`
@@ -62,7 +62,7 @@ const ExpertsList = () => {
         toast.error("Loading Experts Failed");
       }
     }
-    fetchExperts();
+    getExperts();
   }, []);
 
   useEffect(() => {

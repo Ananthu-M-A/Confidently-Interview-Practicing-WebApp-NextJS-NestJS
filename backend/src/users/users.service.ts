@@ -15,23 +15,7 @@ export class UsersService {
         @InjectModel('Interview') private readonly interviewModel: Model<InterviewDocument>,
     ) { }
 
-    async viewUser(userId: string): Promise<object> {
-        const user = await this.userModel.findOne({ _id: userId });
-        return { fullname: user.fullname, email: user.email };
-    }
-
-    async updateUser(userId: string, userData: Partial<User>): Promise<object> {
-        const { password } = userData;
-        userData.password = await hash(password, 10);
-        const user = await this.userModel.findByIdAndUpdate(userId, userData, { new: true });
-        return { id: user._id }
-    }
-
-    async loadExperts(formData: string) {
-        const { subject, date } = JSON.parse(formData);
-        const experts = await this.expertModel.find({ specialization: subject }, { fullname: 1, availability: 1, specialization: 1 });
-        return experts;
-    }
+    async getInterviews() { }
 
     async scheduleInterview(formData: { difficulty: string, time: string }) {
         const { time, difficulty } = formData;
@@ -46,9 +30,27 @@ export class UsersService {
         return newInterview;
     }
 
-    async fetchDates(userId: string) {
+    async getExperts(formData: string) {
+        const { subject, date } = JSON.parse(formData);
+        const experts = await this.expertModel.find({ specialization: subject }, { fullname: 1, availability: 1, specialization: 1 });
+        return experts;
+    }
+
+    async getDates(userId: string) {
         const dates = await this.interviewModel.find({ userId }, { _id: 0, time: 1 });
         return dates;
+    }
+
+    async getUser(userId: string): Promise<object> {
+        const user = await this.userModel.findOne({ _id: userId });
+        return { fullname: user.fullname, email: user.email };
+    }
+
+    async updateUser(userId: string, userData: Partial<User>): Promise<object> {
+        const { password } = userData;
+        userData.password = await hash(password, 10);
+        const user = await this.userModel.findByIdAndUpdate(userId, userData, { new: true });
+        return { id: user._id }
     }
 
 }

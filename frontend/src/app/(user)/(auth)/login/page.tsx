@@ -187,7 +187,7 @@ export default function LoginPage() {
             <CardDescription>
               <Link
                 className="font-semibold hover:text-black hover:underline"
-                href="/resetPassword"
+                href="/reset-password"
               >
                 Forgot password?
               </Link>

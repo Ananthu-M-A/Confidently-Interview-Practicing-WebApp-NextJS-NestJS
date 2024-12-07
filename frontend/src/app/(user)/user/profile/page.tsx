@@ -59,7 +59,7 @@ function ViewUser() {
   });
 
   useEffect(() => {
-    async function fetchUserData() {
+    async function getUserData() {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile/${user?.userId}`
@@ -73,7 +73,7 @@ function ViewUser() {
       }
     }
 
-    fetchUserData();
+    getUserData();
   }, [user, form]);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {

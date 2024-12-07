@@ -24,8 +24,8 @@ const UsersList = () => {
 
   async function handleStatusChange(email: string) {
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`,
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/user`,
         { email }
       );
       if (response) {

@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { useEffect } from "react";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { subjects } from "@/constants/subjects";
 
 const FormSchema = z.object({
   email: z
@@ -48,7 +50,7 @@ function ViewExpert() {
   });
 
   useEffect(() => {
-    async function fetchExpertData() {
+    async function getExpertData() {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/profile/${expert?.userId}`
@@ -62,7 +64,7 @@ function ViewExpert() {
       }
     }
 
-    fetchExpertData();
+    getExpertData();
   }, [expert, form]);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -138,17 +140,24 @@ function ViewExpert() {
               name="specialization"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold">
-                    Specialization
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Eg:- JavaScript Development"
-                      {...field}
-                      type="text"
-                      className="w-full"
-                    />
-                  </FormControl>
+                  <FormLabel className="text-sm font-semibold">Specialization</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your specialization" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {subjects.map((subject, index) => (
+                        <SelectItem key={index} value={subject.id}>
+                          {subject.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

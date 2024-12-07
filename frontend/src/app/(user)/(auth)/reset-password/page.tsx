@@ -31,7 +31,7 @@ const FormSchema = z.object({
     .email({ message: "Enter a valid email address" }),
 });
 
-export default function ResetPasswordForm() {
+export default function ResetPasswordPage() {
   const { resetPassword } = useAuth();
   const router = useRouter();
 

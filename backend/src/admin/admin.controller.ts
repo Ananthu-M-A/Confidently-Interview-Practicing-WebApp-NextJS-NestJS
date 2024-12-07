@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { User } from 'src/common/schemas/users.schema';
 import { AdminService } from './admin.service';
 import { Admin } from '../common/schemas/admin.schema';
@@ -17,37 +17,37 @@ export class AdminController {
     // }
 
     @Post('login')
-    async enterAdmin(@Body() adminData: Partial<Admin>) {
-        return this.adminService.loginAdmin(adminData)
+    async adminLogin(@Body() adminData: Partial<Admin>) {
+        return this.adminService.adminLogin(adminData)
     }
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    async checkUserOnline(@Request() req) {
+    async authenticateAdmin(@Request() req) {
         return req.user;
     }
 
     @Get('users')
-    viewUsers(): Promise<User[]> {
-        return this.adminService.viewUsers()
+    getUsers(): Promise<User[]> {
+        return this.adminService.getUsers()
     }
 
-    @Put('users')
-    updateUser(@Body() userData: Partial<User>): Promise<Partial<User>> {
-        return this.adminService.updateUser(userData)
+    @Patch('user')
+    updateUserStatus(@Body() userData: Partial<User>): Promise<Partial<User>> {
+        return this.adminService.updateUserStatus(userData)
     }
 
     @Get('experts')
-    viewExperts(): Promise<Expert[]> {
-        return this.adminService.viewExperts()
+    getExperts(): Promise<Expert[]> {
+        return this.adminService.getExperts()
     }
 
-    @Put('experts')
-    updateExpert(@Body() expertData: Partial<Expert>): Promise<Expert> {
-        return this.adminService.updateExpert(expertData)
+    @Patch('expert')
+    updateExpertStatus(@Body() expertData: Partial<Expert>): Promise<Expert> {
+        return this.adminService.updateExpertStatus(expertData)
     }
 
-    @Post('experts')
+    @Post('expert')
     addExpert(@Body() expertData: Partial<Expert>) {
         return this.adminService.addExpert(expertData)
     }

@@ -13,12 +13,12 @@ export class ExpertsService {
         private readonly jwtService: JwtService
     ) { }
 
-    async viewExpert(expertId: string): Promise<object> {
+    async getExpert(expertId: string): Promise<object> {
         const expert = await this.expertModel.findOne({ _id: expertId });
         return { fullname: expert.fullname, email: expert.email, specialization: expert.specialization, yearsOfExperience: expert.yearsOfExperience };
     }
 
-    async loginExpert(expertData: Partial<Expert>): Promise<{ expert: Partial<ExpertDocument>; token: string } | null> {
+    async expertLogin(expertData: Partial<Expert>): Promise<{ expert: Partial<ExpertDocument>; token: string } | null> {
         const { email, password } = expertData;
         const expert = await this.expertModel.findOne({ email });
 

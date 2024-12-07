@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { Expert } from '../common/schemas/experts.schema';
 import { ExpertsService } from './experts.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,8 +12,8 @@ export class ExpertsController {
     ) { }
 
     @Get('profile/:expertId')
-    async viewExpert(@Param('expertId') expertId: string): Promise<Partial<Expert>> {
-        return this.expertsService.viewExpert(expertId);
+    async getExpert(@Param('expertId') expertId: string): Promise<Partial<Expert>> {
+        return this.expertsService.getExpert(expertId);
     }
 
     @Put('profile/:expertId')
@@ -24,17 +24,17 @@ export class ExpertsController {
     }
 
     @Post('login')
-    async enterExpert(@Body() expertData: Partial<Expert>) {
-        return this.expertsService.loginExpert(expertData);
+    async expertLogin(@Body() expertData: Partial<Expert>) {
+        return this.expertsService.expertLogin(expertData);
     }
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    async checkUserOnline(@Request() req) {
+    async authenticateExpert(@Request() req) {
         return req.user;
     }
 
-    @Put('availability/:expertId')
+    @Patch('availability/:expertId')
     async updateAvailability(
         @Request() req,
         @Body('availability') slot: string,

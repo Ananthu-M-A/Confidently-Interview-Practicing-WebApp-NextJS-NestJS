@@ -15,23 +15,23 @@ export class AuthController {
     ) { }
 
     @Post('register')
-    async createUser(@Body() userData: User) {
-        return this.authService.registerUser(userData);
+    async userRegister(@Body() userData: User) {
+        return this.authService.userRegister(userData);
     }
 
     @Post('login')
-    async enterUser(@Body() userData: Partial<object>) {
-        return this.authService.loginUser(userData);
+    async userLogin(@Body() userData: Partial<object>) {
+        return this.authService.userLogin(userData);
     }
 
-    @Post('resetPassword')
-    async resetUserEntry(@Body() userData: Partial<User>) {
-        return this.authService.resetUser(userData);
+    @Post('reset-password')
+    async resetPassword(@Body() userData: Partial<User>) {
+        return this.authService.resetPassword(userData);
     }
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    async checkUserOnline(@Request() req) {
+    async authenticateUser(@Request() req) {
         return req.user;
     }
 
@@ -44,7 +44,7 @@ export class AuthController {
     async googleAuthRedirect(@Req() req, @Res() res: Response) {
         const { firstName, lastName, email } = req.user;
         try {
-            const result = await this.authService.registerUser({
+            const result = await this.authService.userRegister({
                 fullname: `${firstName} ${lastName}`,
                 email,
                 password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD'),

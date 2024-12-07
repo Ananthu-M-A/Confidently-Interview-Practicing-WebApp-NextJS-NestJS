@@ -188,7 +188,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   async function resetPassword(email: string) {
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/resetPassword`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
         { email }
       );
       toast.success("Password reset link sent, Check your email.");
