@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Admin, AdminDocument } from '../common/schemas/admin.schema';
 import { Model } from 'mongoose';
@@ -9,6 +9,8 @@ import { User, UserDocument } from 'src/common/schemas/users.schema';
 import { EmailService } from 'src/email/email.service';
 import { Interview, InterviewDocument } from 'src/common/schemas/interview.schema';
 import { ConfigService } from '@nestjs/config';
+import { LoginCredDto } from 'src/common/dto/login-cred.dto';
+import { StatsDto } from 'src/common/dto/stats.dto';
 
 @Injectable()
 export class AdminService {
@@ -21,49 +23,25 @@ export class AdminService {
         private readonly configService: ConfigService,
         private readonly emailService: EmailService) { }
 
-    // async registerUser(userData: Partial<Admin>): Promise<{ user: Partial<AdminDocument>; token: string }> {
-    //     const { email } = userData;
-    //     let user = await this.adminModel.findOne({ email });
-    //     if (user) {
-    //         Object.assign(user, userData);
-    //         await user.save();
-    //         throw new Error("Email already exists");
-    //     } else {
-    //         let { password } = userData;
-    //         userData.password = await hash(password, 10);
-    //         user = new this.adminModel(userData);
-    //         await user.save();
-    //     }
-    //     const payload = { username: user.email, sub: user._id };
-    //     return {
-    //         user: {
-    //             id: user._id,
-    //             email: user.email,
-    //         },
-    //         token: this.jwtService.sign(payload)
-    //     };
-    // }
 
-    async adminLogin(adminData: Partial<Admin>): Promise<Object> {
-        const { email, password } = adminData;
-        const admin = await this.adminModel.findOne({ email });
-        if (!admin) {
-            throw new UnauthorizedException();
+    async adminLogin(adminData: LoginCredDto): Promise<string> {
+        try {
+            const { email, password } = adminData;
+            const admin = await this.adminModel.findOne({ email });
+            if (!admin) {
+                throw new UnauthorizedException(`Email or password entered is incorrect`);
+            }
+            const passwordMatched = await compare(password, admin.password);
+            if (!passwordMatched) {
+                throw new UnauthorizedException(`Email or password entered is incorrect`);
+            }
+            const payload = { username: admin.email, sub: admin._id };
+            const token = this.jwtService.sign(payload);
+            return token;
+        } catch (error) {
+            console.log("Login Error:", error);
+            throw new InternalServerErrorException(`Login Error`)
         }
-        const passwordMatched = await compare(password, admin.password);
-
-        if (!passwordMatched) {
-            throw new UnauthorizedException();
-        }
-
-        const payload = { username: admin.email, sub: admin._id };
-        return {
-            user: {
-                id: admin._id,
-                email: admin.email,
-            },
-            token: this.jwtService.sign(payload)
-        };
     }
 
     async getUsers(): Promise<User[]> {
@@ -75,15 +53,21 @@ export class AdminService {
         return users;
     }
 
-    async updateUserStatus(userData: Partial<User>): Promise<Partial<User>> {
-        const { email } = userData;
-        let existingUser = await this.userModel.findOne({ email });
-        if (!existingUser) {
-            return null;
+    async updateUserStatus(userData: Partial<LoginCredDto>): Promise<Partial<LoginCredDto>> {
+        try {
+            const { email } = userData;
+            let existingUser = await this.userModel.findOne({ email });
+            if (!existingUser) {
+                throw new NotFoundException(`User not found`);
+            }
+            Object.assign(existingUser, { active: !existingUser.active });
+            await existingUser.save();
+            return { email: existingUser.email };
+        } catch (error) {
+            console.log("User Status Updation Error:", error);
+            throw new InternalServerErrorException(`User Status Updation Error`);
         }
-        Object.assign(existingUser, { active: !existingUser.active });
-        await existingUser.save();
-        return existingUser;
+
     }
 
     async getExperts(): Promise<Expert[]> {
@@ -95,15 +79,21 @@ export class AdminService {
         return experts;
     }
 
-    async updateExpertStatus(expertData: Partial<Expert>): Promise<Expert> {
-        const { email } = expertData;
-        let existingExpert = await this.expertModel.findOne({ email });
-        if (!existingExpert) {
-            return null;
+    async updateExpertStatus(expertData: Partial<LoginCredDto>): Promise<Partial<LoginCredDto>> {
+        try {
+            const { email } = expertData;
+            let existingExpert = await this.expertModel.findOne({ email });
+            if (!existingExpert) {
+                throw new NotFoundException(`Expert not found`);
+            }
+            Object.assign(existingExpert, { active: !existingExpert.active });
+            await existingExpert.save();
+            return { email: existingExpert.email };
+        } catch (error) {
+            console.log("Expert Status Updation Error:", error);
+            throw new InternalServerErrorException(`Expert Status Updation Error`);
         }
-        Object.assign(existingExpert, { active: !existingExpert.active });
-        await existingExpert.save();
-        return existingExpert;
+
     }
 
     async addExpert(expertData: Partial<Expert>): Promise<Expert> {
@@ -125,12 +115,12 @@ export class AdminService {
 
     }
 
-    async getStatistics() {
+    async getStatistics(): Promise<StatsDto> {
         const totalUsers = await this.userModel.countDocuments();
         const totalExperts = await this.expertModel.countDocuments();
         const totalInterviews = await this.interviewModel.countDocuments();
         const totalProUsers = await this.userModel.find({ subscription: true }).countDocuments();
-        const avgRating = "4.5";
+        const avgRating = 4.5;
         const totalRevanue = totalProUsers * this.configService.get<number>('SUBSCRIPTION_FEE');
         return { totalUsers, totalExperts, totalInterviews, avgRating, totalRevanue };
     }

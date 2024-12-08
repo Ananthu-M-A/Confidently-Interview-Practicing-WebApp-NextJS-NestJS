@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { Stats } from "@/interfaces/stats.interface";
+import axiosClient from "@/lib/axiosClient";
 
 interface Admin {
   _id: string;
@@ -36,13 +37,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("admin-token");
       if (token) {
         try {
-          const response = await axios.get(
+          const { data } = await axios.get(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/me`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-          setAdmin(response.data);
+          setAdmin(data);
         } catch (error) {
           console.error("Authentication check failed:", error);
           localStorage.removeItem("admin-token");
@@ -54,28 +55,23 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     async function loadStatistics() {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/stats`
-      );
-      if (response) {
-        setStats(response.data);
-      }
+      const { data } = await axiosClient.get(`/admin/stats`);
+      setStats(data);
     }
-    loadStatistics();
+    try {
+      loadStatistics();
+    } catch (error) {
+      console.error(`Error Fetching Stats:-`, error);
+    }
   }, []);
 
   async function login(email: string, password: string) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/login`,
-        {
-          email,
-          password,
-        }
-      );
-      const { token, admin } = response.data;
-      localStorage.setItem("admin-token", token);
-      setAdmin(admin);
+      const { data } = await axiosClient.post(`/admin/login`, {
+        email,
+        password,
+      });
+      localStorage.setItem("admin-token", data.token);
       toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { toast } from "sonner";
 import { User } from "@/interfaces/user.interface";
+import axiosClient from "@/lib/axiosClient";
 
 const UsersList = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -24,10 +25,7 @@ const UsersList = () => {
 
   async function handleStatusChange(email: string) {
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/user`,
-        { email }
-      );
+      const response = await axiosClient.patch(`/admin/user`, { email });
       if (response) {
         toast.success("Status Updated Successfully");
         setUsers((prevUsers) =>
@@ -103,9 +101,7 @@ const UsersList = () => {
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {user.fullname}
-                  </TableCell>
+                  <TableCell className="font-medium">{user.fullname}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.active ? "Active" : "Blocked"}</TableCell>
                   <TableCell>{user.subscription ? "Pro" : "Free"}</TableCell>
