@@ -4,7 +4,8 @@ import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
-import axios, { isAxiosError } from "axios";
+import axiosClient from "@/lib/axiosClient";
+import { isAxiosError } from "axios";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -15,18 +16,17 @@ const ExpertHome = () => {
   async function updateAvailability() {
     try {
       console.log(slot);
-      
-      await axios.patch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/availability/${expert?.userId}`,
-        { availability: slot }
-      );
+
+      await axiosClient.patch(`/expert/availability/${expert?.userId}`, {
+        availability: slot,
+      });
       toast.success("New Slot Added Successfully");
     } catch (error) {
       if (isAxiosError(error)) {
         if (error.response?.status === 409) {
           toast.warning("You've already booked this slot");
-        }else{
-          toast.error("Something went wrong, Try again.")
+        } else {
+          toast.error("Something went wrong, Try again.");
         }
       } else {
         console.error(error);
@@ -78,7 +78,10 @@ const ExpertHome = () => {
               }}
               className="sm:w-min"
             />
-            <Button onClick={updateAvailability} className="font-bold px-4 py-2">
+            <Button
+              onClick={updateAvailability}
+              className="font-bold px-4 py-2"
+            >
               Add Slot
             </Button>
           </div>

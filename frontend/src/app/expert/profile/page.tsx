@@ -14,14 +14,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { useEffect } from "react";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { subjects } from "@/constants/subjects";
+import axiosClient from "@/lib/axiosClient";
 
 const FormSchema = z.object({
   email: z
@@ -52,8 +58,8 @@ function ViewExpert() {
   useEffect(() => {
     async function getExpertData() {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/profile/${expert?.userId}`
+        const response = await axiosClient.get(
+          `/expert/profile/${expert?.userId}`
         );
         if (response.data) {
           form.reset(response.data);
@@ -69,8 +75,8 @@ function ViewExpert() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/profile/${expert?.userId}`,
+      const response = await axiosClient.put(
+        `/expert/profile/${expert?.userId}`,
         data
       );
       if (response) {
@@ -140,7 +146,9 @@ function ViewExpert() {
               name="specialization"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold">Specialization</FormLabel>
+                  <FormLabel className="text-sm font-semibold">
+                    Specialization
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}

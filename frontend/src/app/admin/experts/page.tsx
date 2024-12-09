@@ -14,9 +14,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { toast } from "sonner";
 import { Expert } from "@/interfaces/expert.interface";
+import axiosClient from "@/lib/axiosClient";
 
 const ExpertsList = () => {
   const [experts, setExperts] = useState<Expert[]>([]);
@@ -25,10 +25,7 @@ const ExpertsList = () => {
 
   async function handleStatusChange(email: string) {
     try {
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/expert`,
-        { email }
-      );
+      const response = await axiosClient.patch(`/admin/expert`, { email });
       if (response) {
         toast.success("Status Updated Successfully");
         setExperts((prevExperts) =>
@@ -50,9 +47,7 @@ const ExpertsList = () => {
   useEffect(() => {
     async function getExperts() {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/experts`
-        );
+        const response = await axiosClient.get(`/admin/experts`);
         if (response) {
           setExperts(response.data);
           setFilteredExperts(response.data);
@@ -77,7 +72,9 @@ const ExpertsList = () => {
 
   return (
     <div className="text-left my-6 px-4 sm:px-8">
-      <h1 className="text-2xl sm:text-4xl font-bold mb-4">Experts Management</h1>
+      <h1 className="text-2xl sm:text-4xl font-bold mb-4">
+        Experts Management
+      </h1>
       <div className="border p-4 sm:p-5 rounded-lg">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h1 className="text-lg sm:text-xl font-bold">Search Experts</h1>
@@ -97,7 +94,9 @@ const ExpertsList = () => {
       </div>
       <div className="border p-4 sm:p-5 rounded-lg mt-5 overflow-x-auto">
         <Table>
-          <TableCaption className="sr-only">A list of confidently experts</TableCaption>
+          <TableCaption className="sr-only">
+            A list of confidently experts
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[200px]">Name</TableHead>
@@ -111,7 +110,9 @@ const ExpertsList = () => {
             {filteredExperts.length > 0 ? (
               filteredExperts.map((expert, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{expert.fullname}</TableCell>
+                  <TableCell className="font-medium">
+                    {expert.fullname}
+                  </TableCell>
                   <TableCell>{expert.email}</TableCell>
                   <TableCell>{expert.specialization}</TableCell>
                   <TableCell>{expert.active ? "Active" : "Blocked"}</TableCell>

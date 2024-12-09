@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import axiosClient from "@/lib/axiosClient";
 
 interface User {
   userId: string;
@@ -37,12 +38,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await axiosClient.get(`/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setUser(response.data);
         } catch (error) {
           console.error("Authentication check failed:", error);
@@ -55,28 +53,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function login(email: string, password: string) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axiosClient.post(`/auth/login`, {
+        email,
+        password,
+      });
       const { token } = response.data;
       localStorage.setItem("token", token);
       toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
+        const status = error.response?.status;
+        if (status === 401) {
           toast.warning("Email or password entered is incorrect.");
+        } else if (status === 500) {
+          toast.error("Server error. Please try again later.");
         } else {
           toast.error("Something went wrong. Please try again.");
         }
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
-      console.error("Unsuccessful attempt to Login:", error);
-      throw error;
+      if (error instanceof Error) {
+        console.error("Login attempt failed:", error.message);
+        throw error;
+      }
     }
   }
 
@@ -113,10 +113,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function register(email: string, password: string, fullname: string) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
-        { email, password, fullname }
-      );
+      const response = await axiosClient.post(`/auth/register`, {
+        email,
+        password,
+        fullname,
+      });
       const { token } = response.data;
       localStorage.setItem("token", token);
       toast.success("Registration Successfull");
@@ -179,10 +180,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function resetPassword(email: string) {
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
-        { email }
-      );
+      await axiosClient.post(`/auth/reset-password`, { email });
       toast.success("Password reset link sent, Check your email.");
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -13,7 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { toast } from "sonner";
 import { User } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axiosClient";
@@ -45,9 +44,7 @@ const UsersList = () => {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`
-        );
+        const response = await axiosClient.get(`/admin/users`);
         if (response) {
           setUsers(response.data);
           setFilteredUsers(response.data);

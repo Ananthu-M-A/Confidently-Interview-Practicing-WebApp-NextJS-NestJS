@@ -1,4 +1,4 @@
-export class ExpertDto {
+export class ExpertDTO {
     fullname: string;
     email: string;
     specialization: string;

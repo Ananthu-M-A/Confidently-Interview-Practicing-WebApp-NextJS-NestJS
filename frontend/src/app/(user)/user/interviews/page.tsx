@@ -23,11 +23,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { subjects } from "@/constants/subjects";
 import { difficulties } from "@/constants/difficulties";
-import axios from "axios";
 import { toast } from "sonner";
 import { Expert } from "@/interfaces/expert.interface";
 import { Interview } from "@/interfaces/interview.interface";
 import { useAuth } from "@/contexts/auth/AuthContext";
+import axiosClient from "@/lib/axiosClient";
 
 const FormSchema1 = z.object({
   subject: z.string(),
@@ -75,15 +75,12 @@ const Interviews = () => {
   async function getInterviews(formData: z.infer<typeof FormSchema3>) {
     try {
       console.log(formData.slot, user?.userId);
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/interviews`,
-        {
-          params: {
-            slot: JSON.stringify(formData.slot),
-            userId: JSON.stringify(user?.userId),
-          },
-        }
-      );
+      const { data } = await axiosClient.get(`/user/interviews`, {
+        params: {
+          slot: JSON.stringify(formData.slot),
+          userId: JSON.stringify(user?.userId),
+        },
+      });
       setInterviews(data);
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
@@ -93,10 +90,7 @@ const Interviews = () => {
 
   async function scheduleInterview(formData: z.infer<typeof FormSchema2>) {
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/interview`,
-        formData
-      );
+      await axiosClient.post(`/user/interview`, formData);
       toast.success("New Interview Scheduled Successfully");
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
@@ -106,10 +100,9 @@ const Interviews = () => {
 
   async function getExperts(formData: z.infer<typeof FormSchema1>) {
     try {
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/experts`,
-        { params: { formData: JSON.stringify(formData) } }
-      );
+      const { data } = await axiosClient.get(`/user/experts`, {
+        params: { formData: JSON.stringify(formData) },
+      });
       setExperts(data);
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
@@ -120,8 +113,8 @@ const Interviews = () => {
   useEffect(() => {
     async function getDates() {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/interview-dates/${user?.userId}`
+        const response = await axiosClient.get(
+          `/user/interview-dates/${user?.userId}`
         );
         console.log(user?.userId, response.data);
         setDates(response.data);

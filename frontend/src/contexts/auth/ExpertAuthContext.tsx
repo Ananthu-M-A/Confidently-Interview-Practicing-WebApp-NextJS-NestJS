@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import axiosClient from "@/lib/axiosClient";
 
 interface Expert {
   userId: string;
@@ -29,12 +30,9 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("expert-token");
       if (token) {
         try {
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/me`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await axiosClient.get(`/expert/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setExpert(response.data);
         } catch (error) {
           console.error("Authentication check failed:", error);
@@ -47,13 +45,10 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function login(email: string, password: string) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/expert/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axiosClient.post(`/expert/login`, {
+        email,
+        password,
+      });
       const { token } = response.data;
       localStorage.setItem("expert-token", token);
       setExpert(expert);

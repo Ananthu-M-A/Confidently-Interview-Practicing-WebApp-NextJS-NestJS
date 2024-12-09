@@ -4,8 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcryptjs';
 import { Model } from 'mongoose';
-import { LoginCredDto } from 'src/common/dto/login-cred.dto';
-import { SignupCredDto } from 'src/common/dto/signup-cred.dto';
+import { LoginCredDTO } from 'src/common/dtos/login-cred.dto';
+import { SignupCredDTO } from 'src/common/dtos/signup-cred.dto';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
 import { EmailService } from 'src/email/email.service';
 
@@ -19,14 +19,14 @@ export class AuthService {
         private readonly emailService: EmailService,
     ) { }
 
-    async userRegister(userData: SignupCredDto): Promise<{ token: string }> {
+    async userRegister(signupCredDto: SignupCredDTO): Promise<{ token: string }> {
         try {
-            const { email } = userData;
+            const { email } = signupCredDto;
             let user = await this.userModel.findOne({ email });
             if (user) {
                 throw new ConflictException("Email already registered");
             }
-            user = new this.userModel(userData);
+            user = new this.userModel(signupCredDto);
             await user.save();
             const payload = { username: user.fullname, sub: user._id };
             return { token: this.jwtService.sign(payload) };
@@ -40,9 +40,9 @@ export class AuthService {
 
     }
 
-    async userLogin(userData: LoginCredDto): Promise<{ token: string }> {
+    async userLogin(loginCredDto: LoginCredDTO): Promise<{ token: string }> {
         try {
-            const { email, password } = userData;
+            const { email, password } = loginCredDto;
             const user = await this.userModel.findOne({ email });
 
             if (!user) {
@@ -67,9 +67,9 @@ export class AuthService {
 
     }
 
-    async resetPassword(userData: Partial<User>): Promise<String> {
+    async resetPassword(loginCredDto: Partial<LoginCredDTO>): Promise<string> {
         try {
-            const { email } = userData;
+            const { email } = loginCredDto;
             let user = await this.userModel.findOne({ email });
             if (!user) {
                 throw new NotFoundException('User not found');

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { Stats } from "@/interfaces/stats.interface";
 import axiosClient from "@/lib/axiosClient";
+import axios from "axios";
 
 interface Admin {
   _id: string;
@@ -37,12 +37,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("admin-token");
       if (token) {
         try {
-          const { data } = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/me`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const { data } = await axiosClient.get(`/admin/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setAdmin(data);
         } catch (error) {
           console.error("Authentication check failed:", error);
@@ -70,7 +67,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
       const { data } = await axiosClient.post(`/admin/login`, {
         email,
         password,
-      });     
+      });
       localStorage.setItem("admin-token", data.token);
       toast.success("Successfully Logged In");
     } catch (error) {

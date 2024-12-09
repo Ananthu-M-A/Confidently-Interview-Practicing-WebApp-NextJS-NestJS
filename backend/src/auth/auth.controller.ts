@@ -5,8 +5,8 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { SignupCredDto } from 'src/common/dto/signup-cred.dto';
-import { LoginCredDto } from 'src/common/dto/login-cred.dto';
+import { LoginCredDTO } from 'src/common/dtos/login-cred.dto';
+import { SignupCredDTO } from 'src/common/dtos/signup-cred.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -17,18 +17,18 @@ export class AuthController {
     ) { }
 
     @Post('register')
-    async userRegister(@Body() userData: SignupCredDto) {
-        return this.authService.userRegister(userData);
+    async userRegister(@Body() signupCredDto: SignupCredDTO) {
+        return this.authService.userRegister(signupCredDto);
     }
 
     @Post('login')
-    async userLogin(@Body() userData: LoginCredDto) {
-        return this.authService.userLogin(userData);
+    async userLogin(@Body() loginCredDto: LoginCredDTO) {
+        return this.authService.userLogin(loginCredDto);
     }
 
     @Post('reset-password')
-    async resetPassword(@Body() userData: Partial<LoginCredDto>) {
-        return this.authService.resetPassword(userData);
+    async resetPassword(@Body() loginCredDto: Partial<LoginCredDTO>) {
+        return this.authService.resetPassword(loginCredDto);
     }
 
     @Get('me')

@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import WithAdminAuth from "@/components/auth-guards/WithAdminAuth";
-import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
@@ -26,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { subjects } from "@/constants/subjects";
+import axiosClient from "@/lib/axiosClient";
 
 const FormSchema = z.object({
   email: z
@@ -53,10 +53,7 @@ function AddExpert() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/expert`,
-        data
-      );
+      const response = await axiosClient.post(`/admin/expert`, data);
       if (response) {
         console.log(response);
         router.push("/admin/experts");

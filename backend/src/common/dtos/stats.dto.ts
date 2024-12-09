@@ -1,4 +1,4 @@
-export class StatsDto {
+export class StatsDTO {
     totalUsers: number;
     totalExperts: number;
     totalInterviews: number;

@@ -14,12 +14,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import WithAuth from "@/components/auth-guards/WithAuth";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/auth/AuthContext";
+import axiosClient from "@/lib/axiosClient";
 
 const FormSchema = z
   .object({
@@ -61,9 +61,7 @@ function ViewUser() {
   useEffect(() => {
     async function getUserData() {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile/${user?.userId}`
-        );
+        const response = await axiosClient.get(`/user/profile/${user?.userId}`);
         if (response.data) {
           form.reset(response.data);
         }
@@ -78,8 +76,8 @@ function ViewUser() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile/${user?.userId}`,
+      const response = await axiosClient.put(
+        `/user/profile/${user?.userId}`,
         data
       );
       if (response) {
