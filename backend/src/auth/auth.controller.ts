@@ -5,6 +5,8 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { SignupCredDto } from 'src/common/dto/signup-cred.dto';
+import { LoginCredDto } from 'src/common/dto/login-cred.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -15,25 +17,32 @@ export class AuthController {
     ) { }
 
     @Post('register')
-    async userRegister(@Body() userData: User) {
+    async userRegister(@Body() userData: SignupCredDto) {
         return this.authService.userRegister(userData);
     }
 
     @Post('login')
-    async userLogin(@Body() userData: Partial<object>) {
+    async userLogin(@Body() userData: LoginCredDto) {
         return this.authService.userLogin(userData);
     }
 
     @Post('reset-password')
-    async resetPassword(@Body() userData: Partial<User>) {
+    async resetPassword(@Body() userData: Partial<LoginCredDto>) {
         return this.authService.resetPassword(userData);
     }
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
     async authenticateUser(@Request() req) {
+        if(!req.user){
+            throw new UnauthorizedException(`User not found!`)
+        }
         return req.user;
     }
+
+
+
+    
 
     @Get('google')
     @UseGuards(AuthGuard('google'))
@@ -54,7 +63,6 @@ export class AuthController {
             const frontendURL = this.configService.get<string>('FRONTEND_URL');
             const redirectUrl = new URL(`${frontendURL}/auth/callback`);
             redirectUrl.searchParams.append('token', result.token);
-            redirectUrl.searchParams.append('user', JSON.stringify(result.user));
             res.redirect(redirectUrl.toString());
         } catch (error) {
             const frontendURL = this.configService.get<string>('FRONTEND_URL');

@@ -70,7 +70,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
       const { data } = await axiosClient.post(`/admin/login`, {
         email,
         password,
-      });
+      });     
       localStorage.setItem("admin-token", data.token);
       toast.success("Successfully Logged In");
     } catch (error) {

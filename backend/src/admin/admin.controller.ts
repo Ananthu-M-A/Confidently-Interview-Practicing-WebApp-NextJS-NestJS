@@ -1,10 +1,9 @@
-import { Body, Controller, Get, Patch, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { User } from 'src/common/schemas/users.schema';
+import { Body, Controller, Get, Patch, Post, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { Admin } from '../common/schemas/admin.schema';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { Expert } from 'src/common/schemas/experts.schema';
 import { LoginCredDto } from 'src/common/dto/login-cred.dto';
+import { UserDto } from 'src/common/dto/user.dto';
+import { ExpertDto } from 'src/common/dto/expert.dto';
 
 @Controller('api/admin')
 export class AdminController {
@@ -15,7 +14,7 @@ export class AdminController {
     @UseGuards(JwtAuthGuard)
     async authenticateAdmin(@Request() req) {
         if (!req.user) {
-            throw new UnauthorizedException(`Authorization failed unexpectedly!`)
+            throw new UnauthorizedException(`Admin not found!`)
         }
         return req.user;
     }
@@ -26,27 +25,27 @@ export class AdminController {
     }
 
     @Get('users')
-    getUsers(): Promise<User[]> {
+    getUsers() {
         return this.adminService.getUsers()
     }
 
     @Patch('user')
-    updateUserStatus(@Body() userData: Partial<LoginCredDto>) {
+    updateUserStatus(@Body() userData: UserDto) {
         return this.adminService.updateUserStatus(userData)
     }
 
     @Get('experts')
-    getExperts(): Promise<Expert[]> {
+    getExperts() {
         return this.adminService.getExperts()
     }
 
     @Patch('expert')
-    updateExpertStatus(@Body() expertData: Partial<Expert>) {
+    updateExpertStatus(@Body() expertData: ExpertDto) {
         return this.adminService.updateExpertStatus(expertData)
     }
 
     @Post('expert')
-    addExpert(@Body() expertData: Partial<Expert>) {
+    addExpert(@Body() expertData: ExpertDto) {
         return this.adminService.addExpert(expertData)
     }
 

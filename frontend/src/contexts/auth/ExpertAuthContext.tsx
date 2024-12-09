@@ -54,16 +54,10 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
           password,
         }
       );
-      const { token, expert } = response.data;
-      if (!expert.active) {
-        toast.warning(
-          `You are not allowed to login now, Please contact admin@confidently.com`
-        );
-      } else {
-        localStorage.setItem("expert-token", token);
-        setExpert(expert);
-        toast.success("Successfully Logged In");
-      }
+      const { token } = response.data;
+      localStorage.setItem("expert-token", token);
+      setExpert(expert);
+      toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {

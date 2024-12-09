@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Expert } from '../common/schemas/experts.schema';
 import { ExpertsService } from './experts.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { LoginCredDto } from 'src/common/dto/login-cred.dto';
 
 @Controller('api/expert')
 export class ExpertsController {
@@ -11,27 +12,30 @@ export class ExpertsController {
         private readonly configService: ConfigService
     ) { }
 
+    @Get('me')
+    @UseGuards(JwtAuthGuard)
+    async authenticateExpert(@Request() req) {
+        if (!req.user) {
+            throw new UnauthorizedException(`Expert not found`);
+        }
+        return req.user;
+    }
+
+    @Post('login')
+    async expertLogin(@Body() expertData: LoginCredDto) {
+        return this.expertsService.expertLogin(expertData);
+    }
+
     @Get('profile/:expertId')
-    async getExpert(@Param('expertId') expertId: string): Promise<Partial<Expert>> {
+    async getExpert(@Param('expertId') expertId: string) {
         return this.expertsService.getExpert(expertId);
     }
 
     @Put('profile/:expertId')
     async updateExpert(
         @Param('expertId') expertId: string,
-        @Body() expertData: Partial<Expert>): Promise<Partial<Expert>> {
+        @Body() expertData: Partial<Expert>) {
         return this.expertsService.updateExpert(expertId, expertData);
-    }
-
-    @Post('login')
-    async expertLogin(@Body() expertData: Partial<Expert>) {
-        return this.expertsService.expertLogin(expertData);
-    }
-
-    @Get('me')
-    @UseGuards(JwtAuthGuard)
-    async authenticateExpert(@Request() req) {
-        return req.user;
     }
 
     @Patch('availability/:expertId')

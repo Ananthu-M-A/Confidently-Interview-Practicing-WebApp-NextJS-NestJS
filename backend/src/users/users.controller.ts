@@ -8,6 +8,24 @@ export class UsersController {
 
     constructor(private usersService: UsersService) { }
 
+    @Get('profile/:userId')
+    async getUser(@Param('userId') userId: string) {
+        return this.usersService.getUser(userId);
+    }
+
+    @Put('profile/:userId')
+    async updateUser(
+        @Param('userId') userId: string,
+        @Body() userData: Partial<User>) {
+        console.log(userId, userData);
+        return this.usersService.updateUser(userId, userData);
+    }
+
+    @Get('experts')
+    async getExperts(@Query('formData') formData: string,) {
+        return this.usersService.getExperts(formData)
+    }
+
     @Get('interviews')
     async getInterviews() {
         return this.usersService.getInterviews();
@@ -18,27 +36,8 @@ export class UsersController {
         return this.usersService.scheduleInterview(formData)
     }
 
-    @Get('experts')
-    async getExperts(@Query('formData') formData: string,) {
-        return this.usersService.getExperts(formData)
-    }
-
     @Get('interview-dates/:userId')
     getDates(@Param('userId') userId: string) {
         return this.usersService.getDates(userId);
     }
-
-    @Get('profile/:userId')
-    async getUser(@Param('userId') userId: string): Promise<Partial<User>> {
-        return this.usersService.getUser(userId);
-    }
-
-    @Put('profile/:userId')
-    async updateUser(
-        @Param('userId') userId: string,
-        @Body() userData: Partial<User>): Promise<Partial<User>> {
-        console.log(userId, userData);
-        return this.usersService.updateUser(userId, userData);
-    }
-
 }

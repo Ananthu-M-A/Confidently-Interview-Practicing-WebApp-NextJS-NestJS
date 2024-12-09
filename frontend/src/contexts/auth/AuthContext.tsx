@@ -62,15 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           password,
         }
       );
-      const { token, user } = response.data;
-      if (!user.active) {
-        toast.warning(
-          `You are not allowed to login now, Please contact admin@confidently.com`
-        );
-        return;
-      }
+      const { token } = response.data;
       localStorage.setItem("token", token);
-      setUser(user);
       toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -124,9 +117,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
         { email, password, fullname }
       );
-      const { token, user } = response.data;
+      const { token } = response.data;
       localStorage.setItem("token", token);
-      setUser(user);
       toast.success("Registration Successfull");
     } catch (error) {
       if (axios.isAxiosError(error)) {
