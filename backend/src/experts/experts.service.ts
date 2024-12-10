@@ -4,8 +4,8 @@ import { Expert, ExpertDocument } from '../common/schemas/experts.schema';
 import { Model } from 'mongoose';
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { LoginCredDto } from 'src/common/dto/login-cred.dto';
-import { ExpertDto } from 'src/common/dto/expert.dto';
+import { LoginCredDTO } from 'src/common/dtos/login-cred.dto';
+import { ExpertDTO } from 'src/common/dtos/expert.dto';
 
 @Injectable()
 export class ExpertsService {
@@ -15,7 +15,7 @@ export class ExpertsService {
         private readonly jwtService: JwtService
     ) { }
 
-    async expertLogin(expertData: LoginCredDto): Promise<{ token: string }> {
+    async expertLogin(expertData: LoginCredDTO): Promise<{ token: string }> {
         try {
             const { email, password } = expertData;
             const expert = await this.expertModel.findOne({ email });
@@ -36,7 +36,7 @@ export class ExpertsService {
 
     }
 
-    async getExpert(expertId: string): Promise<Partial<ExpertDto>> {
+    async getExpert(expertId: string): Promise<Partial<ExpertDTO>> {
         try {
             const expert = await this.expertModel.findOne({ _id: expertId });
             return { fullname: expert.fullname, email: expert.email, specialization: expert.specialization, yearsOfExperience: expert.yearsOfExperience };
@@ -47,7 +47,7 @@ export class ExpertsService {
 
     }
 
-    async updateExpert(expertId: string, updateData: Partial<ExpertDto>): Promise<object> {
+    async updateExpert(expertId: string, updateData: Partial<ExpertDTO>): Promise<object> {
         try {
             const expert = await this.expertModel.findByIdAndUpdate(expertId, updateData, { new: true });
             return { id: expert._id }

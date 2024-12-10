@@ -2,7 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hash } from 'bcryptjs';
 import { Model } from 'mongoose';
-import { UserDto } from 'src/common/dto/user.dto';
+import { ExpertDTO } from 'src/common/dtos/expert.dto';
+import { UserDTO } from 'src/common/dtos/user.dto';
 import { ExpertDocument } from 'src/common/schemas/experts.schema';
 import { InterviewDocument } from 'src/common/schemas/interview.schema';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
@@ -16,7 +17,7 @@ export class UsersService {
         @InjectModel('Interview') private readonly interviewModel: Model<InterviewDocument>,
     ) { }
 
-    async getUser(userId: string): Promise<Partial<UserDto>> {
+    async getUser(userId: string): Promise<Partial<UserDTO>> {
         try {
             const user = await this.userModel.findOne({ _id: userId });
             return { fullname: user.fullname, email: user.email };
@@ -43,8 +44,27 @@ export class UsersService {
     async getExperts(formData: string) {
         try {
             const { subject, date } = JSON.parse(formData);
-            const experts = await this.expertModel.find({ specialization: subject }, { fullname: 1, availability: 1, specialization: 1 });
-            return experts;
+            const startOfDay = new Date(date);
+            startOfDay.setUTCHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setUTCHours(23, 59, 59, 999);
+            const experts = await this.expertModel.find({
+                specialization: subject,
+                active: true
+            }, {
+                fullname: 1,
+                specialization: 1,
+                availability: 1,
+            }).exec();
+            const result = experts
+                .map((expert) => {
+                    const availableSlots = expert.availability.filter(
+                        (slot) => slot >= startOfDay && slot <= endOfDay,
+                    );
+                    return { id: expert._id, fullname: expert.fullname, availableSlots };
+                })
+                .filter((entry) => entry.availableSlots.length > 0);
+            return result;
         } catch (error) {
             console.log("Loading Experts Error:", error);
             throw new InternalServerErrorException(`Loading Experts Error`)
@@ -52,10 +72,13 @@ export class UsersService {
 
     }
 
-    async getDates(userId: string) {
+    async getDates(userId: string): Promise<string[]> {
         try {
             const dates = await this.interviewModel.find({ userId }, { _id: 0, time: 1 });
-            return dates;
+            const uniqueDates = Array.from(
+                new Set(dates.map(date => new Date(date.time).toISOString().split('T')[0]))
+            );
+            return uniqueDates;
         } catch (error) {
             console.log("Loading Dates Error:", error);
             throw new InternalServerErrorException(`Loading Dates Error`)
@@ -81,13 +104,32 @@ export class UsersService {
 
     }
 
-    async getInterviews() {
+    async getInterviews(date: string, userId: string) {
         try {
-
+            const inputDate = new Date(date);
+            const timeZoneOffset = inputDate.getTimezoneOffset() * 60000;
+            const startOfDay = new Date(inputDate.getTime() - timeZoneOffset);
+            startOfDay.setUTCHours(0, 0, 0, 0);
+            const endOfDay = new Date(inputDate.getTime() - timeZoneOffset);
+            endOfDay.setUTCHours(23, 59, 59, 999);
+            console.log("Start of Day (UTC):", startOfDay.toISOString());
+            console.log("End of Day (UTC):", endOfDay.toISOString());
+            const interviews = await this.interviewModel.find({
+                userId,
+                time: { $gte: startOfDay.toISOString(), $lte: endOfDay.toISOString() },
+            });
+            console.log(interviews);
+            
+            return interviews.map((interview) => ({
+                id: interview._id,
+                expertId: interview.expertId,
+                time: interview.time,
+                difficulty: interview.difficulty,
+                status: interview.status,
+            }));
         } catch (error) {
-            console.log("Loading Interviews Error:", error);
-            throw new InternalServerErrorException(`Loading Interviews Error`)
+            console.error("Loading Interviews Error:", error);
+            throw new InternalServerErrorException(`Loading Interviews Error`);
         }
     }
-
 }

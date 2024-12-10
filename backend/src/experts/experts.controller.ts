@@ -3,7 +3,7 @@ import { Expert } from '../common/schemas/experts.schema';
 import { ExpertsService } from './experts.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { LoginCredDto } from 'src/common/dto/login-cred.dto';
+import { LoginCredDTO } from 'src/common/dtos/login-cred.dto';
 
 @Controller('api/expert')
 export class ExpertsController {
@@ -22,7 +22,7 @@ export class ExpertsController {
     }
 
     @Post('login')
-    async expertLogin(@Body() expertData: LoginCredDto) {
+    async expertLogin(@Body() expertData: LoginCredDTO) {
         return this.expertsService.expertLogin(expertData);
     }
 

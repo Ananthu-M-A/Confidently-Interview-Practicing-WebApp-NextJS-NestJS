@@ -24,10 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { subjects } from "@/constants/subjects";
 import { difficulties } from "@/constants/difficulties";
 import { toast } from "sonner";
-import { Expert } from "@/interfaces/expert.interface";
 import { Interview } from "@/interfaces/interview.interface";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import axiosClient from "@/lib/axiosClient";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const FormSchema1 = z.object({
   subject: z.string(),
@@ -43,10 +43,21 @@ const FormSchema3 = z.object({
   slot: z.string(),
 });
 
+const FormSchema4 = z.object({
+  type: z.string(),
+});
+
 const Interviews = () => {
-  const [experts, setExperts] = useState<Expert[]>([]);
+  const [experts, setExperts] = useState<
+    {
+      fullname: string;
+      id: string;
+      availableSlots: Date[];
+    }[]
+  >([]);
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [dates, setDates] = useState<string[]>([]);
+  const [selectedExpert, setSelectedExpert] = useState<string | null>(null);
   const { user } = useAuth();
 
   const form1 = useForm<z.infer<typeof FormSchema1>>({
@@ -72,16 +83,31 @@ const Interviews = () => {
     },
   });
 
+  const form4 = useForm<z.infer<typeof FormSchema4>>({
+    resolver: zodResolver(FormSchema4),
+    defaultValues: {},
+  });
+
   async function getInterviews(formData: z.infer<typeof FormSchema3>) {
     try {
-      console.log(formData.slot, user?.userId);
       const { data } = await axiosClient.get(`/user/interviews`, {
         params: {
           slot: JSON.stringify(formData.slot),
-          userId: JSON.stringify(user?.userId),
+          userId: JSON.stringify("2"),
         },
       });
+      console.log(data);
+      
       setInterviews(data);
+    } catch (error) {
+      console.error("Unsuccessful attempt to Login:", error);
+      throw error;
+    }
+  }
+
+  async function cancelInterviews(formData: z.infer<typeof FormSchema4>) {
+    try {
+      console.log(formData);
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
       throw error;
@@ -91,6 +117,7 @@ const Interviews = () => {
   async function scheduleInterview(formData: z.infer<typeof FormSchema2>) {
     try {
       await axiosClient.post(`/user/interview`, formData);
+      window.location.reload();
       toast.success("New Interview Scheduled Successfully");
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
@@ -113,19 +140,16 @@ const Interviews = () => {
   useEffect(() => {
     async function getDates() {
       try {
-        const response = await axiosClient.get(
-          `/user/interview-dates/${user?.userId}`
-        );
-        console.log(user?.userId, response.data);
+        const response = await axiosClient.get(`/user/interview-dates/2`);
         setDates(response.data);
       } catch (error) {
         console.error("Error fetching interview dates:", error);
-        toast.error("Failed to load  interview dates");
+        toast.error("Failed to load interview dates");
       }
     }
 
     getDates();
-  }, [user?.userId]);
+  }, []);
 
   return (
     <div className="px-4 py-6">
@@ -187,24 +211,43 @@ const Interviews = () => {
               </Button>
             </form>
           </Form>
-          {experts.length !== 0 && (
+          {experts.length !== 0 ? (
             <>
               <h2 className="text-sm md:text-md font-medium mt-6 mb-2">
                 Experts Available
               </h2>
-              <Form {...form2}>
-                <form
-                  onSubmit={form2.handleSubmit(scheduleInterview)}
-                  className="space-y-6"
-                >
-                  {experts.map((expert, index) => (
-                    <React.Fragment key={index}>
-                      <FormField
-                        control={form2.control}
-                        name="time"
-                        render={({ field }) => (
+              <div className="max-h-48 overflow-y-auto border p-2 rounded-md">
+                {experts.map((expert) => (
+                  <div key={expert.id} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id={expert.id}
+                      name="expert"
+                      value={expert.id}
+                      checked={selectedExpert === expert.id}
+                      onChange={(e) => setSelectedExpert(e.target.value)}
+                      className="form-radio"
+                    />
+                    <label htmlFor={expert.id}>{expert.fullname}</label>
+                  </div>
+                ))}
+              </div>
+              {selectedExpert && (
+                <Form {...form2}>
+                  <form
+                    onSubmit={form2.handleSubmit(scheduleInterview)}
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={form2.control}
+                      name="time"
+                      render={({ field }) => {
+                        const expert = experts.find(
+                          (e) => e.id === selectedExpert
+                        );
+                        return (
                           <FormItem>
-                            <FormLabel>{expert.fullname}</FormLabel>
+                            <FormLabel>Select a time slot</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
@@ -215,52 +258,62 @@ const Interviews = () => {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {expert.availability.map((slot, index1) => (
-                                  <SelectItem key={index1} value={slot}>
-                                    {new Date(slot).toString()}
+                                {expert?.availableSlots.map((slot, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={new Date(slot).toISOString()}
+                                  >
+                                    {new Date(slot).toLocaleString()}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
                             <FormMessage />
                           </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form2.control}
-                        name="difficulty"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Difficulty Level</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select a difficulty level" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {difficulties.map((difficulty, index) => (
-                                  <SelectItem key={index} value={difficulty.id}>
-                                    {difficulty.level}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </React.Fragment>
-                  ))}
-                  <Button className="w-full font-bold px-4 py-2" type="submit">
-                    Schedule Interview
-                  </Button>
-                </form>
-              </Form>
+                        );
+                      }}
+                    />
+                    <FormField
+                      control={form2.control}
+                      name="difficulty"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Difficulty Level</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a difficulty level" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {difficulties.map((difficulty, index) => (
+                                <SelectItem key={index} value={difficulty.id}>
+                                  {difficulty.level}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      className="w-full font-bold px-4 py-2"
+                      type="submit"
+                    >
+                      Schedule Interview
+                    </Button>
+                  </form>
+                </Form>
+              )}
             </>
+          ) : (
+            <h2 className="text-sm md:text-md font-medium mt-6 mb-2 text-center">
+              No Experts Found, Change Interview Details & Try Again!
+            </h2>
           )}
         </div>
         <div className="w-full md:w-1/2 border p-4 rounded-lg">
@@ -297,14 +350,49 @@ const Interviews = () => {
                   </FormItem>
                 )}
               />
-              <h2 className="text-sm md:text-md font-medium mt-6 mb-2">
-                Interviews Scheduled
-              </h2>
               <Button className="w-full font-bold px-4 py-2" type="submit">
-                Cancel Scheduled Interviews
+                View Interviews
               </Button>
             </form>
           </Form>
+          <div className="mt-5">
+            <Form {...form4}>
+              <form
+                onSubmit={form4.handleSubmit(cancelInterviews)}
+                className="w-full space-y-6"
+              >
+                <FormField
+                  control={form4.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Interviews Scheduled</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="none" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Nothing
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button className="w-full font-bold px-4 py-2" type="submit">
+                  Cancel Scheduled Interviews
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
       </div>
     </div>

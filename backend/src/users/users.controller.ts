@@ -22,13 +22,16 @@ export class UsersController {
     }
 
     @Get('experts')
-    async getExperts(@Query('formData') formData: string,) {
+    async getExperts(@Query('formData') formData: string) {
         return this.usersService.getExperts(formData)
     }
 
     @Get('interviews')
-    async getInterviews() {
-        return this.usersService.getInterviews();
+    async getInterviews(
+        @Query('slot') slot: string,
+        @Query('userId') userId: string,
+    ) {
+        return this.usersService.getInterviews(slot, userId);
     }
 
     @Post('interview')

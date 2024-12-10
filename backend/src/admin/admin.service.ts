@@ -9,10 +9,11 @@ import { User, UserDocument } from 'src/common/schemas/users.schema';
 import { EmailService } from 'src/email/email.service';
 import { Interview, InterviewDocument } from 'src/common/schemas/interview.schema';
 import { ConfigService } from '@nestjs/config';
-import { LoginCredDto } from 'src/common/dto/login-cred.dto';
-import { StatsDto } from 'src/common/dto/stats.dto';
-import { UserDto } from 'src/common/dto/user.dto';
-import { ExpertDto } from 'src/common/dto/expert.dto';
+import { LoginCredDTO } from 'src/common/dtos/login-cred.dto';
+import { UserDTO } from 'src/common/dtos/user.dto';
+import { ExpertDTO } from 'src/common/dtos/expert.dto';
+import { StatsDTO } from 'src/common/dtos/stats.dto';
+
 
 @Injectable()
 export class AdminService {
@@ -25,7 +26,7 @@ export class AdminService {
         private readonly configService: ConfigService,
         private readonly emailService: EmailService) { }
 
-    async adminLogin(adminData: LoginCredDto): Promise<{ token: string }> {
+    async adminLogin(adminData: LoginCredDTO): Promise<{ token: string }> {
         try {
             const { email, password } = adminData;
             const admin = await this.adminModel.findOne({ email });
@@ -48,7 +49,7 @@ export class AdminService {
         }
     }
 
-    async getUsers(): Promise<UserDto[]> {
+    async getUsers(): Promise<UserDTO[]> {
         try {
             let users = await this.userModel.find({},
                 { _id: 0, fullname: 1, email: 1, subscription: 1, active: 1 });
@@ -62,7 +63,7 @@ export class AdminService {
         }
     }
 
-    async updateUserStatus(userData: UserDto): Promise<Partial<UserDto>> {
+    async updateUserStatus(userData: UserDTO): Promise<Partial<UserDTO>> {
         try {
             const { email } = userData;
             let existingUser = await this.userModel.findOne({ email });
@@ -79,7 +80,7 @@ export class AdminService {
 
     }
 
-    async getExperts(): Promise<ExpertDto[]> {
+    async getExperts(): Promise<ExpertDTO[]> {
         try {
             let experts = await this.expertModel.find({},
                 { _id: 0, fullname: 1, email: 1, specialization: 1, active: 1 });
@@ -94,7 +95,7 @@ export class AdminService {
 
     }
 
-    async updateExpertStatus(expertData: Partial<ExpertDto>): Promise<Partial<ExpertDto>> {
+    async updateExpertStatus(expertData: Partial<ExpertDTO>): Promise<Partial<ExpertDTO>> {
         try {
             const { email } = expertData;
             let existingExpert = await this.expertModel.findOne({ email });
@@ -111,7 +112,7 @@ export class AdminService {
 
     }
 
-    async addExpert(expertData: ExpertDto): Promise<Expert> {
+    async addExpert(expertData: ExpertDTO): Promise<Expert> {
         try {
             const { email, fullname, yearsOfExperience } = expertData;
             let existingExpert = await this.expertModel.findOne({ email });
@@ -143,7 +144,7 @@ export class AdminService {
         }
     }
 
-    async getStatistics(): Promise<StatsDto> {
+    async getStatistics(): Promise<StatsDTO> {
         try {
             const totalUsers = await this.userModel.countDocuments();
             const totalExperts = await this.expertModel.countDocuments();
