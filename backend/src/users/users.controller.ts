@@ -17,7 +17,6 @@ export class UsersController {
     async updateUser(
         @Param('userId') userId: string,
         @Body() userData: Partial<User>) {
-        console.log(userId, userData);
         return this.usersService.updateUser(userId, userData);
     }
 
@@ -42,5 +41,10 @@ export class UsersController {
     @Get('interview-dates/:userId')
     getDates(@Param('userId') userId: string) {
         return this.usersService.getDates(userId);
+    }
+
+    @Get('current-plan/:userId')
+    findPlan(@Param('userId') userId: string) {
+        return this.usersService.findPlan(userId);
     }
 }

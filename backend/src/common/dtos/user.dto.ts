@@ -1,6 +1,8 @@
+import { Types } from "mongoose";
+
 export class UserDTO {
     fullname: string;
     email: string;
-    subscription: boolean;
+    subscription: Types.ObjectId;
     active: boolean;
 }

@@ -57,7 +57,6 @@ export class AuthController {
                 fullname: `${firstName} ${lastName}`,
                 email,
                 password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD'),
-                subscription: false,
                 active: true
             });
             const frontendURL = this.configService.get<string>('FRONTEND_URL');

@@ -10,10 +10,12 @@ import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from 'src/email/email.module';
 import { UsersService } from 'src/users/users.service';
 import { LinkedInStrategy } from 'src/common/strategy/linkedin.strategy';
+import { StripeModule } from 'src/stripe/stripe.module';
 
 @Module({
   imports: [
     UsersModule,
+    StripeModule,
     PassportModule,
     PassportModule.register({ defaultStrategy: 'google' }),
     PassportModule.register({ defaultStrategy: 'linkedin' }),

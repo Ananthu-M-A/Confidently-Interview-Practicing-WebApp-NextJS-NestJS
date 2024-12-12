@@ -1,12 +1,13 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hash } from 'bcryptjs';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { ExpertDTO } from 'src/common/dtos/expert.dto';
 import { UserDTO } from 'src/common/dtos/user.dto';
 import { ExpertDocument } from 'src/common/schemas/experts.schema';
 import { InterviewDocument } from 'src/common/schemas/interview.schema';
 import { User, UserDocument } from 'src/common/schemas/users.schema';
+import { StripeService } from 'src/stripe/stripe.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,7 @@ export class UsersService {
         @InjectModel('User') private readonly userModel: Model<UserDocument>,
         @InjectModel('Expert') private readonly expertModel: Model<ExpertDocument>,
         @InjectModel('Interview') private readonly interviewModel: Model<InterviewDocument>,
+        private readonly stripeService: StripeService
     ) { }
 
     async getUser(userId: string): Promise<Partial<UserDTO>> {
@@ -119,7 +121,7 @@ export class UsersService {
                 time: { $gte: startOfDay.toISOString(), $lte: endOfDay.toISOString() },
             });
             console.log(interviews);
-            
+
             return interviews.map((interview) => ({
                 id: interview._id,
                 expertId: interview.expertId,
@@ -132,4 +134,26 @@ export class UsersService {
             throw new InternalServerErrorException(`Loading Interviews Error`);
         }
     }
+
+    async findPlan(userId: string): Promise<{ subscription: boolean }> {
+        try {
+            const user = await this.userModel.findOne({
+                _id: userId
+            }, {
+                _id: 0, subscription: 1
+            });
+            if (!user) {
+                throw new UnauthorizedException(`User not found`);
+            }
+            if (user.subscription) {
+                return { subscription: true };
+            } else {
+                return { subscription: false };
+            }
+        } catch (error) {
+            console.error("Finding Subscription Error:", error);
+            throw new InternalServerErrorException(`Finding Subscription Error`);
+        }
+    }
+
 }

@@ -6,6 +6,8 @@ import { DatabaseModule } from './common/modules/database.module';
 import { AuthModule } from './auth/auth.module';
 import { EnvConfigModule } from './common/modules/config.module';
 import { EmailModule } from './email/email.module';
+import { StripeService } from './stripe/stripe.service';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { EmailModule } from './email/email.module';
     AdminModule,
     AuthModule,
     AppModule,
-    EmailModule
+    EmailModule,
+    StripeModule
   ],
+  providers: [StripeService],
 })
 export class AppModule { }

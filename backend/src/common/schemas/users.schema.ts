@@ -1,7 +1,7 @@
 import { NotAcceptableException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hash } from 'bcryptjs';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
 
@@ -17,8 +17,8 @@ export class User {
     @Prop()
     fullname: string
 
-    @Prop({ required: true, default: false })
-    subscription: boolean
+    @Prop({ ref: 'Subscription'})
+    subscription: Types.ObjectId
 
     @Prop({ required: true, default: true })
     active: boolean
