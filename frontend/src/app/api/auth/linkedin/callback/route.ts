@@ -46,6 +46,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ user });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error instanceof Error)
+      return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

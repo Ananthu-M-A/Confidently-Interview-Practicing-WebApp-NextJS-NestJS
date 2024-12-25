@@ -17,6 +17,7 @@ import { StripeModule } from 'src/stripe/stripe.module';
     UsersModule,
     StripeModule,
     PassportModule,
+    PassportModule.register({ session: true }),
     PassportModule.register({ defaultStrategy: 'google' }),
     PassportModule.register({ defaultStrategy: 'linkedin' }),
     JwtModule.registerAsync({
