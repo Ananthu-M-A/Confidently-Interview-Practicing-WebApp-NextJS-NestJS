@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,38 +19,27 @@ export class StripeService {
     });
   }
 
-  async subscribe(userId: string, plan: string): Promise<{ paymentUrl: string }> {
+  async subscribe(userId: string): Promise<{ paymentUrl: string }> {
     try {
 
       const user = await this.userModel.findOne(
         { _id: userId },
-        { _id: 0, email: 1 }
+        { _id: 0, email: 1, subscription: 1 }
       );
+
       if (!user) {
         throw new UnauthorizedException("User not found")
       }
-      if (!plan) {
-        throw new Error("No plan found.");
-      }
 
-      let priceId: string;
-
-      switch (JSON.parse(plan)) {
-        case "monthly":
-          priceId = this.configService.get<string>('STRIPE_PRICE_ID_MONTHLY');
-          break;
-        case "weekly":
-          priceId = this.configService.get<string>('STRIPE_PRICE_ID_WEEKLY');
-          break;
-        default:
-          throw new Error("No matching plan found.");
+      if (user.subscription) {
+        throw new ConflictException("Subscription already active")
       }
 
       const session = await this.stripe.checkout.sessions.create({
         mode: 'subscription',
         line_items: [
           {
-            price: priceId,
+            price: this.configService.get<string>('STRIPE_PRICE_ID_MONTHLY'),
             quantity: 1,
           }
         ],
@@ -87,7 +76,7 @@ export class StripeService {
         currency,
         amount: amount_total / 100,
       })
-      newSubscription.save();
+      await newSubscription.save();
 
       await this.userModel.updateOne({ _id: user._id }, { subscription: newSubscription._id });
 

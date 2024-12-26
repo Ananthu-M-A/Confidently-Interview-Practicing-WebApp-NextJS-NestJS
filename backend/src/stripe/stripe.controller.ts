@@ -8,9 +8,8 @@ export class StripeController {
 
     @Get('subscription/:userId')
     async subscribe(
-        @Query('plan') plan: string,
         @Param('userId') userId: string) {
-        return this.stripeService.subscribe(userId, plan);
+        return this.stripeService.subscribe(userId);
     }
 
     @Get('success')

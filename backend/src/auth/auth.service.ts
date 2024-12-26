@@ -77,8 +77,11 @@ export class AuthService {
             Object.assign(user, { password: this.configService.get<string>('CONFIDENTLY_DEFAULT_PASSWORD') });
             await user.save();
             await this.emailService.sendResetMail(user.email);
-            return;
+            return 'Password reset link sent';
         } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
             console.log("Reset Password Error:", error);
             throw new InternalServerErrorException(`Reset Password Error`)
         }
