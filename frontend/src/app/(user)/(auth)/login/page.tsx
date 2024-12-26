@@ -61,7 +61,7 @@ export default function LoginPage() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await login(data.email, data.password);
-      window.location.reload();
+      router.push('/user');
     } catch (error) {
       console.error("Login failed:", error);
     }

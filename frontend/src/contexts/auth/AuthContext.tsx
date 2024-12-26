@@ -14,6 +14,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   subscription: boolean;
+  setSubscription: React.Dispatch<React.SetStateAction<boolean>>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (
@@ -56,11 +57,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkSubscription = async () => {
       try {
-        if(user){
-          const { data } = await axiosClient.get(`/user/current-plan/${user?.userId}`);
+        if (user) {
+          const { data } = await axiosClient.get(
+            `/user/current-plan/${user.userId}`
+          );
           setSubscription(data.subscription);
         }
-        
       } catch (error) {
         console.error("Subscription check failed:", error);
       }
@@ -208,6 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         user,
         subscription,
+        setSubscription,
         login,
         logout,
         register,

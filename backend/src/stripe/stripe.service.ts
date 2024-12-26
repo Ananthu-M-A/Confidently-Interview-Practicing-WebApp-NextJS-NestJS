@@ -45,7 +45,7 @@ export class StripeService {
         ],
         customer_email: user.email,
         success_url: `${this.configService.get<string>(`FRONTEND_URL`)}/user/subscriptions/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${this.configService.get<string>(`BACKEND_URL`)}/stripe/cancel`
+        cancel_url: `${this.configService.get<string>(`FRONTEND_URL`)}/user/subscriptions`
       })
       return { paymentUrl: session.url };
     } catch (error) {
@@ -56,12 +56,22 @@ export class StripeService {
 
   async successPayment(sessionId: string) {
     try {
-      const session =
-        await this.stripe.checkout.sessions.retrieve(JSON.parse(sessionId));
+      const session = await this.stripe.checkout.sessions.retrieve(
+        JSON.parse(sessionId)
+      );
       const currentDate = new Date();
       const endDate = new Date(currentDate);
       endDate.setDate(currentDate.getDate() + 30);
       const { customer_email, subscription, amount_total, currency } = session;
+
+      const existingSubscription = await this.subscriptionModel.findOne({
+        subscriptionId: subscription.toString(),
+      });
+
+      if (existingSubscription) {
+        return { message: "Subscription already processed." };
+      }
+
       const user = await this.userModel.findOne(
         { email: customer_email },
         { _id: 1 }
@@ -75,15 +85,18 @@ export class StripeService {
         status: "active",
         currency,
         amount: amount_total / 100,
-      })
+      });
+
       await newSubscription.save();
+      await this.userModel.updateOne(
+        { _id: user._id },
+        { subscription: newSubscription._id }
+      );
 
-      await this.userModel.updateOne({ _id: user._id }, { subscription: newSubscription._id });
-
-      return { message: "Payment Successfull" };
+      return { message: "Payment Successful" };
     } catch (error) {
-      console.log(error);
-      throw new Error(`Stripe Error Occured, Try again later`)
+      console.error(error);
+      throw new Error("Stripe Error Occurred, Try again later");
     }
   }
 }

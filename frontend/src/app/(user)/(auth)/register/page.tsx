@@ -69,8 +69,8 @@ export default function SignupPage() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await register(data.email, data.password, data.fullname);
+      router.push('/user');
       console.log("Registration Successfull");
-      window.location.reload();
     } catch (error) {
       console.error("Registration failed:", error);
     }

@@ -2,6 +2,7 @@
 
 import Loading from "@/app/loading";
 import WithAuth from "@/components/auth-guards/WithAuth";
+import { useAuth } from "@/contexts/auth/AuthContext";
 import axiosClient from "@/lib/axiosClient";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,6 +12,7 @@ const SuccessPage = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const router = useRouter();
+  const { setSubscription } = useAuth();
 
   useEffect(() => {
     async function updateSubscription() {
@@ -20,6 +22,7 @@ const SuccessPage = () => {
             sessionId: JSON.stringify(sessionId),
           },
         });
+        setSubscription(true);
         router.push("/user/subscriptions");
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -30,7 +33,7 @@ const SuccessPage = () => {
       }
     }
     updateSubscription();
-  }, [router, sessionId]);
+  }, [router, sessionId, setSubscription]);
 
   return (
     <>
