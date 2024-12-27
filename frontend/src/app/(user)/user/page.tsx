@@ -60,7 +60,7 @@ const UserHome = () => {
             </Button>
             <Button
               variant={"outline"}
-              onClick={() => router.push("")}
+              onClick={() => router.push("/user/interviews")}
               className="font-bold px-4 py-2"
             >
               View All Upcoming Interviews

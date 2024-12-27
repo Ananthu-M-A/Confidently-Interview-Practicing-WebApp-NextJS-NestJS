@@ -1,5 +1,5 @@
 export interface Interview {
-    _id: string,
+    id: string,
     expertId: string,
     userId: string,
     time: string,

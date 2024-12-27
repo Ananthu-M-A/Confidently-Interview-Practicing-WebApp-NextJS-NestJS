@@ -18,7 +18,7 @@ export class Interview {
     @Prop({ required: true })
     difficulty: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, enum: ["scheduled", "cancelled", "active", "completed"] })
     status: string;
 
 }

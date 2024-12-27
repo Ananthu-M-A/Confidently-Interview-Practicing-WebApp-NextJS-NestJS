@@ -76,7 +76,8 @@ export class UsersService {
 
     async getDates(userId: string): Promise<string[]> {
         try {
-            const dates = await this.interviewModel.find({ userId }, { _id: 0, time: 1 });
+            const user = await this.userModel.findOne({ _id: userId });
+            const dates = await this.interviewModel.find({ userId: user._id }, { _id: 0, time: 1 });
             const uniqueDates = Array.from(
                 new Set(dates.map(date => new Date(date.time).toISOString().split('T')[0]))
             );
@@ -119,14 +120,12 @@ export class UsersService {
             startOfDay.setUTCHours(0, 0, 0, 0);
             const endOfDay = new Date(inputDate.getTime() - timeZoneOffset);
             endOfDay.setUTCHours(23, 59, 59, 999);
-            console.log("Start of Day (UTC):", startOfDay.toISOString());
-            console.log("End of Day (UTC):", endOfDay.toISOString());
+            const user = await this.userModel.findOne({ _id: userId });
             const interviews = await this.interviewModel.find({
-                userId,
+                userId: user._id,
+                status: "scheduled",
                 time: { $gte: startOfDay.toISOString(), $lte: endOfDay.toISOString() },
-            });
-            console.log(interviews);
-
+            }).populate('expertId');
             return interviews.map((interview) => ({
                 id: interview._id,
                 expertId: interview.expertId,
@@ -137,6 +136,25 @@ export class UsersService {
         } catch (error) {
             console.error("Loading Interviews Error:", error);
             throw new InternalServerErrorException(`Loading Interviews Error`);
+        }
+    }
+
+    async cancelInterview(interviewId: string) {
+        try {
+            const interview = await this.interviewModel.findOne({ _id: interviewId });
+            await this.interviewModel.updateOne({
+                _id: interview._id
+            }, {
+                $set: { status: "cancelled" }
+            });
+
+            await this.expertModel.findByIdAndUpdate(
+                { _id: interview.expertId },
+                { $push: { availability: interview.time } });
+            return { message: "Interview Cancelled" }
+        } catch (error) {
+            console.error("Cancelling Interview Error:", error);
+            throw new InternalServerErrorException(`Cancelling Interview Error`);
         }
     }
 

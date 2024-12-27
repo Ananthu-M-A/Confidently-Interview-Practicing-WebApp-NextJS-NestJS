@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../common/schemas/users.schema';
 
@@ -25,10 +25,10 @@ export class UsersController {
         return this.usersService.getExperts(formData)
     }
 
-    @Get('interviews')
+    @Get('interviews/:userId')
     async getInterviews(
         @Query('slot') slot: string,
-        @Query('userId') userId: string,
+        @Param('userId') userId: string,
     ) {
         return this.usersService.getInterviews(slot, userId);
     }
@@ -45,6 +45,11 @@ export class UsersController {
     @Get('interview-dates/:userId')
     getDates(@Param('userId') userId: string) {
         return this.usersService.getDates(userId);
+    }
+
+    @Patch('interview/:interviewId/cancel')
+    cancelInterview(@Param('interviewId') interviewId: string) {
+        return this.usersService.cancelInterview(interviewId);
     }
 
     @Get('current-plan/:userId')

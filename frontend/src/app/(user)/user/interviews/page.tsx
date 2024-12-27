@@ -44,7 +44,7 @@ const FormSchema3 = z.object({
 });
 
 const FormSchema4 = z.object({
-  type: z.string(),
+  interviewId: z.string(),
 });
 
 const Interviews = () => {
@@ -90,15 +90,17 @@ const Interviews = () => {
 
   async function getInterviews(formData: z.infer<typeof FormSchema3>) {
     try {
-      const { data } = await axiosClient.get(`/user/interviews`, {
-        params: {
-          slot: JSON.stringify(formData.slot),
-          userId: JSON.stringify(user?.userId),
-        },
-      });
-      console.log(data);
-
-      setInterviews(data);
+      if (user) {
+        const { data } = await axiosClient.get(
+          `/user/interviews/${user.userId}`,
+          {
+            params: {
+              slot: JSON.stringify(formData.slot),
+            },
+          }
+        );
+        setInterviews(data);
+      }
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
       throw error;
@@ -107,9 +109,12 @@ const Interviews = () => {
 
   async function cancelInterviews(formData: z.infer<typeof FormSchema4>) {
     try {
-      console.log(formData);
+      await axiosClient.patch(
+        `/user/interview/${formData.interviewId}/cancel`
+      );
+      toast.success("Interview Cancelled Successfully")
     } catch (error) {
-      console.error("Unsuccessful attempt to Login:", error);
+      console.error("Unsuccessful attempt cancel interview:", error);
       throw error;
     }
   }
@@ -146,8 +151,12 @@ const Interviews = () => {
   useEffect(() => {
     async function getDates() {
       try {
-        const response = await axiosClient.get(`/user/interview-dates/2`);
-        setDates(response.data);
+        if (user) {
+          const response = await axiosClient.get(
+            `/user/interview-dates/${user.userId}`
+          );
+          setDates(response.data);
+        }
       } catch (error) {
         console.error("Error fetching interview dates:", error);
         toast.error("Failed to load interview dates");
@@ -155,7 +164,7 @@ const Interviews = () => {
     }
 
     getDates();
-  }, []);
+  }, [user]);
 
   return (
     <div className="px-4 py-6">
@@ -369,44 +378,61 @@ const Interviews = () => {
               </Button>
             </form>
           </Form>
-          <div className="mt-5">
-            <Form {...form4}>
-              <form
-                onSubmit={form4.handleSubmit(cancelInterviews)}
-                className="w-full space-y-6"
-              >
-                <FormField
-                  control={form4.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>Interviews Scheduled</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col space-y-1"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value="none" />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              Nothing
-                            </FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button className="w-full font-bold px-4 py-2" type="submit">
-                  Cancel Scheduled Interviews
-                </Button>
-              </form>
-            </Form>
-          </div>
+          {interviews.length !== 0 ? (
+            <div className="mt-5">
+              <Form {...form4}>
+                <form
+                  onSubmit={form4.handleSubmit(cancelInterviews)}
+                  className="w-full space-y-6"
+                >
+                  <FormField
+                    control={form4.control}
+                    name="interviewId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Interviews Scheduled</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex flex-col space-y-1"
+                          >
+                            {interviews.map((interview, index) => (
+                              <FormItem
+                                key={index}
+                                className="flex items-center space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <RadioGroupItem value={interview.id} />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {new Date(interview.time).toLocaleTimeString(
+                                    [],
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    }
+                                  )}
+                                </FormLabel>
+                              </FormItem>
+                            ))}
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button className="w-full font-bold px-4 py-2" type="submit">
+                    Cancel Scheduled Interviews
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          ) : (
+            <h2 className="text-sm md:text-md font-medium mt-6 mb-2 text-center">
+              No Interviews Found, Change Date & Try Again!
+            </h2>
+          )}
         </div>
       </div>
     </div>
