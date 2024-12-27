@@ -13,7 +13,7 @@ export class Interview {
     userId: Types.ObjectId;
 
     @Prop({ required: true })
-    time: string;
+    time: Date;
 
     @Prop({ required: true })
     difficulty: string;

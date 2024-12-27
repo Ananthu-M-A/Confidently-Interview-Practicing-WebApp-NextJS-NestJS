@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../common/schemas/users.schema';
 
@@ -33,9 +33,13 @@ export class UsersController {
         return this.usersService.getInterviews(slot, userId);
     }
 
-    @Post('interview')
-    async scheduleInterview(@Body() formData: { difficulty: string, time: string }) {
-        return this.usersService.scheduleInterview(formData)
+    @Post('interview/:userId')
+    async scheduleInterview(
+        @Body() formData: { difficulty: string, time: string },
+        @Param('userId') userId: string,
+        @Query('expertId') expertId: string,
+    ) {
+        return this.usersService.scheduleInterview(formData, expertId, userId)
     }
 
     @Get('interview-dates/:userId')

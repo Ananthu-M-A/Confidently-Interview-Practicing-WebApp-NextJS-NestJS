@@ -87,17 +87,22 @@ export class UsersService {
         }
     }
 
-    async scheduleInterview(formData: { difficulty: string, time: string }) {
+    async scheduleInterview(formData: { difficulty: string, time: string }, expertId: string, userId: string) {
         try {
             const { time, difficulty } = formData;
+            const user = await this.userModel.findOne({ _id: userId }, { _id: 1 });
+            const expert = await this.expertModel.findOne({ _id: expertId }, { _id: 1 });
             const newInterview = new this.interviewModel({
-                expertId: "1",
-                userId: "2",
-                time,
+                expertId: expert._id,
+                userId: user._id,
+                time: new Date(time),
                 difficulty,
                 status: "scheduled"
             })
             await newInterview.save();
+
+            await this.expertModel.findByIdAndUpdate(expertId, { $pull: { availability: new Date(time) } });
+
             return newInterview;
         } catch (error) {
             console.log("Scheduling Interview Error:", error);

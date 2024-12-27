@@ -93,11 +93,11 @@ const Interviews = () => {
       const { data } = await axiosClient.get(`/user/interviews`, {
         params: {
           slot: JSON.stringify(formData.slot),
-          userId: JSON.stringify("2"),
+          userId: JSON.stringify(user?.userId),
         },
       });
       console.log(data);
-      
+
       setInterviews(data);
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
@@ -116,7 +116,13 @@ const Interviews = () => {
 
   async function scheduleInterview(formData: z.infer<typeof FormSchema2>) {
     try {
-      await axiosClient.post(`/user/interview`, formData);
+      if (user) {
+        await axiosClient.post(`/user/interview/${user.userId}`, formData, {
+          params: {
+            expertId: selectedExpert,
+          },
+        });
+      }
       window.location.reload();
       toast.success("New Interview Scheduled Successfully");
     } catch (error) {
@@ -200,7 +206,15 @@ const Interviews = () => {
                   <FormItem>
                     <FormLabel>Date and Time</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input
+                        type="date"
+                        min={new Date(
+                          new Date().setDate(new Date().getDate() + 1)
+                        )
+                          .toISOString()
+                          .slice(0, 10)}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

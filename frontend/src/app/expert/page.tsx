@@ -72,7 +72,9 @@ const ExpertHome = () => {
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-5 mt-4">
             <Input
               type="datetime-local"
-              min={new Date().toISOString().slice(0, 16)}
+              min={new Date(new Date().setDate(new Date().getDate() + 1))
+                .toISOString()
+                .slice(0, 16)}
               onChange={(e) => {
                 setSlot(e.target.value);
               }}
