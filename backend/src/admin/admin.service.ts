@@ -26,7 +26,10 @@ export class AdminService {
         private readonly configService: ConfigService,
         private readonly emailService: EmailService) { }
 
-    async adminLogin(adminData: LoginCredDTO): Promise<{ token: string }> {
+    async adminLogin(adminData: LoginCredDTO): Promise<{
+        token: string,
+        _id: Object,
+    }> {
         try {
             const { email, password } = adminData;
             const admin = await this.adminModel.findOne({ email });
@@ -39,7 +42,7 @@ export class AdminService {
             }
             const payload = { username: admin.email, sub: admin._id };
             const token = this.jwtService.sign(payload);
-            return { token };
+            return { token, _id: admin._id };
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw error;

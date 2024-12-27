@@ -69,6 +69,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
         password,
       });
       localStorage.setItem("admin-token", data.token);
+      setAdmin({_id:data._id, adminname: "Administrator"})
       toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {

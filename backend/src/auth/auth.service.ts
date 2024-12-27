@@ -40,7 +40,14 @@ export class AuthService {
 
     }
 
-    async userLogin(loginCredDto: LoginCredDTO): Promise<{ token: string }> {
+    async userLogin(loginCredDto: LoginCredDTO): Promise<{
+        token: string,
+        userData: {
+            userId: Object,
+            username: string,
+            active: boolean
+        }
+    }> {
         try {
             const { email, password } = loginCredDto;
             const user = await this.userModel.findOne({ email });
@@ -56,7 +63,14 @@ export class AuthService {
             }
 
             const payload = { username: user.fullname, sub: user._id };
-            return { token: this.jwtService.sign(payload) };
+            return {
+                token: this.jwtService.sign(payload),
+                userData: {
+                    userId: user._id,
+                    username: user.fullname,
+                    active: user.active
+                }
+            };
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw error;

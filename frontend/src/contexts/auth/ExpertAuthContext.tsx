@@ -8,6 +8,7 @@ import axiosClient from "@/lib/axiosClient";
 interface Expert {
   userId: string;
   username: string;
+  active: boolean;
 }
 
 interface ExpertContextType {
@@ -49,9 +50,9 @@ export const ExpertProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password,
       });
-      const { token } = response.data;
+      const { token, expertData } = response.data;
       localStorage.setItem("expert-token", token);
-      setExpert(expert);
+      setExpert(expertData);
       toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {

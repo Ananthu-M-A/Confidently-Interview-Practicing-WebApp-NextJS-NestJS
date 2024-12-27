@@ -76,8 +76,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password,
       });
-      const { token } = response.data;
+      const { token, userData } = response.data;
       localStorage.setItem("token", token);
+      setUser(userData);
       toast.success("Successfully Logged In");
     } catch (error) {
       if (axios.isAxiosError(error)) {

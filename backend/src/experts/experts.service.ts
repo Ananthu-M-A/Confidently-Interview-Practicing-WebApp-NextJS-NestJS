@@ -15,7 +15,14 @@ export class ExpertsService {
         private readonly jwtService: JwtService
     ) { }
 
-    async expertLogin(expertData: LoginCredDTO): Promise<{ token: string }> {
+    async expertLogin(expertData: LoginCredDTO): Promise<{
+        token: string,
+        expertData: {
+            userId: Object,
+            username: string,
+            active: boolean
+        }
+    }> {
         try {
             const { email, password } = expertData;
             const expert = await this.expertModel.findOne({ email });
@@ -25,7 +32,14 @@ export class ExpertsService {
             if (!passwordMatched)
                 throw new UnauthorizedException(`Email or password entered is incorrect`);
             const payload = { username: expert.fullname, sub: expert._id };
-            return { token: this.jwtService.sign(payload) };
+            return {
+                token: this.jwtService.sign(payload),
+                expertData: {
+                    userId: expert._id,
+                    username: expert.fullname,
+                    active: expert.active
+                }
+            };
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw error;
@@ -87,7 +101,7 @@ export class ExpertsService {
 
     async viewInterviews(expertId: string): Promise<any[]> {
         try {
-            return [];            
+            return [];
         } catch (error) {
             console.log("Interviews Loading Error:", error);
             throw new InternalServerErrorException(`Interviews Loading Error`);
@@ -96,7 +110,7 @@ export class ExpertsService {
 
     async submitFeedback(interviewId: string, feedback: any): Promise<string> {
         try {
-            return `Feedback for interview ${interviewId} submitted.`;            
+            return `Feedback for interview ${interviewId} submitted.`;
         } catch (error) {
             console.log("Submitting Feedback Error:", error);
             throw new InternalServerErrorException(`Submitting Feedback Error`);
