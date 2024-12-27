@@ -13,6 +13,9 @@ export class Interview {
     userId: Types.ObjectId;
 
     @Prop({ required: true })
+    subject: string;
+
+    @Prop({ required: true })
     time: Date;
 
     @Prop({ required: true })

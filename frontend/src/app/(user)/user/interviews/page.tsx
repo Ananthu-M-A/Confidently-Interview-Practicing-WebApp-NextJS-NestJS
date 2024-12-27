@@ -28,6 +28,7 @@ import { Interview } from "@/interfaces/interview.interface";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import axiosClient from "@/lib/axiosClient";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useRouter } from "next/navigation";
 
 const FormSchema1 = z.object({
   subject: z.string(),
@@ -59,6 +60,7 @@ const Interviews = () => {
   const [dates, setDates] = useState<string[]>([]);
   const [selectedExpert, setSelectedExpert] = useState<string | null>(null);
   const { user } = useAuth();
+  const router = useRouter();
 
   const form1 = useForm<z.infer<typeof FormSchema1>>({
     resolver: zodResolver(FormSchema1),
@@ -112,7 +114,10 @@ const Interviews = () => {
       await axiosClient.patch(
         `/user/interview/${formData.interviewId}/cancel`
       );
-      toast.success("Interview Cancelled Successfully")
+      toast.success("Interview Cancelled Successfully");
+      setInterviews((prev) =>
+        prev.filter((interview) => interview.id !== formData.interviewId)
+      );
     } catch (error) {
       console.error("Unsuccessful attempt cancel interview:", error);
       throw error;
@@ -128,7 +133,7 @@ const Interviews = () => {
           },
         });
       }
-      window.location.reload();
+      router.push('/user')
       toast.success("New Interview Scheduled Successfully");
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);

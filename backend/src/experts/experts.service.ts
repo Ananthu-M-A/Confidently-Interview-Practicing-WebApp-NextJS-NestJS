@@ -6,12 +6,14 @@ import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { LoginCredDTO } from 'src/common/dtos/login-cred.dto';
 import { ExpertDTO } from 'src/common/dtos/expert.dto';
+import { Interview, InterviewDocument } from 'src/common/schemas/interview.schema';
 
 @Injectable()
 export class ExpertsService {
 
     constructor(
         @InjectModel(Expert.name) private readonly expertModel: Model<ExpertDocument>,
+        @InjectModel(Interview.name) private readonly interviewModel: Model<InterviewDocument>,
         private readonly jwtService: JwtService
     ) { }
 
@@ -101,7 +103,15 @@ export class ExpertsService {
 
     async viewInterviews(expertId: string): Promise<any[]> {
         try {
-            return [];
+            const expert = await this.expertModel.findOne({ _id: expertId });
+            const interviews = await this.interviewModel.find({
+                expertId: expert._id,
+                $or:[
+                    {status: "scheduled"},
+                    {status: "active"},
+                ]
+            })
+            return interviews;
         } catch (error) {
             console.log("Interviews Loading Error:", error);
             throw new InternalServerErrorException(`Interviews Loading Error`);

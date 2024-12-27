@@ -1,6 +1,7 @@
 export interface Interview {
     id: string,
     expertId: string,
+    subject:string,
     userId: string,
     time: string,
     difficulty: string,

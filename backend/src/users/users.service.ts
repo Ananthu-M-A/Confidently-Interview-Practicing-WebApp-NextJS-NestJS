@@ -77,7 +77,10 @@ export class UsersService {
     async getDates(userId: string): Promise<string[]> {
         try {
             const user = await this.userModel.findOne({ _id: userId });
-            const dates = await this.interviewModel.find({ userId: user._id }, { _id: 0, time: 1 });
+            const dates = await this.interviewModel.find(
+                { userId: user._id, status: "scheduled" },
+                { _id: 0, time: 1 }
+            );
             const uniqueDates = Array.from(
                 new Set(dates.map(date => new Date(date.time).toISOString().split('T')[0]))
             );
@@ -92,10 +95,11 @@ export class UsersService {
         try {
             const { time, difficulty } = formData;
             const user = await this.userModel.findOne({ _id: userId }, { _id: 1 });
-            const expert = await this.expertModel.findOne({ _id: expertId }, { _id: 1 });
+            const expert = await this.expertModel.findOne({ _id: expertId }, { _id: 1, specialization: 1 });
             const newInterview = new this.interviewModel({
                 expertId: expert._id,
                 userId: user._id,
+                subject: expert.specialization,
                 time: new Date(time),
                 difficulty,
                 status: "scheduled"

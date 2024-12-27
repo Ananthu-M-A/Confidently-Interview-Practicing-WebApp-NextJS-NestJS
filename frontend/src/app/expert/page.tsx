@@ -4,19 +4,19 @@ import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
+import { Interview } from "@/interfaces/interview.interface";
 import axiosClient from "@/lib/axiosClient";
 import { isAxiosError } from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const ExpertHome = () => {
   const { expert } = useExpertAuth();
   const [slot, setSlot] = useState<string>("");
+  const [interviews, setInterviews] = useState<Interview[]>([]);
 
   async function updateAvailability() {
     try {
-      console.log(slot);
-
       await axiosClient.patch(`/expert/availability/${expert?.userId}`, {
         availability: slot,
       });
@@ -35,35 +35,70 @@ const ExpertHome = () => {
     }
   }
 
+  useEffect(() => {
+    async function loadInterviews() {
+      try {
+        if (expert) {
+          const { data } = await axiosClient.get(
+            `/expert/interviews/${expert.userId}`
+          );
+          setInterviews(data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    loadInterviews();
+  }, [expert]);
+
   return (
     <div className="px-4 py-6 sm:px-8">
       <h1 className="text-xl font-bold mb-6 sm:text-2xl md:text-4xl">
         Expert Dashboard
       </h1>
-      <div>
-        <h2 className="text-lg font-bold mb-4 sm:text-xl">
-          Upcoming Interviews
-        </h2>
-        <div
-          className="flex gap-4 overflow-x-auto scrollbar-hide"
-          style={{ WebkitOverflowScrolling: "touch" }}
-        >
-          {[1, 2, 3, 4, 5].map((interview, index) => (
-            <div
-              key={index}
-              className="min-w-[250px] flex-shrink-0 border p-4 rounded-lg border-black mb-2"
-            >
-              <p className="text-sm sm:text-base">{`Date: ${expert}`}</p>
-              <p className="text-sm sm:text-base">{`Subject: ${expert}`}</p>
-              <p className="text-sm sm:text-base">{`Time: ${expert}`}</p>
-              <Button className="font-bold px-4 py-2 mt-2">Join Now</Button>
-              <Button variant={"outline"} className="font-bold px-4 py-2 mt-2">
-                Cancel
-              </Button>
-            </div>
-          ))}
+      {interviews.length !== 0 && (
+        <div>
+          <h2 className="text-lg font-bold mb-4 sm:text-xl">
+            Upcoming Interviews
+          </h2>
+          <div
+            className="flex gap-4 overflow-x-auto scrollbar-hide"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
+            {interviews.map((interview, index) => (
+              <div
+                key={index}
+                className="min-w-[250px] flex-shrink-0 border p-4 rounded-lg border-black mb-2"
+              >
+                <p className="text-sm sm:text-base">{`Date: ${new Date(
+                  interview.time
+                ).toDateString()}`}</p>
+                <p className="text-sm sm:text-base">{`Subject: ${interview.subject}`}</p>
+                <p className="text-sm sm:text-base">{`Time: ${new Date(
+                  interview.time
+                ).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}`}</p>
+                <div className="flex justify-center">
+                  {interview.status === "active" ? (
+                    <Button className="font-bold px-4 py-2 mt-2">
+                      Join Now
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={"outline"}
+                      className="font-bold px-4 py-2 mt-2"
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       <div className="border rounded-lg mt-6">
         <div className="p-4 rounded-lg">
           <h2 className="text-lg font-bold mb-2 sm:text-xl">

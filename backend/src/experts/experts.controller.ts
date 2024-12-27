@@ -46,9 +46,9 @@ export class ExpertsController {
         return this.expertsService.updateAvailability(expertId, slot);
     }
 
-    @Get('interviews')
-    async viewInterviews(@Request() req) {
-        return this.expertsService.viewInterviews(req.user.id);
+    @Get('interviews/:expertId')
+    async viewInterviews(@Param('expertId') expertId: string) {
+        return this.expertsService.viewInterviews(expertId);
     }
 
     @Post('interviews/:interview_id/feedback')
