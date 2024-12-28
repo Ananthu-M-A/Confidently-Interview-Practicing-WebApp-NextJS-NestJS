@@ -47,6 +47,11 @@ export class UsersController {
         return this.usersService.getDates(userId);
     }
 
+    @Get('latest-interview/:userId')
+    loadLatestInterview(@Param('userId') userId: string) {
+        return this.usersService.loadLatestInterview(userId);
+    }
+
     @Patch('interview/:interviewId/cancel')
     cancelInterview(@Param('interviewId') interviewId: string) {
         return this.usersService.cancelInterview(interviewId);

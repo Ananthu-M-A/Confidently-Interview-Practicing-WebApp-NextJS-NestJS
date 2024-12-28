@@ -101,17 +101,17 @@ export class ExpertsService {
 
     }
 
-    async viewInterviews(expertId: string): Promise<any[]> {
+    async loadDashboard(expertId: string): Promise<Object> {
         try {
             const expert = await this.expertModel.findOne({ _id: expertId });
             const interviews = await this.interviewModel.find({
                 expertId: expert._id,
-                $or:[
-                    {status: "scheduled"},
-                    {status: "active"},
+                $or: [
+                    { status: "scheduled" },
+                    { status: "active" },
                 ]
             })
-            return interviews;
+            return { interviews, expert };
         } catch (error) {
             console.log("Interviews Loading Error:", error);
             throw new InternalServerErrorException(`Interviews Loading Error`);

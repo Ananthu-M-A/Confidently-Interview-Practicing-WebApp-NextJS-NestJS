@@ -4,6 +4,7 @@ import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
+import { Expert } from "@/interfaces/expert.interface";
 import { Interview } from "@/interfaces/interview.interface";
 import axiosClient from "@/lib/axiosClient";
 import { isAxiosError } from "axios";
@@ -14,6 +15,7 @@ const ExpertHome = () => {
   const { expert } = useExpertAuth();
   const [slot, setSlot] = useState<string>("");
   const [interviews, setInterviews] = useState<Interview[]>([]);
+  const [performance, setPerformance] = useState<Expert>();
 
   async function updateAvailability() {
     try {
@@ -36,19 +38,21 @@ const ExpertHome = () => {
   }
 
   useEffect(() => {
-    async function loadInterviews() {
+    async function loadData() {
       try {
         if (expert) {
           const { data } = await axiosClient.get(
-            `/expert/interviews/${expert.userId}`
+            `/expert/dashboard/${expert.userId}`
           );
-          setInterviews(data);
+          setInterviews(data.interviews);
+          setPerformance(data.expert);
         }
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching expert data:", error);
+        toast.error("Failed to load profile data");
       }
     }
-    loadInterviews();
+    loadData();
   }, [expert]);
 
   return (
@@ -129,9 +133,9 @@ const ExpertHome = () => {
       </div>
       <div className="border p-4 rounded-lg mt-6">
         <h2 className="text-lg font-bold mb-2 sm:text-xl">Performance Stats</h2>
-        <p className="text-sm sm:text-base">{`Total Interviews Conducted: ${expert}`}</p>
-        <p className="text-sm sm:text-base">{`Average Rating: ${expert}`}</p>
-        <p className="text-sm sm:text-base">{`Specializations: ${expert}`}</p>
+        <p className="text-sm sm:text-base">{`Total Interviews Conducted: ${interviews.length}`}</p>
+        <p className="text-sm sm:text-base">{`Average Rating: 4`}</p>
+        <p className="text-sm sm:text-base">{`Specializations: ${performance?.specialization}`}</p>
       </div>
     </div>
   );

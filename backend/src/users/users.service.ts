@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hash } from 'bcryptjs';
+import { time } from 'console';
 import { Model, ObjectId } from 'mongoose';
 import { ExpertDTO } from 'src/common/dtos/expert.dto';
 import { UserDTO } from 'src/common/dtos/user.dto';
@@ -140,6 +141,38 @@ export class UsersService {
         } catch (error) {
             console.error("Loading Interviews Error:", error);
             throw new InternalServerErrorException(`Loading Interviews Error`);
+        }
+    }
+
+    async loadLatestInterview(userId: string) {
+        try {
+            const user = await this.userModel.findOne({ _id: userId });
+            const latestInterview = await this.interviewModel.find(
+                {
+                    userId: user._id,
+                    $or: [
+                        { status: "scheduled" },
+                        { status: "active" },
+                    ],
+                }
+            ).sort({ time: 1 }).limit(1);
+            const expert = await this.expertModel.findOne(
+                { _id: latestInterview[0].expertId },
+                { _id: 0, fullname: 1 }
+            );
+            return {
+                subject: latestInterview[0].subject,
+                date: new Date(latestInterview[0].time).toDateString(),
+                time: new Date(latestInterview[0].time).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
+                status: latestInterview[0].status,
+                expertName: expert.fullname
+            };
+        } catch (error) {
+            console.error("Cancelling Interview Error:", error);
+            throw new InternalServerErrorException(`Cancelling Interview Error`);
         }
     }
 

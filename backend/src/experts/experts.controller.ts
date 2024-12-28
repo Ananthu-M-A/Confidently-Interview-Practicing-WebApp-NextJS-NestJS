@@ -46,9 +46,9 @@ export class ExpertsController {
         return this.expertsService.updateAvailability(expertId, slot);
     }
 
-    @Get('interviews/:expertId')
-    async viewInterviews(@Param('expertId') expertId: string) {
-        return this.expertsService.viewInterviews(expertId);
+    @Get('dashboard/:expertId')
+    async loadDashboard(@Param('expertId') expertId: string) {
+        return this.expertsService.loadDashboard(expertId);
     }
 
     @Post('interviews/:interview_id/feedback')
