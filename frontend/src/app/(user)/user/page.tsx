@@ -30,6 +30,10 @@ const UserHome = () => {
     loadLatestInterview();
   }, [user]);
 
+  if (!latestInterview) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="px-4 py-6 sm:px-8">
       <h1 className="text-xl font-bold mb-6 sm:text-2xl md:text-4xl">
@@ -74,12 +78,7 @@ const UserHome = () => {
             <p className="text-sm sm:text-base">{`Expert: ${latestInterview.expertName}`}</p>
             <div className="flex flex-col gap-2 mt-4">
               {latestInterview.status === "active" && (
-                <Button
-                  onClick={() => router.push("")}
-                  className="font-bold px-4 py-2"
-                >
-                  Join Interview
-                </Button>
+                <Button className="font-bold px-4 py-2">Join Interview</Button>
               )}
               <Button
                 variant={"outline"}

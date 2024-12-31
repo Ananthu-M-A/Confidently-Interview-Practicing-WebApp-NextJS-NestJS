@@ -11,7 +11,7 @@ export default function NotFound() {
         <CardDescription>
           The page you requested does not exist.
         </CardDescription>
-        <Link href="/" className="mt-4 text-blue-600 hover:underline">
+        <Link href="/user" className="mt-4 text-blue-600 hover:underline">
           Return to Home
         </Link>
       </CardHeader>

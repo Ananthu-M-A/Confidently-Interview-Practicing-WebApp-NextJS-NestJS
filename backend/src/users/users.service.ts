@@ -161,6 +161,8 @@ export class UsersService {
                 { _id: 0, fullname: 1 }
             );
             return {
+                id: latestInterview[0]._id,
+                userId: user._id,
                 subject: latestInterview[0].subject,
                 date: new Date(latestInterview[0].time).toDateString(),
                 time: new Date(latestInterview[0].time).toLocaleTimeString([], {
@@ -171,8 +173,8 @@ export class UsersService {
                 expertName: expert.fullname
             };
         } catch (error) {
-            console.error("Cancelling Interview Error:", error);
-            throw new InternalServerErrorException(`Cancelling Interview Error`);
+            console.error("Loading Latest Interview Error:", error);
+            throw new InternalServerErrorException(`Loading Latest Interview Error`);
         }
     }
 
