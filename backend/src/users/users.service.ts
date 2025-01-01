@@ -147,6 +147,18 @@ export class UsersService {
     async loadLatestInterview(userId: string) {
         try {
             const user = await this.userModel.findOne({ _id: userId });
+
+            const tenMinutesEarlier = new Date(new Date().getTime() - 10 * 60 * 1000);
+            const tenMinutesLater = new Date(new Date().getTime() + 10 * 60 * 1000);
+
+            await this.interviewModel.updateMany(
+                {
+                    status: "scheduled",
+                    time: { $gte: tenMinutesEarlier, $lte: tenMinutesLater }
+                },
+                { $set: { status: "active" } }
+            );
+
             const latestInterview = await this.interviewModel.find(
                 {
                     userId: user._id,
@@ -156,6 +168,7 @@ export class UsersService {
                     ],
                 }
             ).sort({ time: 1 }).limit(1);
+
             const expert = await this.expertModel.findOne(
                 { _id: latestInterview[0].expertId },
                 { _id: 0, fullname: 1 }

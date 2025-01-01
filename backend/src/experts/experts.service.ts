@@ -110,7 +110,7 @@ export class ExpertsService {
                     { status: "scheduled" },
                     { status: "active" },
                 ]
-            })
+            }).sort({time: 1})
             return { interviews, expert };
         } catch (error) {
             console.log("Interviews Loading Error:", error);

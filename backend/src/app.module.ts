@@ -8,6 +8,7 @@ import { EnvConfigModule } from './common/modules/config.module';
 import { EmailModule } from './email/email.module';
 import { StripeService } from './stripe/stripe.service';
 import { StripeModule } from './stripe/stripe.module';
+import { VideoGateway } from './common/gateways/video.gateway';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { StripeModule } from './stripe/stripe.module';
     EmailModule,
     StripeModule
   ],
-  providers: [StripeService],
+  providers: [StripeService, VideoGateway],
 })
 export class AppModule { }

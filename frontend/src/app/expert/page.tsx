@@ -8,6 +8,7 @@ import { Expert } from "@/interfaces/expert.interface";
 import { Interview } from "@/interfaces/interview.interface";
 import axiosClient from "@/lib/axiosClient";
 import { isAxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,6 +17,7 @@ const ExpertHome = () => {
   const [slot, setSlot] = useState<string>("");
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [performance, setPerformance] = useState<Expert>();
+  const router = useRouter();
 
   async function updateAvailability() {
     try {
@@ -85,8 +87,13 @@ const ExpertHome = () => {
                   minute: "2-digit",
                 })}`}</p>
                 <div className="flex justify-center">
-                  {interview.status === "active" ? (
-                    <Button className="font-bold px-4 py-2 mt-2">
+                  {interview.status !== "active" ? (
+                    <Button
+                      className="font-bold px-4 py-2 mt-2"
+                      onClick={() =>
+                        router.push(`/expert/live-interview/${interview._id}`)
+                      }
+                    >
                       Join Now
                     </Button>
                   ) : (
