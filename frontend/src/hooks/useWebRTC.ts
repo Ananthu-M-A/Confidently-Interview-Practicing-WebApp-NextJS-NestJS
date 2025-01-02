@@ -8,13 +8,13 @@ export const useWebRTC = (roomId: string) => {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [videoOn, setVideoOn] = useState<boolean>(true);
   const [micOn, setMicOn] = useState<boolean>(true);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const peerConnection = useRef<RTCPeerConnection | null>(null);
 
   useEffect(() => {
     const init = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia(
-        { video: videoOn, audio: micOn }
-      );
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       setLocalStream(stream);
 
       peerConnection.current = new RTCPeerConnection({
@@ -54,7 +54,15 @@ export const useWebRTC = (roomId: string) => {
     };
 
     init();
-  }, [micOn, roomId, videoOn]);
+
+    return () => {
+      localStream?.getTracks().forEach((track) => track.stop());
+      peerConnection.current?.close();
+      socket.off('offer');
+      socket.off('answer');
+      socket.off('iceCandidate');
+    };
+  }, [roomId]);
 
   const createOffer = async () => {
     const offer = await peerConnection.current?.createOffer();
@@ -63,16 +71,58 @@ export const useWebRTC = (roomId: string) => {
   };
 
   const toggleCamera = async () => {
-    setVideoOn(false);
+    if (localStream) {
+      localStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+      setVideoOn((prev) => !prev);
+    }
   };
 
   const toggleMic = async () => {
-    setMicOn(false);
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
+      setMicOn((prev) => !prev);
+    }
   };
 
   const endCall = async () => {
-
+    localStream?.getTracks().forEach((track) => track.stop());
+    peerConnection.current?.close();
+    socket.emit('leaveRoom', roomId);
   };
 
-  return { localStream, remoteStream, createOffer, toggleCamera, toggleMic, endCall };
+  const startRecording = () => {
+    if (localStream) {
+      const recorder = new MediaRecorder(localStream, { mimeType: 'video/webm; codecs=vp9' });
+      setMediaRecorder(recorder);
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          setRecordedChunks((prev) => [...prev, event.data]);
+        }
+      };
+
+      recorder.start();
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      console.log('Recording saved:', url);
+      setRecordedChunks([]);
+    }
+  };
+
+  return {
+    localStream,
+    remoteStream,
+    createOffer,
+    toggleCamera,
+    toggleMic,
+    endCall,
+    startRecording,
+    stopRecording,
+  };
 };

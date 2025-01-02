@@ -9,6 +9,14 @@ import {
   BiSolidVideoPlus,
   BiSolidVideoRecording,
 } from "react-icons/bi";
+import { io } from "socket.io-client";
+
+interface Message {
+  userName: string;
+  message: string;
+}
+
+const socket = io("http://localhost:3001");
 
 const VideoCall = ({
   roomId,
@@ -30,18 +38,23 @@ const VideoCall = ({
     toggleCamera,
     toggleMic,
     endCall,
+    startRecording,
+    stopRecording,
   } = useWebRTC(roomId);
 
-  const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [codingNotes, setCodingNotes] = useState("");
-  const [privateNotes, setPrivateNotes] = useState("");
-  const [onlineCode, setOnlineCode] = useState("");
-  const [output, setOutput] = useState("");
-  const [showCompiler, setShowCompiler] = useState(false);
-  const [timer, setTimer] = useState(0);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const [isCameraOn, setIsCameraOn] = useState<boolean>(true);
+  const [isMicOn, setIsMicOn] = useState<boolean>(true);
+  // const [codingNotes, setCodingNotes] = useState<string>("");
+  const [privateNotes, setPrivateNotes] = useState<string>("");
+  const [onlineCode, setOnlineCode] = useState<string>("");
+  const [output, setOutput] = useState<string>("");
+  const [showCompiler, setShowCompiler] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(0);
+  const [isCallStarted, setIsCallStarted] = useState<boolean>(false);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
 
   useEffect(() => {
     if (localVideoRef.current && localStream) {
@@ -56,8 +69,16 @@ const VideoCall = ({
   }, [remoteStream]);
 
   useEffect(() => {
-    const interval = setInterval(() => setTimer((prev) => prev + 1), 1000);
-    return () => clearInterval(interval);
+    if (isCallStarted) {
+      const interval = setInterval(() => setTimer((prev) => prev + 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isCallStarted]);
+
+  useEffect(() => {
+    socket.on("chatMessage", (message) => {
+      setChatMessages((prev) => [...prev, message]);
+    });
   }, []);
 
   const formatTime = (seconds: number) => {
@@ -87,14 +108,41 @@ const VideoCall = ({
       });
       const data = await response.json();
       setOutput(data.output);
+      socket.emit("saveCode", { roomId, code: onlineCode });
     } catch (error) {
-      if (error instanceof Error) setOutput("Error compiling code.");
+      if(error instanceof Error)
+      setOutput("Error compiling code.");
     }
   };
 
+  const handleSendMessage = () => {
+    socket.emit("chatMessage", { roomId, userName, message: newMessage });
+    setNewMessage("");
+  };
+
+  const handleStartCall = () => {
+    if (isExpert) {
+      createOffer();
+      setIsCallStarted(true);
+      startRecording();
+    }
+  };
+
+  const handleEndCall = () => {
+    if (isExpert) {
+      endCall();
+      setIsCallStarted(false);
+      stopRecording();
+    }
+  };
+
+  const savePrivateNotes = () => {
+    socket.emit("savePrivateNotes", { roomId, privateNotes });
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <div className="flex items-center justify-between bg-blue-600 text-white px-6 py-3">
+    <div className="flex flex-col h-screen bg-black text-white">
+      <div className="flex items-center justify-between bg-gray-900 px-6 py-3">
         <div className="flex items-center space-x-4">
           <FaUser size={20} />
           <span>{`Expert: ${expertName}`}</span>
@@ -110,7 +158,7 @@ const VideoCall = ({
       </div>
       <div className="flex flex-1">
         <div className="flex flex-col flex-1 bg-black p-4">
-          <div className="relative w-full h-2/3 border-2 border-gray-400 rounded overflow-hidden">
+          <div className="relative w-full h-2/3 border border-gray-600 rounded overflow-hidden">
             <video
               ref={remoteVideoRef}
               className="w-full h-full object-cover"
@@ -118,10 +166,10 @@ const VideoCall = ({
               playsInline
               title="Remote Stream"
             />
-            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">
               {expertName}
             </div>
-            <div className="absolute bottom-2 right-2 w-1/4 h-1/4 border-2 border-white">
+            <div className="absolute bottom-2 right-2 w-1/4 h-1/4 border border-white">
               <video
                 ref={localVideoRef}
                 className="w-full h-full object-cover"
@@ -130,19 +178,22 @@ const VideoCall = ({
                 muted
                 title="Local Stream"
               />
-              <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 text-white px-1 py-1 rounded text-sm">
+              <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 px-1 py-1 rounded text-sm">
                 {userName}
               </div>
             </div>
           </div>
 
           <div className="flex justify-around mt-4">
-            <button
-              onClick={createOffer}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex"
-            >
-              <BiSolidVideoPlus className="w-6 h-6" title="Connect" />
-            </button>
+            {isExpert && !isCallStarted && (
+              <button
+                onClick={handleStartCall}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex"
+              >
+                <BiSolidVideoPlus className="w-6 h-6" title="Start Call" />
+              </button>
+            )}
+
             <button
               onClick={handleToggleCamera}
               className={`px-4 py-2 rounded ${
@@ -179,35 +230,57 @@ const VideoCall = ({
                 />
               )}
             </button>
-            <button
-              onClick={endCall}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              <MdCallEnd className="w-6 h-6 text-white" title="End Call" />
-            </button>
+
+            {isExpert && isCallStarted && (
+              <button
+                onClick={handleEndCall}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                <MdCallEnd className="w-6 h-6 text-white" title="End Call" />
+              </button>
+            )}
           </div>
         </div>
-        <div className="flex flex-col flex-1 bg-white p-4">
-          {isExpert ? (
+
+        <div className="flex flex-col flex-1 bg-gray-800 p-4">
+          <div className="flex-1 border p-4 mb-4">
+            <h3 className="font-bold mb-2">Chat</h3>
+            <div className="h-48 overflow-y-scroll bg-gray-700 p-2 rounded">
+              {chatMessages.map((msg: Message, index) => (
+                <div key={index} className="mb-1">
+                  <strong>{msg.userName}:</strong> {msg.message}
+                </div>
+              ))}
+            </div>
+            <div className="flex mt-2">
+              <input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                className="flex-1 p-2 border rounded"
+                placeholder="Type your message..."
+              />
+              <button
+                onClick={handleSendMessage}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ml-2"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+
+          {isExpert && (
             <div className="flex-1 border p-4 mb-4">
               <h3 className="font-bold mb-2">Private Notes (Expert Only)</h3>
               <textarea
                 value={privateNotes}
                 onChange={(e) => setPrivateNotes(e.target.value)}
-                className="w-full h-full p-2 border rounded"
+                onBlur={savePrivateNotes}
+                className="w-full h-full p-2 border rounded bg-gray-700 text-white"
                 placeholder="Private notes for the expert..."
               />
             </div>
-          ) : null}
-          <div className="flex-1 border p-4 mb-4">
-            <h3 className="font-bold mb-2">Coding Challenges</h3>
-            <textarea
-              value={codingNotes}
-              onChange={(e) => setCodingNotes(e.target.value)}
-              className="w-full h-full p-2 border rounded"
-              placeholder="Collaborate on coding challenges here..."
-            />
-          </div>
+          )}
+
           <div className="flex-1 border p-4">
             <button
               onClick={() => setShowCompiler((prev) => !prev)}
@@ -220,7 +293,7 @@ const VideoCall = ({
                 <textarea
                   value={onlineCode}
                   onChange={(e) => setOnlineCode(e.target.value)}
-                  className="w-full h-2/3 p-2 border rounded mb-2"
+                  className="w-full h-2/3 p-2 border rounded bg-gray-700 text-white mb-2"
                   placeholder="Write code here..."
                 />
                 <button
@@ -229,7 +302,7 @@ const VideoCall = ({
                 >
                   Compile Code
                 </button>
-                <div className="border p-2 rounded bg-gray-100">
+                <div className="border p-2 rounded bg-gray-100 text-black">
                   <h4 className="font-bold">Output:</h4>
                   <pre>{output}</pre>
                 </div>

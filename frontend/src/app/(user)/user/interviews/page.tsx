@@ -29,6 +29,7 @@ import { useAuth } from "@/contexts/auth/AuthContext";
 import axiosClient from "@/lib/axiosClient";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useRouter } from "next/navigation";
+import WithAuth from "@/components/auth-guards/WithAuth";
 
 const FormSchema1 = z.object({
   subject: z.string(),
@@ -444,4 +445,4 @@ const Interviews = () => {
   );
 };
 
-export default Interviews;
+export default WithAuth(Interviews);

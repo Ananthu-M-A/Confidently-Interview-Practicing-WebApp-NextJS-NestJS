@@ -1,3 +1,4 @@
+import WithAuth from '@/components/auth-guards/WithAuth'
 import React from 'react'
 
 const Notifications = () => {
@@ -8,4 +9,4 @@ const Notifications = () => {
   )
 }
 
-export default Notifications
+export default WithAuth(Notifications) 
