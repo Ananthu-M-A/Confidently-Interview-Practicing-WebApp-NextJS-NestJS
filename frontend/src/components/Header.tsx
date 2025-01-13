@@ -75,12 +75,6 @@ export default function Header() {
               >
                 Subscription
               </Link>
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/user/notifications"
-              >
-                Notification
-              </Link>
               <Button
                 onClick={() => handleLogout("user")}
                 className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
