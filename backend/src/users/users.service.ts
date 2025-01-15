@@ -78,19 +78,31 @@ export class UsersService {
     async getDates(userId: string): Promise<string[]> {
         try {
             const user = await this.userModel.findOne({ _id: userId });
-            const dates = await this.interviewModel.find(
+            const interviews = await this.interviewModel.find({ userId: user._id });
+            const now = new Date();
+            const updatePromises = interviews.map(interview => {
+                if (new Date(interview.time) < now && interview.status === "scheduled") {
+                    return this.interviewModel.updateOne(
+                        { _id: interview._id },
+                        { $set: { status: "cancelled" } }
+                    );
+                }
+            });
+            await Promise.all(updatePromises);
+            const updatedInterviews = await this.interviewModel.find(
                 { userId: user._id, status: "scheduled" },
                 { _id: 0, time: 1 }
             );
             const uniqueDates = Array.from(
-                new Set(dates.map(date => new Date(date.time).toISOString().split('T')[0]))
+                new Set(updatedInterviews.map(date => new Date(date.time).toISOString().split('T')[0]))
             );
             return uniqueDates;
         } catch (error) {
             console.log("Loading Dates Error:", error);
-            throw new InternalServerErrorException(`Loading Dates Error`)
+            throw new InternalServerErrorException(`Loading Dates Error`);
         }
     }
+
 
     async scheduleInterview(formData: { difficulty: string, time: string }, expertId: string, userId: string) {
         try {
@@ -168,7 +180,9 @@ export class UsersService {
                     ],
                 }
             ).sort({ time: 1 }).limit(1);
-
+            if (latestInterview.length === 0) {
+                return null;
+            }
             const expert = await this.expertModel.findOne(
                 { _id: latestInterview[0].expertId },
                 { _id: 0, fullname: 1 }

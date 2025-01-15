@@ -112,9 +112,7 @@ const Interviews = () => {
 
   async function cancelInterviews(formData: z.infer<typeof FormSchema4>) {
     try {
-      await axiosClient.patch(
-        `/user/interview/${formData.interviewId}/cancel`
-      );
+      await axiosClient.patch(`/user/interview/${formData.interviewId}/cancel`);
       toast.success("Interview Cancelled Successfully");
       setInterviews((prev) =>
         prev.filter((interview) => interview.id !== formData.interviewId)
@@ -134,7 +132,7 @@ const Interviews = () => {
           },
         });
       }
-      router.push('/user')
+      router.push("/user");
       toast.success("New Interview Scheduled Successfully");
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
@@ -144,10 +142,20 @@ const Interviews = () => {
 
   async function getExperts(formData: z.infer<typeof FormSchema1>) {
     try {
-      const { data } = await axiosClient.get(`/user/experts`, {
-        params: { formData: JSON.stringify(formData) },
-      });
-      setExperts(data);
+      if (formData.date === "" || formData.subject === "") {
+        toast.warning("Select Interview Details And Try Again.");
+      } else {
+        const { data } = await axiosClient.get(`/user/experts`, {
+          params: { formData: JSON.stringify(formData) },
+        });
+        if (data.length === 0) {
+          toast.warning(
+            "No Experts Found, Change Interview Details & Try Again"
+          );
+        } else {
+          setExperts(data);
+        }
+      }
     } catch (error) {
       console.error("Unsuccessful attempt to Login:", error);
       throw error;
@@ -219,7 +227,7 @@ const Interviews = () => {
                 name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date and Time</FormLabel>
+                    <FormLabel>Date</FormLabel>
                     <FormControl>
                       <Input
                         type="date"
@@ -363,6 +371,7 @@ const Interviews = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={dates.length === 0}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a date" />
@@ -379,7 +388,11 @@ const Interviews = () => {
                   </FormItem>
                 )}
               />
-              <Button className="w-full font-bold px-4 py-2" type="submit">
+              <Button
+                disabled={dates.length === 0}
+                className="w-full font-bold px-4 py-2"
+                type="submit"
+              >
                 View Interviews
               </Button>
             </form>

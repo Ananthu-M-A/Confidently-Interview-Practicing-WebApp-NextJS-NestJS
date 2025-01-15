@@ -30,10 +30,6 @@ const UserHome = () => {
     loadLatestInterview();
   }, [user]);
 
-  if (!latestInterview) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="px-4 py-6 sm:px-8">
       <h1 className="text-xl font-bold mb-6 sm:text-2xl md:text-4xl">
