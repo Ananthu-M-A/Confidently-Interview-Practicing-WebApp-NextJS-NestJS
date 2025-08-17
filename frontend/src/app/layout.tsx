@@ -22,7 +22,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Confidently | Interview Practice App",
   description: "An app for practicing real interviews, powered by Smart Depot",
-  authors: [{ name: "Ananthu M A", url: "https://portfolio.smartdepot.co.in/" }],
+  authors: [{ name: "Ananthu M A", url: "https://ananthuma.com" }],
 };
 
 export default function RootLayout({
