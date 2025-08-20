@@ -49,7 +49,7 @@ This application facilitates practice for face-to-face interviews.
 
 ## License
 
-This project is proprietary.  All rights reserved.  No part of this project may be used, reproduced, or distributed without explicit written permission from the author.
+This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Author
 
@@ -58,4 +58,5 @@ This project is proprietary.  All rights reserved.  No part of this project may 
 - GitHub: [Ananthu-M-A](https://github.com/Ananthu-M-A)
 - Portfolio: [https://ananthuma.com](https://ananthuma.com)
 - Email: ananthumapookkad@gmail.com
+
 
