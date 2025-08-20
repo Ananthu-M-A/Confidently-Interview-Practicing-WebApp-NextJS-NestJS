@@ -2,7 +2,7 @@
 
 > An application for practicing real-world interview scenarios.
 
-![build](https://img.shields.io/badge/build-passing-brightgreen) ![license](https://img.shields.io/badge/license-Proprietary-blue)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Ananthu-M-A/Confidently-Interview-Practicing-WebApp-NextJS-NestJS)](https://github.com/Ananthu-M-A/Confidently-Interview-Practicing-WebApp-NextJS-NestJS/releases) ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg) 
 
 ## About
 
@@ -58,3 +58,4 @@ This project is proprietary.  All rights reserved.  No part of this project may 
 - GitHub: [Ananthu-M-A](https://github.com/Ananthu-M-A)
 - Portfolio: [https://ananthuma.com](https://ananthuma.com)
 - Email: ananthumapookkad@gmail.com
+
