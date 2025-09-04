@@ -15,7 +15,7 @@ export class StripeService {
     @InjectModel('Subscription') private readonly subscriptionModel: Model<SubscriptionDocument>,
     private readonly configService: ConfigService) {
     this.stripe = new Stripe(this.configService.get<string>(`STRIPE_SECRET_KEY`), {
-      apiVersion: "2025-02-24.acacia",
+      apiVersion: "2025-08-27.basil",
     });
   }
 
