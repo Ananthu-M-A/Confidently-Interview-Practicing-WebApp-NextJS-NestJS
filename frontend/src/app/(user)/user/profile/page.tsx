@@ -96,7 +96,7 @@ function ViewUser() {
     <>
       <Card className="w-full max-w-md mx-auto p-4 sm:p-6 mt-6 rounded-xl border shadow-md">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-label="Update Profile Form">
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl font-semibold">
                 Profile Information
@@ -108,12 +108,14 @@ function ViewUser() {
                 name="fullname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel htmlFor="fullname">Name</FormLabel>
                     <FormControl>
                       <Input
+                        id="fullname"
                         placeholder="Eg: Ananthu M A"
                         {...field}
                         className="w-full"
+                        aria-required="true"
                       />
                     </FormControl>
                     <FormMessage />
@@ -125,14 +127,17 @@ function ViewUser() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel htmlFor="email">Email</FormLabel>
                     <FormControl>
                       <Input
+                        id="email"
                         placeholder="Eg: ananthu@gmail.com"
                         {...field}
                         type="email"
                         className="w-full"
                         disabled
+                        aria-required="true"
+                        aria-readonly="true"
                       />
                     </FormControl>
                     <FormMessage />
@@ -144,13 +149,15 @@ function ViewUser() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current / New Password</FormLabel>
+                    <FormLabel htmlFor="password">Current / New Password</FormLabel>
                     <FormControl>
                       <Input
+                        id="password"
                         placeholder="Eg: P@55word"
                         {...field}
                         type="password"
                         className="w-full"
+                        aria-required="true"
                       />
                     </FormControl>
                     <FormMessage />
@@ -162,13 +169,15 @@ function ViewUser() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
                     <FormControl>
                       <Input
+                        id="confirmPassword"
                         placeholder="Eg: P@55word"
                         {...field}
                         type="password"
                         className="w-full"
+                        aria-required="true"
                       />
                     </FormControl>
                     <FormMessage />
@@ -177,7 +186,7 @@ function ViewUser() {
               />
             </CardContent>
             <CardContent>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" aria-label="Update Profile">
                 Update Profile
               </Button>
             </CardContent>
@@ -192,12 +201,14 @@ function ViewUser() {
             onClick={() => router.push("")}
             variant="outline"
             className="w-full"
+            aria-label="Clear Interview History"
           >
             Clear Interview History
           </Button>
           <Button
             onClick={() => router.push("")}
             className="w-full bg-red-600 hover:bg-red-700"
+            aria-label="Delete Account"
           >
             Delete Account
           </Button>

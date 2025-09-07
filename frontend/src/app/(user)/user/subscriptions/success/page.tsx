@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 const SuccessPage = () => {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const sessionId = searchParams?.get ? searchParams.get("session_id") : undefined;
   const router = useRouter();
   const { setSubscription } = useAuth();
 
