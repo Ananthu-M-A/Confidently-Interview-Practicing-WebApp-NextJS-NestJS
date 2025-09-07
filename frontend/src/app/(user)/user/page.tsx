@@ -96,7 +96,7 @@ const UserHome = () => {
         </Card>
       )}
       <h2 className="text-lg font-bold mt-8 sm:text-xl">Recent Interviews</h2>
-      <div className="border p-4 rounded-lg mt-5 flex flex-col sm:flex-row sm:justify-between sm:items-center">
+      <div className="card border p-4 rounded-lg mt-5 flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div>
           <h2 className="text-md font-semibold">{`MERN Development`}</h2>
           <p className="text-sm sm:text-base">{`Date and Time`}</p>

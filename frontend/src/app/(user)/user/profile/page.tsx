@@ -94,9 +94,13 @@ function ViewUser() {
 
   return (
     <>
-      <Card className="w-full max-w-md mx-auto p-4 sm:p-6 mt-6 rounded-xl border shadow-md">
+      <Card className="card w-full max-w-md mx-auto p-4 sm:p-6 mt-6 rounded-xl border shadow-md">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-label="Update Profile Form">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+            aria-label="Update Profile Form"
+          >
             <CardHeader>
               <CardTitle className="text-lg sm:text-xl font-semibold">
                 Profile Information
@@ -149,7 +153,9 @@ function ViewUser() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="password">Current / New Password</FormLabel>
+                    <FormLabel htmlFor="password">
+                      Current / New Password
+                    </FormLabel>
                     <FormControl>
                       <Input
                         id="password"
@@ -169,7 +175,9 @@ function ViewUser() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+                    <FormLabel htmlFor="confirmPassword">
+                      Confirm Password
+                    </FormLabel>
                     <FormControl>
                       <Input
                         id="confirmPassword"
@@ -186,7 +194,11 @@ function ViewUser() {
               />
             </CardContent>
             <CardContent>
-              <Button type="submit" className="w-full" aria-label="Update Profile">
+              <Button
+                type="submit"
+                className="btn-primary w-full"
+                aria-label="Update Profile"
+              >
                 Update Profile
               </Button>
             </CardContent>
@@ -200,7 +212,7 @@ function ViewUser() {
           <Button
             onClick={() => router.push("")}
             variant="outline"
-            className="w-full"
+            className="btn-primary w-full"
             aria-label="Clear Interview History"
           >
             Clear Interview History
