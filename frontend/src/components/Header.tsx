@@ -38,37 +38,86 @@ export default function Header() {
           Confidently Interview
         </h1>
         <nav className="flex flex-col sm:flex-row items-center gap-4">
-          {(pathname === "/login" || pathname === "/register" || pathname === "/") && (
+          {(pathname === "/login" ||
+            pathname === "/register" ||
+            pathname === "/") && (
             <>
               <Link href="/login">
-                <Button variant="outline" className="btn-primary w-full sm:w-auto">Log In</Button>
+                <Button
+                  variant="outline"
+                  className="btn-primary w-full sm:w-auto"
+                >
+                  Log In
+                </Button>
               </Link>
               <Link href="/register">
-                <Button className="btn-primary w-full sm:w-auto">Sign Up</Button>
+                <Button className="btn-primary w-full sm:w-auto">
+                  Sign Up
+                </Button>
               </Link>
+              <Button
+                aria-label="Toggle dark mode"
+                className="btn-primary shadow-lg"
+                onClick={() => {
+                  document.body.classList.toggle("dark");
+                }}
+              >
+                🌓
+              </Button>
             </>
           )}
           {user && (
             <>
-              <Link className="btn-primary" href="/user">Home</Link>
-              <Link className="btn-primary" href="/user/profile">Profile</Link>
-              <Link className="btn-primary" href="/user/subscriptions">Subscription</Link>
-              <Button onClick={() => handleLogout("user")} className="btn-primary">Log Out</Button>
+              <Link className="btn-primary" href="/user">
+                Home
+              </Link>
+              <Link className="btn-primary" href="/user/profile">
+                Profile
+              </Link>
+              <Link className="btn-primary" href="/user/subscriptions">
+                Subscription
+              </Link>
+              <Button
+                onClick={() => handleLogout("user")}
+                className="btn-primary"
+              >
+                Log Out
+              </Button>
             </>
           )}
           {expert && (
             <>
-              <Link className="btn-primary" href="/expert">Dashboard</Link>
-              <Link className="btn-primary" href="/expert/profile">Profile</Link>
-              <Button onClick={() => handleLogout("expert")} className="btn-primary">Log Out</Button>
+              <Link className="btn-primary" href="/expert">
+                Dashboard
+              </Link>
+              <Link className="btn-primary" href="/expert/profile">
+                Profile
+              </Link>
+              <Button
+                onClick={() => handleLogout("expert")}
+                className="btn-primary"
+              >
+                Log Out
+              </Button>
             </>
           )}
           {admin && (
             <>
-              <Link className="btn-primary" href="/admin">Dashboard</Link>
-              <Link className="btn-primary" href="/admin/experts">Experts</Link>
-              <Link className="btn-primary" href="/admin/users">Users</Link>
-              <Button onClick={() => handleLogout("admin")} className="btn-primary">Log Out</Button>
+              <Link className="btn-primary" href="/admin">
+                Dashboard
+              </Link>
+              <Link className="btn-primary" href="/admin/experts">
+                Experts
+              </Link>
+              <Link className="btn-primary" href="/admin/users">
+                Users
+              </Link>
+              <Button
+                onClick={() => handleLogout("admin")}
+                className="btn-primary"
+              >
+                Log Out
+              </Button>
             </>
           )}
         </nav>
