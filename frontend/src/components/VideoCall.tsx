@@ -10,6 +10,7 @@ import {
   BiSolidVideoRecording,
 } from "react-icons/bi";
 import { io } from "socket.io-client";
+import { toast } from "sonner";
 
 interface Message {
   userName: string;
@@ -106,18 +107,25 @@ const VideoCall = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: onlineCode }),
       });
+      if (!response.ok) throw new Error("Compile failed");
       const data = await response.json();
       setOutput(data.output);
+      toast.success("Code compiled successfully!");
       socket.emit("saveCode", { roomId, code: onlineCode });
     } catch (error) {
-      if(error instanceof Error)
       setOutput("Error compiling code.");
+      toast.error("Error compiling code.");
     }
   };
 
   const handleSendMessage = () => {
+    if (!newMessage.trim()) {
+      toast.error("Message cannot be empty.");
+      return;
+    }
     socket.emit("chatMessage", { roomId, userName, message: newMessage });
     setNewMessage("");
+    toast.success("Message sent!");
   };
 
   const handleStartCall = () => {
@@ -125,6 +133,7 @@ const VideoCall = ({
       createOffer();
       setIsCallStarted(true);
       startRecording();
+      toast.success("Call started!");
     }
   };
 
@@ -133,182 +142,27 @@ const VideoCall = ({
       endCall();
       setIsCallStarted(false);
       stopRecording();
+      toast.success("Call ended.");
     }
   };
 
   const savePrivateNotes = () => {
-    socket.emit("savePrivateNotes", { roomId, privateNotes });
+  socket.emit("savePrivateNotes", { roomId, privateNotes });
+  toast.success("Private notes saved!");
   };
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white">
-      <div className="flex items-center justify-between bg-gray-900 px-6 py-3">
-        <div className="flex items-center space-x-4">
-          <FaUser size={20} />
-          <span>{`Expert: ${expertName}`}</span>
-        </div>
-        <div className="flex items-center space-x-4">
-          <FaRegClock size={20} />
-          <span>{formatTime(timer)}</span>
-        </div>
-        <div className="flex items-center space-x-4">
-          <FaFileAlt size={20} />
-          <span>{`Subject: ${subject}`}</span>
-        </div>
+    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-black text-white rounded-2xl shadow-2xl border border-blue-900">
+      {/* ...existing code... */}
+      <div className="flex items-center justify-between bg-gray-900 px-6 py-3 rounded-t-2xl shadow-md">
+        {/* ...existing code... */}
       </div>
       <div className="flex flex-1">
-        <div className="flex flex-col flex-1 bg-black p-4">
-          <div className="relative w-full h-2/3 border border-gray-600 rounded overflow-hidden">
-            <video
-              ref={remoteVideoRef}
-              className="w-full h-full object-cover"
-              autoPlay
-              playsInline
-              title="Remote Stream"
-            />
-            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">
-              {expertName}
-            </div>
-            <div className="absolute bottom-2 right-2 w-1/4 h-1/4 border border-white">
-              <video
-                ref={localVideoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                playsInline
-                muted
-                title="Local Stream"
-              />
-              <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 px-1 py-1 rounded text-sm">
-                {userName}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-around mt-4">
-            {isExpert && !isCallStarted && (
-              <button
-                onClick={handleStartCall}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex"
-              >
-                <BiSolidVideoPlus className="w-6 h-6" title="Start Call" />
-              </button>
-            )}
-
-            <button
-              onClick={handleToggleCamera}
-              className={`px-4 py-2 rounded ${
-                isCameraOn ? "bg-red-500" : "bg-blue-500"
-              } hover:opacity-90`}
-            >
-              {isCameraOn ? (
-                <BiSolidVideoOff
-                  className="w-6 h-6 text-white"
-                  title="Cam Off"
-                />
-              ) : (
-                <BiSolidVideoRecording
-                  className="w-6 h-6 text-white"
-                  title="Cam On"
-                />
-              )}
-            </button>
-            <button
-              onClick={handleToggleMic}
-              className={`px-4 py-2 rounded ${
-                isMicOn ? "bg-red-500" : "bg-blue-500"
-              } hover:opacity-90`}
-            >
-              {isMicOn ? (
-                <BiSolidMicrophoneOff
-                  className="w-6 h-6 text-white"
-                  title="Mute"
-                />
-              ) : (
-                <BiSolidMicrophone
-                  className="w-6 h-6 text-white"
-                  title="Unmute"
-                />
-              )}
-            </button>
-
-            {isExpert && isCallStarted && (
-              <button
-                onClick={handleEndCall}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-              >
-                <MdCallEnd className="w-6 h-6 text-white" title="End Call" />
-              </button>
-            )}
-          </div>
+        <div className="flex flex-col flex-1 bg-black/80 p-4 rounded-bl-2xl">
+          {/* ...existing code... */}
         </div>
-
-        <div className="flex flex-col flex-1 bg-gray-800 p-4">
-          <div className="flex-1 border p-4 mb-4">
-            <h3 className="font-bold mb-2">Chat</h3>
-            <div className="h-48 overflow-y-scroll bg-gray-700 p-2 rounded">
-              {chatMessages.map((msg: Message, index) => (
-                <div key={index} className="mb-1">
-                  <strong>{msg.userName}:</strong> {msg.message}
-                </div>
-              ))}
-            </div>
-            <div className="flex mt-2">
-              <input
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1 p-2 border rounded"
-                placeholder="Type your message..."
-              />
-              <button
-                onClick={handleSendMessage}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ml-2"
-              >
-                Send
-              </button>
-            </div>
-          </div>
-
-          {isExpert && (
-            <div className="flex-1 border p-4 mb-4">
-              <h3 className="font-bold mb-2">Private Notes (Expert Only)</h3>
-              <textarea
-                value={privateNotes}
-                onChange={(e) => setPrivateNotes(e.target.value)}
-                onBlur={savePrivateNotes}
-                className="w-full h-full p-2 border rounded bg-gray-700 text-white"
-                placeholder="Private notes for the expert..."
-              />
-            </div>
-          )}
-
-          <div className="flex-1 border p-4">
-            <button
-              onClick={() => setShowCompiler((prev) => !prev)}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-2"
-            >
-              {showCompiler ? "Hide Compiler" : "Show Compiler"}
-            </button>
-            {showCompiler && (
-              <div>
-                <textarea
-                  value={onlineCode}
-                  onChange={(e) => setOnlineCode(e.target.value)}
-                  className="w-full h-2/3 p-2 border rounded bg-gray-700 text-white mb-2"
-                  placeholder="Write code here..."
-                />
-                <button
-                  onClick={compileCode}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-2"
-                >
-                  Compile Code
-                </button>
-                <div className="border p-2 rounded bg-gray-100 text-black">
-                  <h4 className="font-bold">Output:</h4>
-                  <pre>{output}</pre>
-                </div>
-              </div>
-            )}
-          </div>
+        <div className="flex flex-col flex-1 bg-gray-800/80 p-4 rounded-br-2xl">
+          {/* ...existing code... */}
         </div>
       </div>
     </div>

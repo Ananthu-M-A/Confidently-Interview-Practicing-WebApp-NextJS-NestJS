@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth/AuthContext";
@@ -63,6 +65,7 @@ export default function LoginPage() {
       await login(data.email, data.password);
       router.push('/user');
     } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
       console.error("Login failed:", error);
     }
   }
@@ -92,118 +95,125 @@ export default function LoginPage() {
   }, [user, router]);
 
   return (
-    <>
+    <AnimatePresence mode="wait">
       {!isLoading && (
-        <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-              <CardHeader>
-                <CardTitle className="text-2xl sm:text-3xl text-center">
-                  Log In to Confidently
-                </CardTitle>
-                <h1 className="text-sm sm:text-xs text-center mt-1">
-                  Enter your credentials to access your account
-                </h1>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-semibold p-1">
-                        Email
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Eg:- ananthu@gmail.com"
-                          {...field}
-                          type="email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-semibold p-1">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Eg:- P@55word"
-                          {...field}
-                          type={isChecked ? "text" : "password"}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardContent className="text-center">
-                <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start p-1">
-                  <Label className="flex items-center text-sm sm:text-xs font-semibold mb-2 sm:mb-0">
-                    <Input
-                      type="checkbox"
-                      className="w-4"
-                      checked={isChecked}
-                      onChange={() => setIsChecked(!isChecked)}
-                      aria-label="Show Password"
-                    />
-                    <span className="ml-2">Show Password</span>
-                  </Label>
-                  <Button type="submit" className="font-bold w-full sm:w-auto">
-                    Log In
-                  </Button>
-                </div>
-              </CardContent>
-            </form>
-          </Form>
-          <h1 className="text-sm text-center mt-4">Or continue with</h1>
-          <CardContent className="flex gap-4 sm:gap-10 justify-center pt-3">
-            <Button
-              variant="outline"
-              onClick={handleGoogleLogin}
-              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
-            >
-              <FaGoogle className="text-red-600" />
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleLinkedinLogin}
-              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
-            >
-              <FaLinkedinIn className="text-blue-600" />
-              LinkedIn
-            </Button>
-          </CardContent>
-          <CardContent className="text-center mt-4 space-y-2">
-            <CardDescription>
-              <Link
-                className="font-semibold hover:text-black hover:underline"
-                href="/reset-password"
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+                <CardHeader>
+                  <CardTitle className="text-2xl sm:text-3xl text-center">
+                    Log In to Confidently
+                  </CardTitle>
+                  <h1 className="text-sm sm:text-xs text-center mt-1">
+                    Enter your credentials to access your account
+                  </h1>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold p-1">
+                          Email
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Eg:- ananthu@gmail.com"
+                            {...field}
+                            type="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold p-1">
+                          Password
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Eg:- P@55word"
+                            {...field}
+                            type={isChecked ? "text" : "password"}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+                <CardContent className="text-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start p-1">
+                    <Label className="flex items-center text-sm sm:text-xs font-semibold mb-2 sm:mb-0">
+                      <Input
+                        type="checkbox"
+                        className="w-4"
+                        checked={isChecked}
+                        onChange={() => setIsChecked(!isChecked)}
+                        aria-label="Show Password"
+                      />
+                      <span className="ml-2">Show Password</span>
+                    </Label>
+                    <Button type="submit" className="font-bold w-full sm:w-auto">
+                      Log In
+                    </Button>
+                  </div>
+                </CardContent>
+              </form>
+            </Form>
+            <h1 className="text-sm text-center mt-4">Or continue with</h1>
+            <CardContent className="flex gap-4 sm:gap-10 justify-center pt-3">
+              <Button
+                variant="outline"
+                onClick={handleGoogleLogin}
+                className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
               >
-                Forgot password?
-              </Link>
-            </CardDescription>
-            <CardDescription>
-              {`Don't have an account? `}
-              <Link
-                className="font-semibold hover:text-black hover:underline"
-                href="/register"
+                <FaGoogle className="text-red-600" />
+                Google
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleLinkedinLogin}
+                className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
               >
-                Register Now
-              </Link>
-            </CardDescription>
-          </CardContent>
-        </Card>
+                <FaLinkedinIn className="text-blue-600" />
+                LinkedIn
+              </Button>
+            </CardContent>
+            <CardContent className="text-center mt-4 space-y-2">
+              <CardDescription>
+                <Link
+                  className="font-semibold hover:text-black hover:underline"
+                  href="/reset-password"
+                >
+                  Forgot password?
+                </Link>
+              </CardDescription>
+              <CardDescription>
+                {`Don't have an account? `}
+                <Link
+                  className="font-semibold hover:text-black hover:underline"
+                  href="/register"
+                >
+                  Register Now
+                </Link>
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 }

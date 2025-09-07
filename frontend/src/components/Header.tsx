@@ -32,109 +32,47 @@ export default function Header() {
   }
 
   return (
-    <div className="p-4 sm:p-6 border-b border-gray-300 bg-white">
+    <header className="w-full py-4 px-6 bg-gradient-to-r from-blue-100 via-indigo-100 to-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="text-2xl font-semibold mb-4 sm:mb-0">Confidently</h1>
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-          {(pathname === "/login" ||
-            pathname === "/register" ||
-            pathname === "/") && (
+        <h1 className="text-3xl font-extrabold text-gradient bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent tracking-wide mb-4 sm:mb-0">
+          Confidently Interview
+        </h1>
+        <nav className="flex flex-col sm:flex-row items-center gap-4">
+          {(pathname === "/login" || pathname === "/register" || pathname === "/") && (
             <>
               <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="w-full sm:w-auto border border-gray-500 font-bold py-2 px-4 sm:py-3 sm:px-6"
-                >
-                  Log In
-                </Button>
+                <Button variant="outline" className="btn-primary w-full sm:w-auto">Log In</Button>
               </Link>
               <Link href="/register">
-                <Button className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6">
-                  Sign Up
-                </Button>
+                <Button className="btn-primary w-full sm:w-auto">Sign Up</Button>
               </Link>
             </>
           )}
           {user && (
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/user"
-              >
-                Home
-              </Link>
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/user/profile"
-              >
-                Profile
-              </Link>
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/user/subscriptions"
-              >
-                Subscription
-              </Link>
-              <Button
-                onClick={() => handleLogout("user")}
-                className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
-              >
-                Log Out
-              </Button>
-            </div>
+            <>
+              <Link className="btn-primary" href="/user">Home</Link>
+              <Link className="btn-primary" href="/user/profile">Profile</Link>
+              <Link className="btn-primary" href="/user/subscriptions">Subscription</Link>
+              <Button onClick={() => handleLogout("user")} className="btn-primary">Log Out</Button>
+            </>
           )}
           {expert && (
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/expert"
-              >
-                Dashboard
-              </Link>
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/expert/profile"
-              >
-                Profile
-              </Link>
-              <Button
-                onClick={() => handleLogout("expert")}
-                className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
-              >
-                Log Out
-              </Button>
-            </div>
+            <>
+              <Link className="btn-primary" href="/expert">Dashboard</Link>
+              <Link className="btn-primary" href="/expert/profile">Profile</Link>
+              <Button onClick={() => handleLogout("expert")} className="btn-primary">Log Out</Button>
+            </>
           )}
           {admin && (
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/admin"
-              >
-                Dashboard
-              </Link>
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/admin/experts"
-              >
-                Experts
-              </Link>
-              <Link
-                className="hover:underline font-bold mt-2 sm:mt-0"
-                href="/admin/users"
-              >
-                Users
-              </Link>
-              <Button
-                onClick={() => handleLogout("admin")}
-                className="w-full sm:w-auto font-bold py-2 px-4 sm:py-3 sm:px-6"
-              >
-                Log Out
-              </Button>
-            </div>
+            <>
+              <Link className="btn-primary" href="/admin">Dashboard</Link>
+              <Link className="btn-primary" href="/admin/experts">Experts</Link>
+              <Link className="btn-primary" href="/admin/users">Users</Link>
+              <Button onClick={() => handleLogout("admin")} className="btn-primary">Log Out</Button>
+            </>
           )}
-        </div>
+        </nav>
       </div>
-    </div>
+    </header>
   );
 }

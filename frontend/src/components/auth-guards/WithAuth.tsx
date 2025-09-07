@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/auth/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 
 const WithAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
   const ComponentWithAuth = (props: P) => {
@@ -11,6 +12,7 @@ const WithAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
 
     useEffect(() => {
       if (!user) {
+        toast.error('You must be logged in to access this page.')
         router.push('/login')
       }
     }, [user, router])

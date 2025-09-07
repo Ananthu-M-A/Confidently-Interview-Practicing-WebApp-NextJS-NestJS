@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth/AuthContext";
@@ -70,8 +72,9 @@ export default function SignupPage() {
     try {
       await register(data.email, data.password, data.fullname);
       router.push('/user');
-      console.log("Registration Successfull");
+      toast.success("Registration successful!");
     } catch (error) {
+      toast.error("Registration failed. Please check your details.");
       console.error("Registration failed:", error);
     }
   }
@@ -101,145 +104,154 @@ export default function SignupPage() {
   }, [user, router]);
 
   return (
-    <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-          <CardHeader>
-            <CardTitle className="text-2xl sm:text-3xl text-center">
-              Sign Up for Confidently
-            </CardTitle>
-            <h1 className="text-sm sm:text-xs text-center mt-1">
-              Create your account to start improving your interview skills
-            </h1>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="fullname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-semibold p-1">
-                    Full Name
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Eg:- Ananthu M A"
-                      {...field}
-                      type="text"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-semibold p-1">
-                    Email
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Eg:- ananthu@gmail.com"
-                      {...field}
-                      type="email"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-semibold p-1">
-                    Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Eg:- P@55word"
-                      {...field}
-                      type={isChecked ? "text" : "password"}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-semibold p-1">
-                    Confirm Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Eg:- P@55word"
-                      {...field}
-                      type={isChecked ? "text" : "password"}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardContent className="text-center">
-            <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start p-1">
-              <Label className="flex items-center text-sm sm:text-xs font-semibold mb-2 sm:mb-0">
-                <Input
-                  type="checkbox"
-                  id="show-password"
-                  className="w-4"
-                  checked={isChecked}
-                  onChange={() => setIsChecked(!isChecked)}
-                  aria-label="Show Password"
+    <AnimatePresence mode="wait">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -30 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+              <CardHeader>
+                <CardTitle className="text-2xl sm:text-3xl text-center">
+                  Sign Up for Confidently
+                </CardTitle>
+                <h1 className="text-sm sm:text-xs text-center mt-1">
+                  Create your account to start improving your interview skills
+                </h1>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="fullname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold p-1">
+                        Full Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Eg:- Ananthu M A"
+                          {...field}
+                          type="text"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <span className="ml-2">Show Password</span>
-              </Label>
-              <Button type="submit" className="font-bold w-full sm:w-auto">
-                Sign Up
-              </Button>
-            </div>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold p-1">
+                        Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Eg:- ananthu@gmail.com"
+                          {...field}
+                          type="email"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold p-1">
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Eg:- P@55word"
+                          {...field}
+                          type={isChecked ? "text" : "password"}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold p-1">
+                        Confirm Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Eg:- P@55word"
+                          {...field}
+                          type={isChecked ? "text" : "password"}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardContent className="text-center">
+                <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start p-1">
+                  <Label className="flex items-center text-sm sm:text-xs font-semibold mb-2 sm:mb-0">
+                    <Input
+                      type="checkbox"
+                      id="show-password"
+                      className="w-4"
+                      checked={isChecked}
+                      onChange={() => setIsChecked(!isChecked)}
+                      aria-label="Show Password"
+                    />
+                    <span className="ml-2">Show Password</span>
+                  </Label>
+                  <Button type="submit" className="font-bold w-full sm:w-auto">
+                    Sign Up
+                  </Button>
+                </div>
+              </CardContent>
+            </form>
+          </Form>
+          <h1 className="text-sm text-center mt-4">Or sign up with</h1>
+          <CardContent className="flex gap-4 sm:gap-10 justify-center pt-3">
+            <Button
+              variant="outline"
+              onClick={handleGoogleSignup}
+              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
+            >
+              <FaGoogle className="text-red-600" />
+              Google
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleLinkedinSignup}
+              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
+            >
+              <FaLinkedinIn className="text-blue-600" />
+              LinkedIn
+            </Button>
           </CardContent>
-        </form>
-      </Form>
-      <h1 className="text-sm text-center mt-4">Or sign up with</h1>
-      <CardContent className="flex gap-4 sm:gap-10 justify-center pt-3">
-        <Button
-          variant="outline"
-          onClick={handleGoogleSignup}
-          className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
-        >
-          <FaGoogle className="text-red-600" />
-          Google
-        </Button>
-        <Button
-          variant="outline"
-          onClick={handleLinkedinSignup}
-          className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
-        >
-          <FaLinkedinIn className="text-blue-600" />
-          LinkedIn
-        </Button>
-      </CardContent>
-      <CardContent className="text-center mt-4">
-        <CardDescription>
-          Already have an account?{" "}
-          <Link
-            className="font-semibold hover:text-black hover:underline"
-            href="/login"
-          >
-            Login Now
-          </Link>
-        </CardDescription>
-      </CardContent>
-    </Card>
+          <CardContent className="text-center mt-4">
+            <CardDescription>
+              Already have an account?{" "}
+              <Link
+                className="font-semibold hover:text-black hover:underline"
+                href="/login"
+              >
+                Login Now
+              </Link>
+            </CardDescription>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </AnimatePresence>
   );
 }

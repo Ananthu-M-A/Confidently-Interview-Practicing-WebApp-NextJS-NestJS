@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/contexts/auth/AdminAuthContext";
 
@@ -52,9 +54,10 @@ export default function LoginPage() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await login(data.email, data.password);
-      console.log("Admin logged in");
-      window.location.reload();
+      toast.success("Admin logged in!");
+      router.push('/admin');
     } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
       console.error("Login failed:", error);
     }
   }
@@ -68,80 +71,87 @@ export default function LoginPage() {
   }, [admin, router]);
 
   return (
-    <>
+    <AnimatePresence mode="wait">
       {!isLoading && (
-        <Card className="w-full max-w-md mx-auto px-4 py-6 my-6 rounded-xl border shadow-lg">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-              <CardHeader>
-                <CardTitle className="text-2xl sm:text-3xl text-center">
-                  Confidently Admin Login
-                </CardTitle>
-                <h1 className="text-sm sm:text-xs text-center mt-2">
-                  Enter your credentials to access your account
-                </h1>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-semibold p-1">
-                        Email
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Eg:- ananthu@gmail.com"
-                          {...field}
-                          type="email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-semibold p-1">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Eg:- P@55word"
-                          {...field}
-                          type={isChecked ? "text" : "password"}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardContent className="text-center mt-4">
-                <div className="flex justify-between items-center text-center p-1">
-                  <Label className="flex items-center text-xs font-semibold">
-                    <Input
-                      type="checkbox"
-                      className="w-4 h-4"
-                      checked={isChecked}
-                      onChange={() => setIsChecked(!isChecked)}
-                      aria-label="Show Password"
-                    />
-                    <span className="pl-2">Show Password</span>
-                  </Label>
-                  <Button type="submit" className="font-bold px-4 py-2">
-                    Log In
-                  </Button>
-                </div>
-              </CardContent>
-            </form>
-          </Form>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="w-full max-w-md mx-auto px-4 py-6 my-6 rounded-xl border shadow-lg">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+                <CardHeader>
+                  <CardTitle className="text-2xl sm:text-3xl text-center">
+                    Confidently Admin Login
+                  </CardTitle>
+                  <h1 className="text-sm sm:text-xs text-center mt-2">
+                    Enter your credentials to access your account
+                  </h1>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold p-1">
+                          Email
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Eg:- ananthu@gmail.com"
+                            {...field}
+                            type="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold p-1">
+                          Password
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Eg:- P@55word"
+                            {...field}
+                            type={isChecked ? "text" : "password"}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+                <CardContent className="text-center mt-4">
+                  <div className="flex justify-between items-center text-center p-1">
+                    <Label className="flex items-center text-xs font-semibold">
+                      <Input
+                        type="checkbox"
+                        className="w-4 h-4"
+                        checked={isChecked}
+                        onChange={() => setIsChecked(!isChecked)}
+                        aria-label="Show Password"
+                      />
+                      <span className="pl-2">Show Password</span>
+                    </Label>
+                    <Button type="submit" className="font-bold px-4 py-2">
+                      Log In
+                    </Button>
+                  </div>
+                </CardContent>
+              </form>
+            </Form>
+          </Card>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 }
