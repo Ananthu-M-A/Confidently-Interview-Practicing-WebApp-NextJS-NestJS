@@ -186,7 +186,7 @@ const Interviews = () => {
         Schedule an Interview
       </h1>
       <div className="flex flex-col md:flex-row gap-4 md:gap-10">
-        <div className="w-full md:w-1/2 border p-4 rounded-lg">
+        <div className="card w-full md:w-1/2 border p-4 rounded-lg">
           <h2 className="text-base md:text-lg font-bold mb-2">
             Interview Details
           </h2>
@@ -243,7 +243,7 @@ const Interviews = () => {
                   </FormItem>
                 )}
               />
-              <Button className="w-full font-bold px-4 py-2" type="submit">
+              <Button className="btn-primary w-full font-bold px-4 py-2" type="submit">
                 Find Available Experts
               </Button>
             </form>
@@ -353,7 +353,7 @@ const Interviews = () => {
             </h2>
           )}
         </div>
-        <div className="w-full md:w-1/2 border p-4 rounded-lg">
+        <div className="card w-full md:w-1/2 border p-4 rounded-lg">
           <h2 className="text-base md:text-lg font-bold mb-2">
             Upcoming Interviews
           </h2>
@@ -390,7 +390,7 @@ const Interviews = () => {
               />
               <Button
                 disabled={dates.length === 0}
-                className="w-full font-bold px-4 py-2"
+                className="btn-primary w-full font-bold px-4 py-2"
                 type="submit"
               >
                 View Interviews

@@ -39,7 +39,7 @@ const SubscriptionsPage = () => {
       </h1>
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
         {!subscription && (
-          <div className="border p-4 rounded-lg">
+          <div className="card border p-4 rounded-lg">
             <h2 className="text-lg font-bold mb-2 sm:text-xl">Free</h2>
             <h2 className="text-lg font-bold mb-4 sm:text-xl">₹0</h2>
             <p className="px-5 font-medium text-sm sm:text-base">{`1 interview per week`}</p>
@@ -53,7 +53,7 @@ const SubscriptionsPage = () => {
             </Button>
           </div>
         )}
-        <div className="border p-4 rounded-lg">
+        <div className="card border p-4 rounded-lg">
           <h2 className="text-lg font-bold mb-2 sm:text-xl">Pro</h2>
           <h2 className="text-lg font-bold mb-4 sm:text-xl">₹1499/month</h2>
           <p className="px-5 font-medium text-sm sm:text-base">{`Upto 4 interviews per day`}</p>
@@ -62,7 +62,7 @@ const SubscriptionsPage = () => {
           <p className="px-5 font-medium text-sm sm:text-base">{`Unlimited access to interview recordings`}</p>
           <Button
             onClick={!subscription ? handleMonthlyPayment : () => {}}
-            className={`font-bold px-4 py-2 w-full mt-4 ${
+            className={`btn-primary font-bold px-4 py-2 w-full mt-4 ${
               subscription
                 ? "hover:cursor-not-allowed bg-gray-500 hover:bg-gray-500"
                 : ""
