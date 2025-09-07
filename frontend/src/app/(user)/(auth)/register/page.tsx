@@ -111,7 +111,7 @@ export default function SignupPage() {
         exit={{ opacity: 0, y: -30 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
+        <Card className="card w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <CardHeader>
@@ -213,7 +213,7 @@ export default function SignupPage() {
                     />
                     <span className="ml-2">Show Password</span>
                   </Label>
-                  <Button type="submit" className="font-bold w-full sm:w-auto">
+                  <Button type="submit" className="btn-primary font-bold w-full sm:w-auto">
                     Sign Up
                   </Button>
                 </div>
@@ -225,7 +225,7 @@ export default function SignupPage() {
             <Button
               variant="outline"
               onClick={handleGoogleSignup}
-              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
+              className="btn-primary border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
             >
               <FaGoogle className="text-red-600" />
               Google
@@ -233,7 +233,7 @@ export default function SignupPage() {
             <Button
               variant="outline"
               onClick={handleLinkedinSignup}
-              className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
+              className="btn-primary border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
             >
               <FaLinkedinIn className="text-blue-600" />
               LinkedIn

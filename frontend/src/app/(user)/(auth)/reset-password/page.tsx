@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <Card className="w-full max-w-sm sm:max-w-md mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
+    <Card className="card w-full max-w-sm sm:max-w-md mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <CardHeader>
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
             />
           </CardContent>
           <CardContent className="text-center mt-4">
-            <Button type="submit" className="font-bold w-full sm:w-auto">
+            <Button type="submit" className="btn-primary font-bold w-full sm:w-auto">
               Send Password Reset Link
             </Button>
           </CardContent>

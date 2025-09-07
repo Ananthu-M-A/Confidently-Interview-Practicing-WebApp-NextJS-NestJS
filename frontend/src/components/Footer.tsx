@@ -14,7 +14,7 @@ export default function Footer() {
           href="https://ananthuma.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 hover:text-blue-600 transition-colors"
+          className="inline-flex items-center gap-2 font-semibold hover:text-black hover:underline"
         >
           Ananthu M A
         </Link>

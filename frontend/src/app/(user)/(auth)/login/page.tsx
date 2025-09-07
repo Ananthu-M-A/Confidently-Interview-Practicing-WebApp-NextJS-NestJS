@@ -63,7 +63,7 @@ export default function LoginPage() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await login(data.email, data.password);
-      router.push('/user');
+      router.push("/user");
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
       console.error("Login failed:", error);
@@ -103,7 +103,7 @@ export default function LoginPage() {
           exit={{ opacity: 0, y: -30 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
+          <Card className="card w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-4 py-6 my-6 rounded-xl border-2 shadow-lg">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
                 <CardHeader>
@@ -166,7 +166,10 @@ export default function LoginPage() {
                       />
                       <span className="ml-2">Show Password</span>
                     </Label>
-                    <Button type="submit" className="font-bold w-full sm:w-auto">
+                    <Button
+                      type="submit"
+                      className="btn-primary font-bold w-full sm:w-auto"
+                    >
                       Log In
                     </Button>
                   </div>
@@ -178,7 +181,7 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 onClick={handleGoogleLogin}
-                className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
+                className="btn-primary border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
               >
                 <FaGoogle className="text-red-600" />
                 Google
@@ -186,7 +189,7 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 onClick={handleLinkedinLogin}
-                className="border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
+                className="btn-primary border border-black font-semibold flex items-center gap-2 px-4 py-2 text-sm"
               >
                 <FaLinkedinIn className="text-blue-600" />
                 LinkedIn
