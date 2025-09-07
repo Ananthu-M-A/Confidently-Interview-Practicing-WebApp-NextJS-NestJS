@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// Dummy data, replace with real backend integration
 const stats = {
   interviews: 1200,
   experts: 45,

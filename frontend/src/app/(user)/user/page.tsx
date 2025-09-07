@@ -2,6 +2,7 @@
 
 import WithAuth from "@/components/auth-guards/WithAuth";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import { Interview } from "@/interfaces/interview.interface";
 import axiosClient from "@/lib/axiosClient";
@@ -36,34 +37,34 @@ const UserHome = () => {
         {`Welcome Back, ${user?.username}`}
       </h1>
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
-        <div className="border p-4 rounded-lg">
+        <Card className="card border p-4 rounded-lg">
           <h2 className="text-lg font-bold mb-2 sm:text-xl">Your Stats</h2>
           <p className="text-sm sm:text-base">{`Average Score: ${user}`}</p>
           <p className="text-sm sm:text-base">{`Total Interviews: ${user}`}</p>
           <p className="text-sm sm:text-base">{`Strengths: ${user}`}</p>
           <p className="text-sm sm:text-base">{`Areas of Improvement: ${user}`}</p>
-        </div>
-        <div className="border p-4 rounded-lg">
+        </Card>
+        <Card className="card border p-4 rounded-lg">
           <h2 className="text-lg font-bold mb-4 sm:text-xl">Quick Actions</h2>
           <div className="flex flex-col gap-4">
             <Button
               onClick={() => router.push("/user/interviews")}
-              className="font-bold px-4 py-2"
+              className="btn-primary font-bold px-4 py-2"
             >
               Schedule New Interview
             </Button>
             <Button
               onClick={() => router.push("/user/profile")}
               variant={"outline"}
-              className="font-bold px-4 py-2"
+              className="btn-primary font-bold px-4 py-2"
             >
               View Profile
             </Button>
           </div>
-        </div>
+        </Card>
       </div>
       {latestInterview && (
-        <div className="border rounded-lg grid gap-6 mt-6 sm:grid-cols-1 md:grid-cols-3">
+        <Card className="card border rounded-lg grid gap-6 mt-6 sm:grid-cols-1 md:grid-cols-3">
           <div className="p-4 rounded-lg">
             <h2 className="text-lg font-bold mb-2 sm:text-xl">
               Next Upcoming Interview
@@ -75,7 +76,7 @@ const UserHome = () => {
             <div className="flex flex-col gap-2 mt-4">
               {/* {latestInterview.status === "active" && ( */}
               <Button
-                className="font-bold px-4 py-2"
+                className="btn-primary font-bold px-4 py-2"
                 onClick={() =>
                   router.push(`/user/live-interview/${latestInterview.id}`)
                 }
@@ -86,13 +87,13 @@ const UserHome = () => {
               <Button
                 variant={"outline"}
                 onClick={() => router.push("/user/interviews")}
-                className="font-bold px-4 py-2"
+                className="btn-primary font-bold px-4 py-2"
               >
                 View All Upcoming Interviews
               </Button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
       <h2 className="text-lg font-bold mt-8 sm:text-xl">Recent Interviews</h2>
       <div className="border p-4 rounded-lg mt-5 flex flex-col sm:flex-row sm:justify-between sm:items-center">
@@ -105,7 +106,7 @@ const UserHome = () => {
           <Button
             variant={"outline"}
             onClick={() => router.push("")}
-            className="text-sm sm:text-base px-4 py-2"
+            className="btn-primary text-sm sm:text-base px-4 py-2"
           >
             View Feedback
           </Button>
