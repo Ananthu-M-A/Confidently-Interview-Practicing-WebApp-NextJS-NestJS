@@ -36,9 +36,11 @@ const HomePage = () => {
             Practice real-time interviews with professional experts and boost
             your confidence.
           </motion.p>
-          <Button asChild size="lg">
-            <Link href="/register">Get Started</Link>
-          </Button>
+          <Link href="/register">
+            <Button className="btn-primary w-full sm:w-auto">
+              Get Started
+            </Button>
+          </Link>
         </section>
         <section className="px-5 sm:px-12 py-6">
           <h2 className="text-2xl sm:text-3xl font-medium text-left pb-4">
@@ -128,17 +130,12 @@ const HomePage = () => {
             Ready to Ace Your Next Interview?
           </h2>
           <div className="flex gap-4 sm:gap-6">
-            <Button asChild size="lg">
-              <Link href="/register">Sign Up</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-black"
-            >
-              <Link href="/login">Log In</Link>
-            </Button>
+            <Link href="/register">
+              <Button className="btn-primary">Sign Up</Button>
+            </Link>
+            <Link href="/login">
+              <Button className="btn-primary">Log In</Button>
+            </Link>
           </div>
         </section>
       </motion.div>

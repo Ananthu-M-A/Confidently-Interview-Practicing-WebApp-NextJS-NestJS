@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-indigo-900 dark:to-black transition-colors duration-300 text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased duration-300`}
       >
         <AdminProvider>
           <ExpertProvider>

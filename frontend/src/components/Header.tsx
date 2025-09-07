@@ -34,8 +34,8 @@ export default function Header() {
   return (
     <header className="w-full py-4 px-6 bg-gradient-to-r from-blue-100 via-indigo-100 to-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="text-3xl font-extrabold text-gradient bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent tracking-wide mb-4 sm:mb-0">
-          Confidently Interview
+        <h1 className="text-3xl font-extrabold tracking-wide mb-4 sm:mb-0">
+          Confidently
         </h1>
         <nav className="flex flex-col sm:flex-row items-center gap-4">
           {(pathname === "/login" ||
@@ -55,15 +55,6 @@ export default function Header() {
                   Sign Up
                 </Button>
               </Link>
-              <Button
-                aria-label="Toggle dark mode"
-                className="btn-primary shadow-lg"
-                onClick={() => {
-                  document.body.classList.toggle("dark");
-                }}
-              >
-                🌓
-              </Button>
             </>
           )}
           {user && (
