@@ -32,9 +32,9 @@ export default function Header() {
   }
 
   return (
-    <header className="w-full py-4 px-6 bg-gradient-to-r from-blue-100 via-indigo-100 to-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
+    <header className="w-full py-4 px-6 shadow-lg sticky top-0 z-50 border-b border-gray-200">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="text-3xl font-extrabold tracking-wide mb-4 sm:mb-0">
+        <h1 className="text-4xl font-extrabold tracking-wide mb-4 sm:mb-0">
           Confidently
         </h1>
         <nav className="flex flex-col sm:flex-row items-center gap-4">
