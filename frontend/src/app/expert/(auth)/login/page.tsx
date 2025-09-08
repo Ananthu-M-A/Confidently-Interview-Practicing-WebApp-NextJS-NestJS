@@ -86,7 +86,7 @@ export default function LoginPage() {
           exit={{ opacity: 0, y: -30 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="w-full max-w-md mx-auto px-4 py-4 sm:py-6 my-4 rounded-xl border-2 shadow-lg">
+          <Card className="card w-full max-w-md mx-auto px-4 py-4 sm:py-6 my-4 rounded-xl border-2 shadow-lg">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
                 <CardHeader>
@@ -149,7 +149,7 @@ export default function LoginPage() {
                       />
                       <span className="ml-2">Show Password</span>
                     </Label>
-                    <Button type="submit" className="font-bold">
+                    <Button type="submit" className="btn-primary font-bold">
                       Log In
                     </Button>
                   </div>

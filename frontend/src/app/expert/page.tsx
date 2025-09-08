@@ -2,6 +2,7 @@
 
 import WithExpertAuth from "@/components/auth-guards/WithExpertAuth";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useExpertAuth } from "@/contexts/auth/ExpertAuthContext";
 import { Expert } from "@/interfaces/expert.interface";
@@ -63,7 +64,7 @@ const ExpertHome = () => {
         Expert Dashboard
       </h1>
       {interviews.length !== 0 && (
-        <div>
+        <Card className="card">
           <h2 className="text-lg font-bold mb-4 sm:text-xl">
             Upcoming Interviews
           </h2>
@@ -108,9 +109,9 @@ const ExpertHome = () => {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
-      <div className="border rounded-lg mt-6">
+      <Card className="card border rounded-lg mt-6">
         <div className="p-4 rounded-lg">
           <h2 className="text-lg font-bold mb-2 sm:text-xl">
             Manage Availability
@@ -128,7 +129,7 @@ const ExpertHome = () => {
             />
             <Button
               onClick={updateAvailability}
-              className="font-bold px-4 py-2"
+              className="btn-primary font-bold px-4 py-2"
             >
               Add Slot
             </Button>
@@ -137,13 +138,13 @@ const ExpertHome = () => {
             Each slot is of 1 hour; select starting time to add slot.
           </h1>
         </div>
-      </div>
-      <div className="border p-4 rounded-lg mt-6">
+      </Card>
+      <Card className="card border p-4 rounded-lg mt-6">
         <h2 className="text-lg font-bold mb-2 sm:text-xl">Performance Stats</h2>
         <p className="text-sm sm:text-base">{`Total Interviews Conducted: ${interviews.length}`}</p>
         <p className="text-sm sm:text-base">{`Average Rating: 4`}</p>
         <p className="text-sm sm:text-base">{`Specializations: ${performance?.specialization}`}</p>
-      </div>
+      </Card>
     </div>
   );
 };
