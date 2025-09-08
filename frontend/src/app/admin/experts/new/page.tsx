@@ -68,7 +68,7 @@ function AddExpert() {
   }
 
   return (
-    <Card className="w-full max-w-xl mx-auto p-4 sm:p-6 my-6 rounded-xl border shadow-lg">
+    <Card className="card w-full max-w-xl mx-auto p-4 sm:p-6 my-6 rounded-xl border shadow-lg">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -133,9 +133,13 @@ function AddExpert() {
                         <SelectValue placeholder="Select a subject for interview" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="border-0">
                       {subjects.map((subject, index) => (
-                        <SelectItem key={index} value={subject.id}>
+                        <SelectItem
+                          key={index}
+                          value={subject.id}
+                          className="btn-primary"
+                        >
                           {subject.name}
                         </SelectItem>
                       ))}
@@ -169,7 +173,7 @@ function AddExpert() {
           <CardContent className="text-center mt-4">
             <Button
               type="submit"
-              className="w-full sm:w-auto px-4 py-2 font-bold"
+              className="btn-primary w-full sm:w-auto px-4 py-2 font-bold"
             >
               Add Expert & Send Email
             </Button>

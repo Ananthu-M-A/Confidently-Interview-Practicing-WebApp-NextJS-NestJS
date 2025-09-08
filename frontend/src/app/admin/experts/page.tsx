@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Expert } from "@/interfaces/expert.interface";
 import axiosClient from "@/lib/axiosClient";
+import { Card } from "@/components/ui/card";
 
 const ExpertsList = () => {
   const [experts, setExperts] = useState<Expert[]>([]);
@@ -75,14 +76,11 @@ const ExpertsList = () => {
       <h1 className="text-2xl sm:text-4xl font-bold mb-4">
         Experts Management
       </h1>
-      <div className="border p-4 sm:p-5 rounded-lg">
+      <Card className="card border p-4 sm:p-5 rounded-lg">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h1 className="text-lg sm:text-xl font-bold">Search Experts</h1>
-          <Link
-            href="/admin/experts/new"
-            className="text-lg font-bold border-2 border-black px-3 py-1 rounded-full hover:bg-black hover:text-white"
-          >
-            + Add Expert
+          <Link href="/admin/experts/new" className="btn-primary">
+            Add Expert
           </Link>
         </div>
         <Input
@@ -91,8 +89,8 @@ const ExpertsList = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mt-3"
         />
-      </div>
-      <div className="border p-4 sm:p-5 rounded-lg mt-5 overflow-x-auto">
+      </Card>
+      <Card className="card border p-4 sm:p-5 rounded-lg mt-5 overflow-x-auto">
         <Table>
           <TableCaption className="sr-only">
             A list of confidently experts
@@ -120,11 +118,7 @@ const ExpertsList = () => {
                     <Button
                       onClick={() => handleStatusChange(expert.email)}
                       variant={expert.active ? "destructive" : "outline"}
-                      className={
-                        expert.active
-                          ? "hover:bg-red-700 hover:text-white"
-                          : "bg-green-500 text-white hover:bg-green-700"
-                      }
+                      className="btn-primary"
                     >
                       {expert.active ? "Deactivate" : "Activate"}
                     </Button>
@@ -140,7 +134,7 @@ const ExpertsList = () => {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 };
