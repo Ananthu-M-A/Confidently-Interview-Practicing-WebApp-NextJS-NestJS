@@ -9,15 +9,17 @@ export class AdminSeedService implements OnModuleInit {
     constructor(@InjectModel(Admin.name) private adminModel: Model<AdminDocument>) { }
 
     async onModuleInit() {
-        const adminExists = await this.adminModel.findOne({ email: 'admin@confidently.com' });
+        const adminEmail = process.env.CONFIDENTLY_ADMIN_EMAIL || 'admin@confidently.com';
+        const adminPassword = process.env.CONFIDENTLY_ADMIN_PASSWORD || 'Pswd4@dmin';
+        const adminExists = await this.adminModel.findOne({ email: adminEmail });
 
         if (!adminExists) {
-            const hashedPassword = await bcrypt.hash('Pswd4@dmin', 10);
+            const hashedPassword = await bcrypt.hash(adminPassword, 10);
             await this.adminModel.create({
-                email: 'admin@confidently.com',
+                email: adminEmail,
                 password: hashedPassword,
             });
-            console.log('✅ Default admin created: admin@confidently.com / Pswd4@dmin');
+            console.log(`Default Admin Created: ${adminEmail} / ${adminPassword}`);
         }
     }
 }
