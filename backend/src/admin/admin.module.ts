@@ -8,6 +8,7 @@ import { Expert, ExpertSchema } from 'src/common/schemas/experts.schema';
 import { User, UserSchema } from 'src/common/schemas/users.schema';
 import { EmailModule } from 'src/email/email.module';
 import { Interview, InterviewSchema } from 'src/common/schemas/interview.schema';
+import { AdminSeedService } from './seed/admin-seed.service';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { Interview, InterviewSchema } from 'src/common/schemas/interview.schema'
     EmailModule
   ],
   controllers: [AdminController],
-  providers: [AdminService],
+  providers: [AdminService, AdminSeedService],
   exports: [AdminService]
 })
 export class AdminModule { }
