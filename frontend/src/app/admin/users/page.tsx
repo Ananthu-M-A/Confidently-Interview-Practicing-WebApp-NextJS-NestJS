@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { User } from "@/interfaces/user.interface";
 import axiosClient from "@/lib/axiosClient";
+import { Card } from "@/components/ui/card";
 
 const UsersList = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -60,8 +61,10 @@ const UsersList = () => {
   useEffect(() => {
     const results = users.filter(
       (user) =>
-        user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        (user.fullname &&
+          user.fullname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (user.email &&
+          user.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredUsers(results);
   }, [searchTerm, users]);
@@ -69,7 +72,7 @@ const UsersList = () => {
   return (
     <div className="text-left my-6 px-4 sm:px-8">
       <h1 className="text-2xl sm:text-4xl font-bold mb-4">Users Management</h1>
-      <div className="border p-4 sm:p-5 rounded-lg">
+      <Card className="card border p-4 sm:p-5 rounded-lg">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h1 className="text-lg sm:text-xl font-bold">Search Users</h1>
         </div>
@@ -79,8 +82,8 @@ const UsersList = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mt-3"
         />
-      </div>
-      <div className="border p-4 sm:p-5 rounded-lg mt-5 overflow-x-auto">
+      </Card>
+      <Card className="card border p-4 sm:p-5 rounded-lg mt-5 overflow-x-auto">
         <Table>
           <TableCaption className="sr-only">
             A list of confidently users
@@ -106,11 +109,7 @@ const UsersList = () => {
                     <Button
                       onClick={() => handleStatusChange(user.email)}
                       variant={user.active ? "destructive" : "outline"}
-                      className={
-                        user.active
-                          ? "hover:bg-red-700 hover:text-white"
-                          : "bg-green-500 text-white hover:bg-green-700"
-                      }
+                      className="btn-primary"
                     >
                       {user.active ? "Deactivate" : "Activate"}
                     </Button>
@@ -126,7 +125,7 @@ const UsersList = () => {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 };

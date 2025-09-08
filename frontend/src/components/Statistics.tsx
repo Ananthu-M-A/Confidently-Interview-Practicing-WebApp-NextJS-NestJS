@@ -40,12 +40,12 @@ export function Statistics() {
   return (
     <section className="w-full py-10 flex flex-wrap justify-center gap-8">
       {isLoading && (
-        <div className="w-full text-center text-lg animate-pulse text-blue-500">
+        <div className="w-full text-center text-lg animate-pulse">
           Loading statistics...
         </div>
       )}
       {isError && (
-        <div className="w-full text-center text-lg text-red-500">
+        <div className="w-full text-center text-lg">
           Failed to load statistics.
         </div>
       )}
@@ -60,12 +60,8 @@ export function Statistics() {
             transition={{ delay: idx * 0.2 }}
           >
             {stat.icon}
-            <span className="text-4xl font-extrabold mt-2">
-              {stat.value}
-            </span>
-            <span className="text-lg mt-1 font-medium">
-              {stat.label}
-            </span>
+            <span className="text-4xl font-extrabold mt-2">{stat.value}</span>
+            <span className="text-lg mt-1 font-medium">{stat.label}</span>
           </motion.div>
         ))}
     </section>
