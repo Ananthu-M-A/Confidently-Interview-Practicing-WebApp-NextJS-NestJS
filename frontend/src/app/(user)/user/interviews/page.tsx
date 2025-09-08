@@ -210,9 +210,13 @@ const Interviews = () => {
                           <SelectValue placeholder="Select a subject for interview" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="border-0">
                         {subjects.map((subject, index) => (
-                          <SelectItem key={index} value={subject.id}>
+                          <SelectItem
+                            key={index}
+                            value={subject.id}
+                            className="btn-primary"
+                          >
                             {subject.name}
                           </SelectItem>
                         ))}
@@ -243,7 +247,10 @@ const Interviews = () => {
                   </FormItem>
                 )}
               />
-              <Button className="btn-primary w-full font-bold px-4 py-2" type="submit">
+              <Button
+                className="btn-primary w-full font-bold px-4 py-2"
+                type="submit"
+              >
                 Find Available Experts
               </Button>
             </form>
