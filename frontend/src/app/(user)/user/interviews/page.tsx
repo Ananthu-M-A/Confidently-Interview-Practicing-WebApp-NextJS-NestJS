@@ -301,11 +301,12 @@ const Interviews = () => {
                                   <SelectValue placeholder="Select a slot for interview" />
                                 </SelectTrigger>
                               </FormControl>
-                              <SelectContent>
+                              <SelectContent className="border-0">
                                 {expert?.availableSlots.map((slot, index) => (
                                   <SelectItem
                                     key={index}
                                     value={new Date(slot).toISOString()}
+                                    className="btn-primary"
                                   >
                                     {new Date(slot).toLocaleString()}
                                   </SelectItem>
@@ -332,9 +333,9 @@ const Interviews = () => {
                                 <SelectValue placeholder="Select a difficulty level" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent className="border-0">
                               {difficulties.map((difficulty, index) => (
-                                <SelectItem key={index} value={difficulty.id}>
+                                <SelectItem key={index} value={difficulty.id} className="btn-primary">
                                   {difficulty.level}
                                 </SelectItem>
                               ))}
@@ -345,7 +346,7 @@ const Interviews = () => {
                       )}
                     />
                     <Button
-                      className="w-full font-bold px-4 py-2"
+                      className="btn-primary w-full font-bold px-4 py-2"
                       type="submit"
                     >
                       Schedule Interview
@@ -448,7 +449,7 @@ const Interviews = () => {
                       </FormItem>
                     )}
                   />
-                  <Button className="w-full font-bold px-4 py-2" type="submit">
+                  <Button className="btn-primary w-full font-bold px-4 py-2" type="submit">
                     Cancel Scheduled Interviews
                   </Button>
                 </form>

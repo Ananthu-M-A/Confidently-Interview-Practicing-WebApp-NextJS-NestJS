@@ -83,7 +83,6 @@ const UserHome = () => {
               >
                 Join Interview
               </Button>
-              {/* )} */}
               <Button
                 variant={"outline"}
                 onClick={() => router.push("/user/interviews")}
