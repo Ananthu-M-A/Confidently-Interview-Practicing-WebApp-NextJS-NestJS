@@ -135,7 +135,7 @@ function ViewUser() {
                     <FormControl>
                       <Input
                         id="email"
-                        placeholder="Eg: ananthu@gmail.com"
+                        placeholder="Eg: name@example.com"
                         {...field}
                         type="email"
                         className="w-full"

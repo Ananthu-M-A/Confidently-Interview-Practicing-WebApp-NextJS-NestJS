@@ -75,7 +75,7 @@ export default function ResetPasswordPage() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Eg:- ananthu@gmail.com"
+                      placeholder="Eg:- name@example.com"
                       {...field}
                       type="email"
                     />

@@ -130,7 +130,7 @@ function ViewExpert() {
                   <FormLabel className="text-sm font-semibold">Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Eg:- ananthu@gmail.com"
+                      placeholder="Eg:- name@example.com"
                       {...field}
                       type="email"
                       className="w-full"

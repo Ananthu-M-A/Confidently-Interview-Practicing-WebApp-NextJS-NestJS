@@ -152,7 +152,7 @@ export default function SignupPage() {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Eg:- ananthu@gmail.com"
+                          placeholder="Eg:- name@example.com"
                           {...field}
                           type="email"
                         />
